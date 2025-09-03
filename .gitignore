@@ -42,3 +42,7 @@ packages/ui/cache
 
 # sst
 .sst
+
+.DS_Store
+
+packages/ui/src/components/Figma Screenshots/
