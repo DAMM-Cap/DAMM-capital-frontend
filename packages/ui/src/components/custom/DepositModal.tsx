@@ -3,7 +3,6 @@ import Button from "../core/Button";
 import Input from "../core/Input";
 import Label from "../core/Label";
 import Modal, { ModalActionButtons, ModalContents } from "../core/Modal";
-import DammStableIcon from "../icons/DammStableIcon";
 import AmountComponent from "./AmountComponent";
 import TitleComponent from "./TitleComponent";
 
@@ -13,12 +12,20 @@ interface DepositModalProps {
   amount: string;
   onAmountChange: (value: string) => void;
   onMaxClick: () => void;
-  max?: number;
+  max: number;
+  position: number;
+  positionConverted: number;
   referralCode: string;
   onReferralCodeChange: (value: string) => void;
   onDeposit: () => void;
   isLoading: boolean;
   isInsufficientBalance: boolean;
+  invalidAmount: boolean;
+  invalidReferral: boolean;
+  validReferral: boolean;
+  tokenSymbol: string;
+  tokenIcon: React.ReactNode;
+  conversionValue: number;
 }
 
 const DepositModal: React.FC<DepositModalProps> = ({
@@ -27,42 +34,58 @@ const DepositModal: React.FC<DepositModalProps> = ({
   amount,
   onAmountChange,
   onMaxClick,
-  max = 1000,
+  max,
+  position,
+  positionConverted,
   referralCode,
   onReferralCodeChange,
   onDeposit,
   isLoading,
   isInsufficientBalance,
+  invalidAmount,
+  invalidReferral,
+  validReferral,
+  tokenSymbol,
+  tokenIcon: TokenIcon,
+  conversionValue,
 }) => {
   return (
     <Modal title="Deposit" open={open} onClose={onClose}>
       <ModalContents>
         <TitleComponent
           label="My position"
-          title="0 DUSDC"
-          leftIcon={<DammStableIcon />}
-          secondaryTitle="$0"
+          title={`${position} ${tokenSymbol}`}
+          leftIcon={TokenIcon}
+          secondaryTitle={`$${positionConverted}`}
         />
         <AmountComponent
-          tokenLabel="DUSDC"
-          tokenIcon={<DammStableIcon size={20} />}
-          tokenSecondaryLabel="$0"
+          tokenLabel={tokenSymbol}
+          tokenIcon={TokenIcon}
+          tokenSecondaryLabel={`$${max}`}
           conversionLeftText="1 USDC"
-          conversionRightText="0.935 DAMM USDC"
+          conversionRightText={`${conversionValue} ${tokenSymbol}`}
           amount={amount}
           onAmountChange={onAmountChange}
           onMaxClick={onMaxClick}
           max={max}
+          noEdit={isLoading}
+          validation={invalidAmount ? "invalid" : undefined}
+          validationMessage="Invalid amount"
         />
         <Input
           label="Referral code"
           type="text"
           value={referralCode}
+          noEdit={isLoading}
           placeholder="Type here"
           onChange={onReferralCodeChange}
-          className="w-full"
+          className="w-full pt-4"
+          validation={invalidReferral ? "invalid" : validReferral ? "success" : undefined}
+          validationMessage={
+            validReferral ? "Referral address validated" : "Invalid referral address"
+          }
         />
-        <div className="flex flex-col gap-2 pt-4 pb-4">
+        <div className="flex flex-col gap-2 pt-0 pb-4">
           <Label label="Completion time" secondaryLabel="~ 48 hours" />
           <Label label="Note: You can cancel your deposit before it's confirmed." />
         </div>
@@ -70,7 +93,9 @@ const DepositModal: React.FC<DepositModalProps> = ({
       <ModalActionButtons>
         <Button
           onClick={onDeposit}
-          variant={isInsufficientBalance ? "disabled" : "primary"}
+          variant={
+            isInsufficientBalance || invalidAmount || invalidReferral ? "disabled" : "primary"
+          }
           isLoading={isLoading}
         >
           {isInsufficientBalance ? "Insufficient balance" : "Deposit"}

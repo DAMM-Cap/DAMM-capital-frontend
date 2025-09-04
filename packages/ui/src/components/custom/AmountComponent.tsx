@@ -8,15 +8,19 @@ interface AmountComponentProps {
   conversionLeftText: string;
   conversionRightText: string;
   tokenSecondaryLabel: string;
+  noEdit: boolean;
   amount: string;
   onAmountChange: (value: string) => void;
   onMaxClick: () => void;
   max?: number;
+  validation?: "invalid" | "success" | null;
+  validationMessage?: string;
 }
 
 const AmountComponent: React.FC<AmountComponentProps> = ({
   tokenLabel,
   tokenIcon,
+  noEdit,
   amount,
   conversionLeftText,
   conversionRightText,
@@ -24,6 +28,8 @@ const AmountComponent: React.FC<AmountComponentProps> = ({
   onAmountChange,
   onMaxClick,
   max = 1000,
+  validation,
+  validationMessage,
 }) => {
   return (
     <div className="flex flex-row w-full gap-3">
@@ -43,13 +49,16 @@ const AmountComponent: React.FC<AmountComponentProps> = ({
         onChange={onAmountChange}
         max={max}
         onMaxClick={onMaxClick}
+        noEdit={noEdit}
         complexLabel={{
           leftText: conversionLeftText,
-          icon: <ConversionIcon />,
+          icon: <ConversionIcon size={16} />,
           rightText: conversionRightText,
           align: "right",
         }}
         className="w-3/4"
+        validation={validation}
+        validationMessage={validationMessage}
       />
     </div>
   );

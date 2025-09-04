@@ -164,47 +164,52 @@ export default function Input({
 
         {max && onMaxClick && (
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <Button2 onClick={onMaxClick}>max.</Button2>
+            <Button2 onClick={onMaxClick} disabled={noEdit}>
+              max.
+            </Button2>
           </div>
         )}
       </div>
 
-      {/* Validation Message */}
-      {validation && validationMessage && (
-        <div
-          className={`mt-2 font-inter font-medium text-sm leading-none tracking-wider ${
-            validation === "invalid" ? "text-[#EF4444]" : "text-[#14B8A6]"
-          }`}
-        >
-          {validationMessage}
-        </div>
-      )}
+      {/* Always reserve space for bottom content */}
+      <div className="mt-2 h-[20px] items-center">
+        {/* Validation Message */}
+        {validation && validationMessage && (
+          <div
+            className={`font-inter font-normal text-sm leading-none tracking-wider ${
+              validation === "invalid" ? "text-[#EF4444]" : "text-[#14B8A6]"
+            }`}
+          >
+            {validationMessage}
+          </div>
+        )}
 
-      {/* Secondary Label */}
-      {secondaryLabel && (
-        <div
-          className={`mt-2 font-montserrat font-normal text-xs leading-none text-[#BDBDBD] ${
-            secondaryLabelAlign === "right" ? "text-right" : "text-left"
-          }`}
-        >
-          {secondaryLabel}
-        </div>
-      )}
+        {/* Secondary Label */}
+        {secondaryLabel && !validation && (
+          <div
+            className={`font-montserrat font-normal text-xs leading-none text-[#BDBDBD] ${
+              secondaryLabelAlign === "right" ? "text-right" : "text-left"
+            }`}
+          >
+            {secondaryLabel}
+          </div>
+        )}
 
-      {/* Complex Label */}
-      {complexLabel && (
-        <div
-          className={`mt-2 font-montserrat font-normal text-xs leading-none flex items-center gap-2 ${
-            complexLabel.align === "right" ? "justify-end" : "justify-start"
-          }`}
-        >
-          <span className="text-[#BDBDBD]">{complexLabel.leftText}</span>
-          <span className="text-[#BDBDBD]">{complexLabel.icon}</span>
-          <span className="text-[#A3E635] flex items-center gap-1">
-            {complexLabel.rightText} <CircledExclamationIcon />
-          </span>
-        </div>
-      )}
+        {/* Complex Label */}
+        {complexLabel && !validation && (
+          <div
+            className={`font-montserrat font-normal text-xs leading-none flex items-center gap-2 ${
+              complexLabel.align === "right" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <span className="text-[#BDBDBD]">{complexLabel.leftText}</span>
+            <span className="text-[#BDBDBD]">{complexLabel.icon}</span>
+            <span className="text-[#A3E635] flex items-center gap-1">
+              {complexLabel.rightText} <CircledExclamationIcon size={14} />
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
