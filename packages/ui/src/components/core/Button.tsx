@@ -6,6 +6,7 @@ interface ButtonProps {
   variant?: "primary" | "secondary" | "disabled" | "loading";
   disabled?: boolean;
   isLoading?: boolean;
+  className?: string;
 }
 
 export default function Button({
@@ -14,6 +15,7 @@ export default function Button({
   variant = "primary",
   disabled = false,
   isLoading = false,
+  className = "",
 }: ButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
@@ -90,7 +92,7 @@ export default function Button({
     <button
       onClick={onClick}
       disabled={isDisabled}
-      className={`flex-1 px-4 py-2 rounded-2xl ${commonClasses}`}
+      className={`px-4 py-2 rounded-2xl ${commonClasses} ${className}`}
       style={getButtonStyles()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

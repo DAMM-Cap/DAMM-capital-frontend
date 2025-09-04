@@ -164,7 +164,7 @@ export default function Input({
 
         {max && onMaxClick && (
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <Button2 onClick={onMaxClick} disabled={noEdit}>
+            <Button2 onClick={onMaxClick} disabled={noEdit} className="w-[42px] h-[21px] !rounded">
               max.
             </Button2>
           </div>

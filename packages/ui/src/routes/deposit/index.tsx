@@ -1,4 +1,14 @@
-import { Button, DammStableIcon, DepositModal } from "@/components";
+import {
+  Button,
+  Button2,
+  DammStableIcon,
+  DepositModal,
+  Label,
+  Modal,
+  ModalActionButtons,
+  ModalContents,
+  TitleComponent,
+} from "@/components";
 import EnterIcon from "@/components/icons/EnterIcon";
 import RedeemIcon from "@/components/icons/RedeemIcon";
 import { createFileRoute } from "@tanstack/react-router";
@@ -20,6 +30,7 @@ function Deposit() {
   const [invalidAmount, setInvalidAmount] = useState(false);
   const [invalidReferral, setInvalidReferral] = useState(false);
   const [validReferral, setValidReferral] = useState(false);
+  const [openModalInProgress, setOpenModalInProgress] = useState(false);
 
   useEffect(() => {
     if (referral.length > 0) {
@@ -58,6 +69,7 @@ function Deposit() {
     setTimeout(() => {
       setIsLoading(false);
       setOpenModal(false);
+      setOpenModalInProgress(true);
     }, 4000);
   };
 
@@ -98,6 +110,33 @@ function Deposit() {
           tokenSymbol="DUSDC"
           tokenIcon={<DammStableIcon size={20} />}
         />
+
+        <Modal
+          open={openModalInProgress}
+          onClose={() => setOpenModalInProgress(false)}
+          title="Deposit in Progress"
+          className="w-[530px]"
+        >
+          <ModalContents>
+            <Label
+              label="Your deposit has been successfully submitted and is now awaiting confirmation."
+              className="!text-sm !pt-1"
+            />
+            <Label label="Processing may take up to 48 hours." className="!text-sm" />
+            <Label
+              label="To check the status of your deposit, you can track the transaction on Etherscan using your wallet address."
+              className="!text-sm !pb-2"
+            />
+          </ModalContents>
+          <ModalActionButtons>
+            <Button2 className="w-1/4" onClick={() => setOpenModalInProgress(false)}>
+              Close
+            </Button2>
+            <Button className="w-3/4" onClick={() => setOpenModalInProgress(false)}>
+              Go to my Portfolio
+            </Button>
+          </ModalActionButtons>
+        </Modal>
       </div>
     </div>
   );

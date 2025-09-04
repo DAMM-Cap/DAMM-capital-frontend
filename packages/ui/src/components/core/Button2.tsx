@@ -4,14 +4,20 @@ interface Button2Props {
   children: React.ReactNode;
   onClick: () => void;
   disabled?: boolean;
+  className?: string;
 }
 
-export default function Button2({ children, onClick, disabled = false }: Button2Props) {
+export default function Button2({
+  children,
+  onClick,
+  disabled = false,
+  className = "",
+}: Button2Props) {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
 
   const baseClasses =
-    "w-[42px] h-[21px] rounded font-montserrat font-normal text-sm leading-none transition-all duration-200 flex items-center justify-center border focus:outline-none focus:ring-0 focus:border-0";
+    "rounded-2xl font-montserrat font-normal text-sm leading-none transition-all duration-200 flex items-center justify-center border focus:outline-none focus:ring-0 focus:border-0";
 
   const getButtonStyles = () => {
     if (disabled) {
@@ -49,7 +55,7 @@ export default function Button2({ children, onClick, disabled = false }: Button2
     <button
       onClick={onClick}
       disabled={disabled}
-      className={baseClasses}
+      className={`${baseClasses} ${className}`}
       style={getButtonStyles()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

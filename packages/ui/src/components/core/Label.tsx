@@ -15,7 +15,9 @@ const Label: React.FC<LabelProps> = ({
 }) => {
   return (
     <div className={`flex items-center justify-between ${className}`}>
-      <label className="font-montserrat font-normal text-xs leading-none text-[#BDBDBD]">
+      <label
+        className={`font-montserrat font-normal text-xs leading-none text-[#BDBDBD] ${className}`}
+      >
         {label}
       </label>
       {secondaryLabel && (
