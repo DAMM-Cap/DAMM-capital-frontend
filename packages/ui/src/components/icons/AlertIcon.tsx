@@ -1,5 +1,3 @@
-import React from "react";
-
 interface AlertIconProps {
   color?: string;
   size?: number;

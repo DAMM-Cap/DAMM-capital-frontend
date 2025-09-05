@@ -1,16 +1,11 @@
 import React from "react";
 
-interface ConversionIconProps {
+interface ActivityIconProps {
   size?: number;
-  color?: string;
   className?: string;
 }
 
-const ConversionIcon: React.FC<ConversionIconProps> = ({
-  size = 12,
-  color = "currentColor",
-  className = "",
-}) => {
+const ActivityIcon: React.FC<ActivityIconProps> = ({ size = 24, className = "" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -18,18 +13,15 @@ const ConversionIcon: React.FC<ConversionIconProps> = ({
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke={color}
+      stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
     >
-      <path d="M8 3 4 7l4 4" />
-      <path d="M4 7h16" />
-      <path d="m16 21 4-4-4-4" />
-      <path d="M20 17H4" />
+      <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
     </svg>
   );
 };
 
-export default ConversionIcon;
+export default ActivityIcon;

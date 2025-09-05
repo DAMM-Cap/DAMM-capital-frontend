@@ -1,16 +1,20 @@
 import {
   Button,
-  Button2,
+  Card,
   DammStableIcon,
   DepositModal,
-  Label,
-  Modal,
-  ModalActionButtons,
-  ModalContents,
-  TitleComponent,
+  Fund,
+  InfoModal,
+  Link,
+  TableFunds,
 } from "@/components";
+import ActivityIcon from "@/components/icons/Activity";
+import BookOpenCheckIcon from "@/components/icons/BookOpenCheck";
 import EnterIcon from "@/components/icons/EnterIcon";
+import GavelIcon from "@/components/icons/Gavel";
+import MapPinIcon from "@/components/icons/MapPin";
 import RedeemIcon from "@/components/icons/RedeemIcon";
+import ScaleIcon from "@/components/icons/Scale";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
@@ -31,6 +35,16 @@ function Deposit() {
   const [invalidReferral, setInvalidReferral] = useState(false);
   const [validReferral, setValidReferral] = useState(false);
   const [openModalInProgress, setOpenModalInProgress] = useState(false);
+  const [openModalWhitelisting, setOpenModalWhitelisting] = useState(false);
+  const [openModalTerms, setOpenModalTerms] = useState(false);
+  const [isLoadingFund, setIsLoadingFund] = useState(false);
+
+  useEffect(() => {
+    setIsLoadingFund(true);
+    setTimeout(() => {
+      setIsLoadingFund(false);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     if (referral.length > 0) {
@@ -70,7 +84,7 @@ function Deposit() {
       setIsLoading(false);
       setOpenModal(false);
       setOpenModalInProgress(true);
-    }, 4000);
+    }, 2000);
   };
 
   return (
@@ -78,7 +92,13 @@ function Deposit() {
       <div className="flex flex-col gap-4">
         {/* Button custom */}
 
-        <Button onClick={() => setOpenModal(true)}>
+        <Button
+          onClick={() => {
+            setOpenModal(true);
+            setOpenModalWhitelisting(true);
+            setOpenModalTerms(true);
+          }}
+        >
           <EnterIcon />
           Deposit
         </Button>
@@ -111,32 +131,138 @@ function Deposit() {
           tokenIcon={<DammStableIcon size={20} />}
         />
 
-        <Modal
+        <InfoModal
           open={openModalInProgress}
           onClose={() => setOpenModalInProgress(false)}
           title="Deposit in Progress"
-          className="w-[530px]"
+          actions={{
+            secondary: {
+              text: "Close",
+              onClick: () => setOpenModalInProgress(false),
+              className: "w-1/4",
+            },
+            primary: {
+              text: "Go to my Portfolio",
+              onClick: () => setOpenModalInProgress(false),
+              className: "w-3/4",
+            },
+          }}
         >
-          <ModalContents>
-            <Label
-              label="Your deposit has been successfully submitted and is now awaiting confirmation."
-              className="!text-sm !pt-1"
-            />
-            <Label label="Processing may take up to 48 hours." className="!text-sm" />
-            <Label
-              label="To check the status of your deposit, you can track the transaction on Etherscan using your wallet address."
-              className="!text-sm !pb-2"
-            />
-          </ModalContents>
-          <ModalActionButtons>
-            <Button2 className="w-1/4" onClick={() => setOpenModalInProgress(false)}>
-              Close
-            </Button2>
-            <Button className="w-3/4" onClick={() => setOpenModalInProgress(false)}>
-              Go to my Portfolio
-            </Button>
-          </ModalActionButtons>
-        </Modal>
+          Your deposit has been successfully submitted and is now awaiting confirmation. Processing
+          may take up to 48 hours. To check the status of your deposit, you can track the
+          transaction on <Link href="https://etherscan.io/">Etherscan</Link> using your wallet
+          address.
+        </InfoModal>
+
+        <InfoModal
+          open={openModalWhitelisting}
+          onClose={() => setOpenModalWhitelisting(false)}
+          title="Whitelisting Required"
+          actions={{
+            secondary: {
+              text: "Close",
+              onClick: () => setOpenModalWhitelisting(false),
+            },
+          }}
+        >
+          Your wallet address is not whitelisted, so deposits are not allowed. To request access,
+          please email us at <Link href="mailto:team@dammcap.finance">team@dammcap.finance</Link> or
+          ask in our <Link href="">FAQ Telegram Group</Link>.
+        </InfoModal>
+
+        <InfoModal
+          open={openModalTerms}
+          onClose={() => setOpenModalTerms(false)}
+          title="Acknowledge Terms"
+          actions={{
+            secondary: {
+              text: "Reject",
+              onClick: () => setOpenModalTerms(false),
+              className: "w-1/4",
+            },
+            primary: {
+              text: "Accept",
+              onClick: () => setOpenModalTerms(false),
+              className: "w-3/4",
+            },
+          }}
+        >
+          By accesing or using DAMM Capital’s products and services, I agree to the{" "}
+          <Link href="">Terms And Conditions</Link> and <Link href="">Cookies and privacy</Link>. I
+          further confirm that:{" "}
+          <Card leftIcon={<MapPinIcon size={20} />}>
+            I am not located in a jurisdiction where the use of DAMM services is restricted by law.
+          </Card>
+          <Card leftIcon={<ScaleIcon size={20} />}>
+            I am authorized to use DAMM Capital’s platform in accordance with the laws and
+            regulations of my country.
+          </Card>
+          <Card leftIcon={<GavelIcon size={20} />}>
+            I am not a sanctioned individual nor acting on behalf of one.
+          </Card>
+          <Card leftIcon={<ActivityIcon size={20} />}>
+            I understand that using decentralized finance (DeFi) protocols carries inherent risks,
+            including potential loss of funds.
+          </Card>
+          <Card leftIcon={<BookOpenCheckIcon size={20} />}>
+            I acknowledge that DAMM Capital does not provide financial advice or custodial services
+            and that I am fully responsible for my actions.
+          </Card>
+        </InfoModal>
+
+        <TableFunds
+          className="!w-[600px]"
+          funds={[
+            {
+              leftIcon: <DammStableIcon size={20} />,
+              title: "DAMM Stable",
+              subtitle: "Managed by DAMM Capital",
+              secondColumnText: "9.02%",
+              thirdColumnText: "8.28%",
+              fourthColumnText: "$31.6M",
+              tokenIcon: <DammStableIcon size={20} />,
+              tokenName: "DUSDC",
+              onClick: () => {
+                setOpenModal(true);
+                setOpenModalWhitelisting(true);
+                setOpenModalTerms(true);
+              },
+              isLoading: isLoadingFund,
+            },
+            {
+              leftIcon: <DammStableIcon size={20} />,
+              title: "DAMM Stable",
+              subtitle: "Managed by DAMM Capital",
+              secondColumnText: "9.02%",
+              thirdColumnText: "8.28%",
+              fourthColumnText: "$31.6M",
+              tokenIcon: <DammStableIcon size={20} />,
+              tokenName: "DUSDC",
+              onClick: () => {
+                setOpenModal(true);
+                setOpenModalWhitelisting(true);
+                setOpenModalTerms(true);
+              },
+              isLoading: isLoadingFund,
+            },
+            {
+              leftIcon: <DammStableIcon size={20} />,
+              title: "DAMM Stable",
+              subtitle: "Managed by DAMM Capital",
+              secondColumnText: "9.02%",
+              thirdColumnText: "8.28%",
+              fourthColumnText: "$31.6M",
+              tokenIcon: <DammStableIcon size={20} />,
+              tokenName: "DUSDC",
+              onClick: () => {
+                setOpenModal(true);
+                setOpenModalWhitelisting(true);
+                setOpenModalTerms(true);
+              },
+              isLoading: isLoadingFund,
+            },
+          ]}
+        />
       </div>
     </div>
   );

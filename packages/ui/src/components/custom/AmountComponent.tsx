@@ -52,7 +52,7 @@ const AmountComponent: React.FC<AmountComponentProps> = ({
         noEdit={noEdit}
         complexLabel={{
           leftText: conversionLeftText,
-          icon: <ConversionIcon size={16} />,
+          icon: <ConversionIcon size={14} />,
           rightText: conversionRightText,
           align: "right",
         }}
