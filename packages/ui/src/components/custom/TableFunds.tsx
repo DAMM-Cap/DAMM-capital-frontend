@@ -21,7 +21,7 @@ interface TableFundsProps {
 
 const TableFunds: React.FC<TableFundsProps> = ({ funds, className = "" }) => {
   return (
-    <div className={`w-[800px] mx-auto ${className}`}>
+    <div className={`w-full mx-auto ${className}`}>
       {/* Header */}
       <div className="grid grid-cols-12 gap-2 items-center mb-4 px-4">
         <div className="col-span-4">
@@ -45,7 +45,7 @@ const TableFunds: React.FC<TableFundsProps> = ({ funds, className = "" }) => {
           </div>
         </div>
         <div className="col-span-2">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-[#BDBDBD] text-center">
+          <div className="font-montserrat font-normal text-[10px] leading-none text-[#BDBDBD] text-left">
             Underlying Asset
           </div>
         </div>

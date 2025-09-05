@@ -17,7 +17,7 @@ export default function Button2({
   const [isClicked, setIsClicked] = useState(false);
 
   const baseClasses =
-    "rounded-2xl font-montserrat font-normal text-sm leading-none transition-all duration-200 flex items-center justify-center border focus:outline-none focus:ring-0 focus:border-0";
+    "px-4 py-2 rounded-2xl font-montserrat font-normal text-sm leading-none transition-all duration-200 flex items-center justify-center border focus:outline-none focus:ring-0 focus:border-0";
 
   const getButtonStyles = () => {
     if (disabled) {

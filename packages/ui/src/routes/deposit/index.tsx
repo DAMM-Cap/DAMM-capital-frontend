@@ -1,13 +1,5 @@
-import {
-  Button,
-  Card,
-  DammStableIcon,
-  DepositModal,
-  Fund,
-  InfoModal,
-  Link,
-  TableFunds,
-} from "@/components";
+import { Button, Card, DammStableIcon, DepositModal, InfoModal, Link } from "@/components";
+import WithdrawModal from "@/components/custom/WithdrawModal";
 import ActivityIcon from "@/components/icons/Activity";
 import BookOpenCheckIcon from "@/components/icons/BookOpenCheck";
 import EnterIcon from "@/components/icons/EnterIcon";
@@ -34,17 +26,10 @@ function Deposit() {
   const [invalidAmount, setInvalidAmount] = useState(false);
   const [invalidReferral, setInvalidReferral] = useState(false);
   const [validReferral, setValidReferral] = useState(false);
+  const [openModalWithdraw, setOpenModalWithdraw] = useState(false);
   const [openModalInProgress, setOpenModalInProgress] = useState(false);
   const [openModalWhitelisting, setOpenModalWhitelisting] = useState(false);
   const [openModalTerms, setOpenModalTerms] = useState(false);
-  const [isLoadingFund, setIsLoadingFund] = useState(false);
-
-  useEffect(() => {
-    setIsLoadingFund(true);
-    setTimeout(() => {
-      setIsLoadingFund(false);
-    }, 2000);
-  }, []);
 
   useEffect(() => {
     if (referral.length > 0) {
@@ -87,9 +72,17 @@ function Deposit() {
     }, 2000);
   };
 
+  const handleWithdraw = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setOpenModalWithdraw(false);
+    }, 2000);
+  };
+
   return (
     <div className="flex flex-1 items-center justify-center">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-full">
         {/* Button custom */}
 
         <Button
@@ -103,7 +96,11 @@ function Deposit() {
           Deposit
         </Button>
 
-        <Button onClick={() => {}}>
+        <Button
+          onClick={() => {
+            setOpenModalWithdraw(true);
+          }}
+        >
           <RedeemIcon />
           Withdraw
         </Button>
@@ -129,6 +126,24 @@ function Deposit() {
           invalidAmount={invalidAmount}
           tokenSymbol="DUSDC"
           tokenIcon={<DammStableIcon size={20} />}
+        />
+
+        <WithdrawModal
+          open={openModalWithdraw}
+          onClose={() => setOpenModalWithdraw(false)}
+          amount={amount}
+          onAmountChange={setAmount}
+          onMaxClick={() => setAmount(max.toString())}
+          max={max}
+          position={position}
+          positionConverted={position * conversionValue}
+          onWithdraw={() => handleWithdraw()}
+          isLoading={isLoading}
+          isInsufficientShares={isInsufficientBalance}
+          invalidAmount={invalidAmount}
+          tokenSymbol="DUSDC"
+          tokenIcon={<DammStableIcon size={20} />}
+          conversionValue={conversionValue}
         />
 
         <InfoModal
@@ -209,60 +224,6 @@ function Deposit() {
             and that I am fully responsible for my actions.
           </Card>
         </InfoModal>
-
-        <TableFunds
-          className="!w-[600px]"
-          funds={[
-            {
-              leftIcon: <DammStableIcon size={20} />,
-              title: "DAMM Stable",
-              subtitle: "Managed by DAMM Capital",
-              secondColumnText: "9.02%",
-              thirdColumnText: "8.28%",
-              fourthColumnText: "$31.6M",
-              tokenIcon: <DammStableIcon size={20} />,
-              tokenName: "DUSDC",
-              onClick: () => {
-                setOpenModal(true);
-                setOpenModalWhitelisting(true);
-                setOpenModalTerms(true);
-              },
-              isLoading: isLoadingFund,
-            },
-            {
-              leftIcon: <DammStableIcon size={20} />,
-              title: "DAMM Stable",
-              subtitle: "Managed by DAMM Capital",
-              secondColumnText: "9.02%",
-              thirdColumnText: "8.28%",
-              fourthColumnText: "$31.6M",
-              tokenIcon: <DammStableIcon size={20} />,
-              tokenName: "DUSDC",
-              onClick: () => {
-                setOpenModal(true);
-                setOpenModalWhitelisting(true);
-                setOpenModalTerms(true);
-              },
-              isLoading: isLoadingFund,
-            },
-            {
-              leftIcon: <DammStableIcon size={20} />,
-              title: "DAMM Stable",
-              subtitle: "Managed by DAMM Capital",
-              secondColumnText: "9.02%",
-              thirdColumnText: "8.28%",
-              fourthColumnText: "$31.6M",
-              tokenIcon: <DammStableIcon size={20} />,
-              tokenName: "DUSDC",
-              onClick: () => {
-                setOpenModal(true);
-                setOpenModalWhitelisting(true);
-                setOpenModalTerms(true);
-              },
-              isLoading: isLoadingFund,
-            },
-          ]}
-        />
       </div>
     </div>
   );
