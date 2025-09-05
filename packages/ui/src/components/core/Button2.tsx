@@ -17,7 +17,7 @@ export default function Button2({
   const [isClicked, setIsClicked] = useState(false);
 
   const baseClasses =
-    "px-4 py-2 rounded-2xl font-montserrat font-normal text-sm leading-none transition-all duration-200 flex items-center justify-center border focus:outline-none focus:ring-0 focus:border-0";
+    "rounded-2xl font-montserrat font-medium text-base leading-none transition-all duration-200 flex items-center justify-center border focus:outline-none focus:ring-0 focus:border-0";
 
   const getButtonStyles = () => {
     if (disabled) {
@@ -55,7 +55,7 @@ export default function Button2({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`${baseClasses} ${className}`}
+      className={`px-4 py-2 ${baseClasses} ${className}`}
       style={getButtonStyles()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
