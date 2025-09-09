@@ -14,6 +14,9 @@ const EnvSchema = z.object({
   PORT: z.coerce.number().default(9999),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).optional(),
   CORS_ORIGINS: z.string().default("http://localhost:3000"),
+  CDP_API_KEY_ID: z.string().optional(),
+  CDP_API_KEY_SECRET: z.string().optional(),
+  CDP_WALLET_SECRET: z.string().optional(),
 });
 
 export type env = z.infer<typeof EnvSchema>;

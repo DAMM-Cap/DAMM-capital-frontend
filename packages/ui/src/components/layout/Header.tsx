@@ -1,3 +1,10 @@
+import {
+  useEvmAddress,
+  useIsSignedIn,
+  useSignInWithEmail,
+  useVerifyEmailOTP,
+} from "@coinbase/cdp-hooks";
+import { AuthButton } from "@coinbase/cdp-react/components/AuthButton";
 import { Link, useLocation } from "@tanstack/react-router";
 import React from "react";
 import Button from "../core/Button";
@@ -7,6 +14,15 @@ import EnterIcon from "../icons/EnterIcon";
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const { evmAddress } = useEvmAddress();
+  const { isSignedIn } = useIsSignedIn();
+  /* const { signInWithEmail } = useSignInWithEmail();
+  const { verifyEmailOTP } = useVerifyEmailOTP(); */
+
+  /* const handleSignInWithEmail = async () => {
+    const { email, otp } = await signInWithEmail();
+    await verifyEmailOTP(email, otp);
+  }; */
 
   const getLinkClassName = (path: string) => {
     const isActive = location.pathname === path;
@@ -47,12 +63,14 @@ const Header: React.FC = () => {
                   Portfolio
                 </Link>
               </nav>
+              {isSignedIn && <Label label={`EVM Address: ${evmAddress}`} />}
             </div>
             <div>
-              <Button onClick={() => {}} className="text-sm">
+              <AuthButton className="h-8 w-36 rounded-2xl -mt-4 " />
+              {/* <Button onClick={handleSignInWithEmail} className="text-sm">
                 <EnterIcon />
                 Log In
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>

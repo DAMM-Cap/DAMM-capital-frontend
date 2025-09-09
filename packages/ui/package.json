@@ -10,13 +10,18 @@
     "routes": "@tanstack/router-vite-plugin generate"
   },
   "dependencies": {
+    "@coinbase/cdp-core": "^0.0.28",
+    "@coinbase/cdp-hooks": "^0.0.28",
+    "@coinbase/cdp-react": "^0.0.28",
     "@heroicons/react": "^2.2.0",
     "@tanstack/react-query": "^5.40.0",
     "@tanstack/react-router": "^1.114.17",
     "@tanstack/router-cli": "^1.114.17",
     "dotenv": "16.4.7",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "viem": "^2.26.5",
+    "wagmi": "^2.14.16"
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.114.17",
