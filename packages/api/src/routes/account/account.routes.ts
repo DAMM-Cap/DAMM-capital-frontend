@@ -45,7 +45,8 @@ const AccountRequestSchema = z.object({
 });
 
 const AccountResponseSchema = z.object({
-  address: z.string().describe("EVM address"),
+  evmEOAAddress: z.string().describe("EVM EOA address"),
+  evmSmartAddress: z.string().describe("EVM Smart address"),
   accountId: z.string().describe("Account identifier"),
 });
 

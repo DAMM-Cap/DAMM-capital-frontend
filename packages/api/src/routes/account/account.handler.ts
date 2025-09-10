@@ -39,37 +39,26 @@ export const accountHandler: AppRouteHandler<AccountRoute> = async (c) => {
     });
 
     const accountId = endUser.userId;
-    const address = endUser.evmAccounts[0]; // This is the unique possible address of the account
-    const needToCreateAccount = endUser.evmSmartAccounts.length === 0;
+
+    console.log("AccountId", accountId);
+    console.log("EOA Address", endUser.evmAccounts[0]);
+    console.log("Smart Account Address:", endUser.evmSmartAccounts[0]);
 
     console.log("Attempting to create/get account with CDP client...");
-    console.log("Address", address);
-    console.log("AccountId", accountId);
-    console.log("Smart Account:", endUser.evmSmartAccounts[0]);
 
-    const account = await cdpClient.evm.getOrCreateAccount({
+    const ownerAccount = await cdpClient.evm.getOrCreateAccount({
       name: accountId,
-      //address: address as `0x${string}`,
     });
 
-    /* let account;
-    if (needToCreateAccount) {
-        account = await cdpClient.evm.getOrCreateAccount({
-        //name: session!.user.id,
-        name: accountId,
-      });
-      console.log("Smart Account Created:", account.address);
-    } else {
-      account = await cdpClient.evm.getAccount({
-        name: accountId,
-        address: endUser.evmSmartAccounts[0] as `0x${string}`,
-      });
-      console.log("Smart Account Retrieved:", account.address);
-    } */
+    const account = await cdpClient.evm.getOrCreateSmartAccount({
+      name: accountId,
+      owner: ownerAccount,
+    });
 
     return c.json(
       {
-        address: account.address,
+        evmEOAAddress: ownerAccount.address,
+        evmSmartAddress: account.address,
         accountId: accountId,
       },
       HttpStatusCodes.OK,
