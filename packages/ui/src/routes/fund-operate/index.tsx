@@ -3,6 +3,7 @@ import {
   Card,
   DammStableIcon,
   DepositModal,
+  Fund,
   InfoModal,
   Link,
   TitleComponent,
@@ -17,6 +18,7 @@ import RedeemIcon from "@/components/icons/RedeemIcon";
 import ScaleIcon from "@/components/icons/Scale";
 import { useVaults } from "@/context/vault-context";
 import { useDeposit } from "@/hooks/use-deposit";
+import { useWithdraw } from "@/hooks/use-withdraw";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -25,13 +27,13 @@ const depositSearchSchema = z.object({
   vaultId: z.string(),
 });
 
-export const Route = createFileRoute("/deposit/")({
-  component: Deposit,
+export const Route = createFileRoute("/fund-operate/")({
+  component: FundOperate,
   validateSearch: (search) => depositSearchSchema.parse(search),
 });
 
-function Deposit() {
-  const { vaultId } = useSearch({ from: "/deposit/" });
+function FundOperate() {
+  const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { vaults } = useVaults();
   const selectedVault = vaults?.vaultsData?.find((v) => v.staticData.vault_id === vaultId);
 
@@ -52,6 +54,7 @@ function Deposit() {
   const [openModalTerms, setOpenModalTerms] = useState(false);
 
   const { submitRequestDeposit } = useDeposit();
+  const { submitRequestWithdraw, submitRedeem } = useWithdraw();
 
   useEffect(() => {
     if (referral.length > 0) {
@@ -87,6 +90,7 @@ function Deposit() {
 
   const handleDeposit = async () => {
     setIsLoading(true);
+
     // Execute transaction
     const tx = await submitRequestDeposit(
       selectedVault!.staticData.vault_address,
@@ -107,8 +111,38 @@ function Deposit() {
     }, 2000);
   };
 
-  const handleWithdraw = () => {
+  const handleWithdraw = async () => {
     setIsLoading(true);
+
+    // Execute transaction
+    const tx = await submitRequestWithdraw(selectedVault!.staticData.vault_address, amount);
+
+    // Wait for confirmation
+    await tx.wait();
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setOpenModalWithdraw(false);
+    }, 2000);
+  };
+
+  const handleRedeem = async () => {
+    setIsLoading(true);
+
+    // Execute transaction
+    const amount = String(selectedVault!.positionData.availableToRedeemRaw);
+    // Execute transaction
+    const tx = await submitRedeem(
+      selectedVault!.staticData.vault_address,
+      selectedVault!.staticData.token_address,
+      selectedVault!.staticData.fee_receiver_address,
+      selectedVault!.vaultData.exitRate,
+      amount,
+    );
+
+    // Wait for confirmation
+    await tx.wait();
+
     setTimeout(() => {
       setIsLoading(false);
       setOpenModalWithdraw(false);
@@ -119,10 +153,30 @@ function Deposit() {
     selectedVault && (
       <div className="flex flex-1 items-center justify-center">
         <div className="flex flex-col gap-4 w-full">
-          <TitleComponent
+          <Fund
+            leftIcon={<DammStableIcon size={20} />}
             title={selectedVault.staticData.vault_name}
-            secondaryTitle={selectedVault.staticData.vault_symbol}
-            label={selectedVault.staticData.token_symbol}
+            subtitle={selectedVault.staticData.vault_symbol}
+            secondColumnText={selectedVault.vaultData.apr.toString()}
+            thirdColumnText={selectedVault.vaultData.aprChange.toString()}
+            fourthColumnText={selectedVault.vaultData.tvl.toString()}
+            tokenIcon={
+              <img
+                src={selectedVault.staticData.vault_icon}
+                alt={selectedVault.staticData.vault_name}
+                className="w-5 h-5 object-cover rounded-full"
+              />
+            }
+            tokenName={selectedVault.staticData.token_symbol}
+            onClick={() => {}}
+            isLoading={isLoading}
+            className="w-full"
+          />
+
+          <TitleComponent
+            title={selectedVault.positionData.totalValue}
+            secondaryTitle={selectedVault.positionData.vaultShare}
+            label={selectedVault.positionData.claimableShares}
           />
 
           {/* Button custom */}
@@ -136,16 +190,27 @@ function Deposit() {
             <EnterIcon />
             Deposit
           </Button>
-
-          <Button
-            onClick={() => {
-              setOpenModalWithdraw(true);
-            }}
-          >
-            <RedeemIcon />
-            Withdraw
-          </Button>
-
+          {(selectedVault.positionData.availableToRedeemRaw &&
+            selectedVault.positionData.availableToRedeemRaw > 0) ||
+          selectedVault.staticData.vault_status !== "open" ? (
+            <Button onClick={() => handleRedeem()}>
+              <RedeemIcon />
+              <span>
+                {/* Claim  */}
+                {selectedVault.positionData.availableToRedeemRaw}{" "}
+                {selectedVault.staticData.token_symbol}
+              </span>
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                setOpenModalWithdraw(true);
+              }}
+            >
+              <RedeemIcon />
+              Withdraw
+            </Button>
+          )}
           {/* Modal */}
           <DepositModal
             open={openModal}
@@ -168,7 +233,6 @@ function Deposit() {
             tokenSymbol="DUSDC"
             tokenIcon={<DammStableIcon size={20} />}
           />
-
           <WithdrawModal
             open={openModalWithdraw}
             onClose={() => setOpenModalWithdraw(false)}
@@ -186,7 +250,6 @@ function Deposit() {
             tokenIcon={<DammStableIcon size={20} />}
             conversionValue={conversionValue}
           />
-
           <InfoModal
             open={openModalInProgress}
             onClose={() => setOpenModalInProgress(false)}
@@ -209,7 +272,6 @@ function Deposit() {
             the transaction on <Link href="https://etherscan.io/">Etherscan</Link> using your wallet
             address.
           </InfoModal>
-
           <InfoModal
             open={openModalWhitelisting}
             onClose={() => setOpenModalWhitelisting(false)}
@@ -225,7 +287,6 @@ function Deposit() {
             please email us at <Link href="mailto:team@dammcap.finance">team@dammcap.finance</Link>{" "}
             or ask in our <Link href="">FAQ Telegram Group</Link>.
           </InfoModal>
-
           <InfoModal
             open={openModalTerms}
             onClose={() => setOpenModalTerms(false)}

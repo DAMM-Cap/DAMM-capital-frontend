@@ -2,23 +2,32 @@ import { getNetworkConfig } from "@/lib/network";
 import VaultABI from "@/lib/protocols/abis/Vault.json";
 import { getERC20TransferTx } from "@/lib/protocols/utils/eip2612";
 import { getApproveTx } from "@/lib/protocols/utils/token-utils";
-import { EvmAddress, EvmCall, sendUserOperation } from "@coinbase/cdp-core";
-import { useEvmAddress, useIsSignedIn } from "@coinbase/cdp-hooks";
+import { EvmAddress, EvmCall } from "@coinbase/cdp-core";
+import { useEvmAddress, useIsInitialized, useIsSignedIn } from "@coinbase/cdp-hooks";
 import { TransactionResponse } from "@ethersproject/providers";
-import { useAppKitNetwork } from "@reown/appkit/react";
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
-import { encodeFunctionData } from "viem";
+import { Abi, encodeFunctionData } from "viem";
 import { useAccount } from "wagmi";
+import { useCDPTxs } from "./use-cdp-txs";
+
+// Filter ABI to only include the 4-parameter requestDeposit function
+const RequestDepositABI = VaultABI.filter(
+  (item: any) => item.name === "requestDeposit" && item.inputs?.length === 4,
+) as Abi;
 
 export function useDeposit() {
   const { address } = useAccount();
-  const network = useAppKitNetwork();
+  const networkConfig = getNetworkConfig();
   const { evmAddress: smartAccount } = useEvmAddress();
   const isSignedIn = useIsSignedIn();
+  const { isInitialized } = useIsInitialized();
+  const { executeSmartAccountTransactionBatch } = useCDPTxs();
 
   const cancelDepositRequest = async (vaultAddress: string) => {
-    if (!address) throw new Error("No address found");
+    if (!isInitialized) throw new Error("Failed to initialize");
+    if (!address || !networkConfig.chain.id) throw new Error("Failed connection");
+    if (!smartAccount || !isSignedIn) throw new Error("Failed smart account");
 
     const txs: EvmCall[] = [];
 
@@ -50,14 +59,15 @@ export function useDeposit() {
     entranceRate: number,
     amount: string,
   ) => {
-    if (!address || !network.chainId) throw new Error("Failed connection");
+    if (!isInitialized) throw new Error("Failed to initialize");
+    if (!address || !networkConfig.chain.id) throw new Error("Failed connection");
     if (!smartAccount || !isSignedIn) throw new Error("Failed smart account");
 
     const txs: EvmCall[] = [];
 
     const amountInWei = parseUnits(amount, tokenDecimals);
 
-    // Approve tokens to be transferred from safe to the vault
+    // Approve tokens to be transferred from smartAccount to the vault
     const approveTx = await getApproveTx(
       smartAccount,
       vaultAddress,
@@ -77,7 +87,7 @@ export function useDeposit() {
       .div(10000);
     const depositAmount = BigNumber.from(amountInWei).sub(fee);
 
-    // Transfer entrance_fee from safe to fee_receiver
+    // Transfer entrance_fee from smartAccount to fee_receiver
     const transferFeeTx = getERC20TransferTx({
       to: feeReceiverAddress as EvmAddress,
       amount: fee.toBigInt(),
@@ -85,15 +95,15 @@ export function useDeposit() {
     }) as EvmCall;
     if (transferFeeTx) txs.push(transferFeeTx);
 
-    // Request deposit
+    // Request deposit with referral (4 parameters)
     const requestDepositCall = {
       to: vaultAddress as EvmAddress,
       value: 0n,
       data: encodeFunctionData({
-        abi: VaultABI,
+        abi: RequestDepositABI,
         functionName: "requestDeposit",
         args: [depositAmount, smartAccount, smartAccount, smartAccount],
-      }),
+      }) as `0x${string}`,
     };
     txs.push(requestDepositCall);
 
@@ -101,20 +111,9 @@ export function useDeposit() {
       const txResponse = await executeSmartAccountTransactionBatch(txs);
       return txResponse as unknown as TransactionResponse;
     } catch (error) {
-      console.error("Error executing safe transaction:", error);
+      console.error("Error executing smart account transaction:", error);
       throw new Error("Cannot execute deposit request");
     }
-  };
-
-  const executeSmartAccountTransactionBatch = async (txs: EvmCall[]) => {
-    const network = getNetworkConfig().network;
-    const { userOperationHash } = await sendUserOperation({
-      evmSmartAccount: smartAccount as `0x${string}`,
-      network: network,
-      calls: txs,
-    });
-    const txResponse = { txHash: userOperationHash };
-    return txResponse as unknown as TransactionResponse;
   };
 
   return {

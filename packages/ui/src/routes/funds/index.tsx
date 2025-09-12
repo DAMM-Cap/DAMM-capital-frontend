@@ -53,7 +53,7 @@ function Funds() {
             ),
             tokenName: fund.staticData.token_symbol,
             onClick: () => {
-              navigate({ to: "/deposit", search: { vaultId: fund.staticData.vault_id } });
+              navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
             },
             isLoading: isLoadingFund,
             //isLoading: isLoading,

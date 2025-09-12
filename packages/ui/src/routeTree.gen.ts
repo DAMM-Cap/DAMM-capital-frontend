@@ -14,7 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as PortfolioIndexImport } from './routes/portfolio/index'
 import { Route as FundsIndexImport } from './routes/funds/index'
-import { Route as DepositIndexImport } from './routes/deposit/index'
+import { Route as FundOperateIndexImport } from './routes/fund-operate/index'
 import { Route as AboutIndexImport } from './routes/about/index'
 
 // Create/Update Routes
@@ -37,9 +37,9 @@ const FundsIndexRoute = FundsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const DepositIndexRoute = DepositIndexImport.update({
-  id: '/deposit/',
-  path: '/deposit/',
+const FundOperateIndexRoute = FundOperateIndexImport.update({
+  id: '/fund-operate/',
+  path: '/fund-operate/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,11 +67,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutIndexImport
       parentRoute: typeof rootRoute
     }
-    '/deposit/': {
-      id: '/deposit/'
-      path: '/deposit'
-      fullPath: '/deposit'
-      preLoaderRoute: typeof DepositIndexImport
+    '/fund-operate/': {
+      id: '/fund-operate/'
+      path: '/fund-operate'
+      fullPath: '/fund-operate'
+      preLoaderRoute: typeof FundOperateIndexImport
       parentRoute: typeof rootRoute
     }
     '/funds/': {
@@ -96,7 +96,7 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutIndexRoute
-  '/deposit': typeof DepositIndexRoute
+  '/fund-operate': typeof FundOperateIndexRoute
   '/funds': typeof FundsIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
 }
@@ -104,7 +104,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutIndexRoute
-  '/deposit': typeof DepositIndexRoute
+  '/fund-operate': typeof FundOperateIndexRoute
   '/funds': typeof FundsIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
 }
@@ -113,24 +113,30 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about/': typeof AboutIndexRoute
-  '/deposit/': typeof DepositIndexRoute
+  '/fund-operate/': typeof FundOperateIndexRoute
   '/funds/': typeof FundsIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/deposit' | '/funds' | '/portfolio'
+  fullPaths: '/' | '/about' | '/fund-operate' | '/funds' | '/portfolio'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/deposit' | '/funds' | '/portfolio'
-  id: '__root__' | '/' | '/about/' | '/deposit/' | '/funds/' | '/portfolio/'
+  to: '/' | '/about' | '/fund-operate' | '/funds' | '/portfolio'
+  id:
+    | '__root__'
+    | '/'
+    | '/about/'
+    | '/fund-operate/'
+    | '/funds/'
+    | '/portfolio/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutIndexRoute: typeof AboutIndexRoute
-  DepositIndexRoute: typeof DepositIndexRoute
+  FundOperateIndexRoute: typeof FundOperateIndexRoute
   FundsIndexRoute: typeof FundsIndexRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
 }
@@ -138,7 +144,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutIndexRoute: AboutIndexRoute,
-  DepositIndexRoute: DepositIndexRoute,
+  FundOperateIndexRoute: FundOperateIndexRoute,
   FundsIndexRoute: FundsIndexRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
 }
@@ -155,7 +161,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about/",
-        "/deposit/",
+        "/fund-operate/",
         "/funds/",
         "/portfolio/"
       ]
@@ -166,8 +172,8 @@ export const routeTree = rootRoute
     "/about/": {
       "filePath": "about/index.tsx"
     },
-    "/deposit/": {
-      "filePath": "deposit/index.tsx"
+    "/fund-operate/": {
+      "filePath": "fund-operate/index.tsx"
     },
     "/funds/": {
       "filePath": "funds/index.tsx"
