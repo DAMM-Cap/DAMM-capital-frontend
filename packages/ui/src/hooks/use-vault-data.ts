@@ -10,7 +10,6 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useVaultData(wallet: string) {
   //const { getVaultDataDirectly } = useGetVaultDataDirectly();
-  //const network = useAppKitNetwork();
   const network = getNetworkConfig().chain;
 
   return useQuery<VaultDataResponse>({

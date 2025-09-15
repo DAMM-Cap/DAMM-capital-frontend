@@ -56,6 +56,7 @@ export function transformVaultData(vaultData: VaultData): VaultDataView {
     exitRate: vaultData.exitRate,
     performanceFee: vaultData.performanceFee,
     managementFee: vaultData.managementFee,
+    sharePrice: vaultData.sharePrice,
   };
 }
 
@@ -63,6 +64,7 @@ export function transformPositionData(positionData: PositionData): PositionDataV
   return {
     totalValue: `${positionData.totalValue} WLD`,
     totalValueUSD: `≈ $${positionData.totalValueUSD}`,
+    totalValueRaw: positionData.totalValue,
     wldBalance: `${positionData.wldBalance} WLD`,
     usdcBalance: `${positionData.usdcBalance} USDC`,
     availableToRedeem: `${positionData.availableToRedeem} WLD`,

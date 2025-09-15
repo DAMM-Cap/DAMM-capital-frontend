@@ -56,9 +56,6 @@ const Header: React.FC = () => {
                 <Link to="/funds" className={getLinkClassName("/funds")}>
                   Funds
                 </Link>
-                {/* <Link to="/deposit" className={getLinkClassName("/deposit")}>
-                  Deposit
-                </Link> */}
                 <Link to="/portfolio" className={getLinkClassName("/portfolio")}>
                   Portfolio
                 </Link>

@@ -45,6 +45,7 @@ export interface VaultData {
   exitRate: number;
   performanceFee: number;
   managementFee: number;
+  sharePrice: number;
 }
 
 export interface PositionData {

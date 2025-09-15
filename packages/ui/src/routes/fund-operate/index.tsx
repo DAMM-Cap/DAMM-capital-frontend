@@ -38,8 +38,8 @@ function FundOperate() {
   const selectedVault = vaults?.vaultsData?.find((v) => v.staticData.vault_id === vaultId);
 
   const max = 1000;
-  const position = 3500;
-  const conversionValue = 0.935;
+  const position = selectedVault?.positionData.totalValueRaw || 0;
+  const conversionValue = selectedVault?.vaultData.sharePrice || 0;
   const [amount, setAmount] = useState("");
   const [referral, setReferral] = useState("");
   const [openModal, setOpenModal] = useState(false);
