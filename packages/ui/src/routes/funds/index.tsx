@@ -12,7 +12,7 @@ export const Route = createFileRoute("/funds/")({
 
 function Funds() {
   const navigate = useNavigate();
-  const isSignedIn = useIsSignedIn();
+  const { isSignedIn } = useIsSignedIn();
   const [isLoadingFund, setIsLoadingFund] = useState(false);
   const { vaults, isLoading } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = useMemo(

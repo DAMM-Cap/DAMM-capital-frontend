@@ -9,7 +9,6 @@ import { getNetworkConfig } from "@/lib/network";
 import { useQuery } from "@tanstack/react-query";
 
 export function useVaultData(wallet: string) {
-  //const { getVaultDataDirectly } = useGetVaultDataDirectly();
   const network = getNetworkConfig().chain;
 
   return useQuery<VaultDataResponse>({
@@ -50,7 +49,6 @@ export function useVaultData(wallet: string) {
         console.warn("Error fetching vault data:", error);
         console.warn("Retrieving vault data from contract");
         return getNullMockedVaultData();
-        //return await getVaultDataDirectly();
       }
     },
     enabled:
