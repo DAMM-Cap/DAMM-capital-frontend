@@ -1,6 +1,5 @@
 import React from "react";
 import Button from "../core/Button";
-import Button2 from "../core/Button2";
 import Modal, { ModalActionButtons, ModalContents } from "../core/Modal";
 import InfoLabel from "./InfoLabel";
 
@@ -38,13 +37,14 @@ const InfoModal: React.FC<InfoModalProps> = ({
     const buttons = [];
     if (actions.secondary) {
       buttons.push(
-        <Button2
+        <Button
           key="secondary"
           className={actions.secondary.className}
           onClick={actions.secondary.onClick}
+          variant="secondary"
         >
           {actions.secondary.text}
-        </Button2>,
+        </Button>,
       );
     }
     if (actions.primary) {

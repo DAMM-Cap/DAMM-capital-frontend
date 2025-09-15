@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AlertIcon from "../icons/AlertIcon";
 import CheckIcon from "../icons/CheckIcon";
 import CircledExclamationIcon from "../icons/CircledExclamationIcon";
-import Button2 from "./Button2";
+import Button from "./Button";
 
 interface InputProps {
   type?: "text" | "email" | "password" | "number";
@@ -164,9 +164,14 @@ export default function Input({
 
         {max && onMaxClick && (
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <Button2 onClick={onMaxClick} disabled={noEdit} className="w-[42px] h-[21px] !rounded">
+            <Button
+              onClick={onMaxClick}
+              variant="secondary"
+              disabled={noEdit}
+              className="w-[42px] h-[21px] !rounded"
+            >
               max.
-            </Button2>
+            </Button>
           </div>
         )}
       </div>

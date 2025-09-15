@@ -1,5 +1,4 @@
 export { default as Button } from "./core/Button";
-export { default as Button2 } from "./core/Button2";
 export { default as Card } from "./core/Card";
 export { default as Input } from "./core/Input";
 export { default as Label } from "./core/Label";

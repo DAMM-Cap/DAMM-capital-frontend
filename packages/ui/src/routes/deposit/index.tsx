@@ -7,6 +7,7 @@ import GavelIcon from "@/components/icons/Gavel";
 import MapPinIcon from "@/components/icons/MapPin";
 import RedeemIcon from "@/components/icons/RedeemIcon";
 import ScaleIcon from "@/components/icons/Scale";
+import envParsed from "@/envParsed";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
@@ -100,6 +101,7 @@ function Deposit() {
           onClick={() => {
             setOpenModalWithdraw(true);
           }}
+          variant="secondary"
         >
           <RedeemIcon />
           Withdraw
@@ -202,7 +204,7 @@ function Deposit() {
             },
           }}
         >
-          By accesing or using DAMM Capital’s products and services, I agree to the{" "}
+          By accessing or using DAMM Capital’s products and services, I agree to the{" "}
           <Link href="">Terms And Conditions</Link> and <Link href="">Cookies and privacy</Link>. I
           further confirm that:{" "}
           <Card leftIcon={<MapPinIcon size={20} />}>

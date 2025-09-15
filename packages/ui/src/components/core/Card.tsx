@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 
 interface CardProps {
@@ -8,22 +9,16 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ leftIcon, children, className = "", variant = "default" }) => {
-  const getVariantStyles = () => {
-    switch (variant) {
-      case "fund":
-        return "bg-[#18181BCC]";
-      default:
-        return "bg-[#09090B]";
-    }
-  };
+  const variantClasses = clsx({
+    "bg-disabled": variant === "fund",
+    "bg-textDark": variant === "default",
+  });
 
   return (
-    <div
-      className={`border border-[#18181B] ${getVariantStyles()} rounded-2xl p-4 my-4 ${className}`}
-    >
+    <div className={`border border-disabled ${variantClasses} rounded-2xl p-4 my-4 ${className}`}>
       <div className="flex items-center gap-3">
         {leftIcon && <div className="flex-shrink-0">{leftIcon}</div>}
-        <div className="font-montserrat font-normal text-xs leading-none text-[#BDBDBD]">
+        <div className="font-montserrat font-normal text-xs leading-none text-neutral">
           {children}
         </div>
       </div>

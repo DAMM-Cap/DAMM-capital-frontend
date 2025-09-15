@@ -69,7 +69,11 @@ const Fund: React.FC<FundProps> = ({
             <div className="col-span-4 w-full">
               <div className="flex items-center gap-3">
                 <div className="flex-shrink-0 flex items-center justify-center">
-                  {React.cloneElement(leftIcon as React.ReactElement<any>, { size: 32 })}
+                  {React.isValidElement(leftIcon)
+                    ? React.cloneElement(leftIcon as React.ReactElement<{ size?: number }>, {
+                        size: 32,
+                      })
+                    : leftIcon}
                 </div>
                 <div className="flex-1">
                   <div className="font-montserrat font-bold text-lg leading-none text-[#F7FEE7]">
