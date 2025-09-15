@@ -64,9 +64,9 @@ export default function Button({
     if (variant === "secondary") {
       if (isClicked) {
         return {
-          backgroundColor: "#A3E635",
-          color: "#000000",
-          border: "2px solid #A3E635",
+          backgroundColor: "#F7FEE7",
+          color: "#09090B",
+          border: "2px solid #F7FEE7",
         };
       }
       if (isHovered) {
@@ -77,9 +77,9 @@ export default function Button({
         };
       }
       return {
-        backgroundColor: "#FFFFFF",
-        color: "#000000",
-        border: "2px solid #A3E635",
+        backgroundColor: "#F7FEE7",
+        color: "#09090B",
+        border: "2px solid #F7FEE7",
       };
     }
 

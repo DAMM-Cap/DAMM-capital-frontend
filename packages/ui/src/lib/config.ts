@@ -9,7 +9,7 @@ export const CDP_CONFIG: Config = {
 export const APP_CONFIG: AppConfig = {
   name: "Login",
   //logoUrl: "http://localhost:3000/logo.svg",
-  logoUrl: "https://picsum.photos/64",
+  //logoUrl: "https://picsum.photos/64",
 
   authMethods: ["email" /* , "sms" */],
   showCoinbaseFooter: true,

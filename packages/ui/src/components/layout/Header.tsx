@@ -2,20 +2,24 @@ import {
   useEvmAddress,
   useIsSignedIn,
   useSignInWithEmail,
+  useSignOut,
   useVerifyEmailOTP,
 } from "@coinbase/cdp-hooks";
 import { AuthButton } from "@coinbase/cdp-react/components/AuthButton";
 import { Link, useLocation } from "@tanstack/react-router";
-import React from "react";
+import React, { useState } from "react";
 import Button from "../core/Button";
 import Label from "../core/Label";
+import Modal, { ModalActionButtons, ModalContents } from "../core/Modal";
 import TitleComponent from "../custom/TitleComponent";
-import EnterIcon from "../icons/EnterIcon";
+import ConnectedIcon from "../icons/ConnectedIcon";
 
 const Header: React.FC = () => {
   const location = useLocation();
   const { evmAddress } = useEvmAddress();
   const { isSignedIn } = useIsSignedIn();
+  const [openModal, setOpenModal] = useState(false);
+  const { signOut } = useSignOut();
   /* const { signInWithEmail } = useSignInWithEmail();
   const { verifyEmailOTP } = useVerifyEmailOTP(); */
 
@@ -60,18 +64,61 @@ const Header: React.FC = () => {
                   Portfolio
                 </Link>
               </nav>
-              {isSignedIn && <Label label={`EVM Address: ${evmAddress}`} />}
             </div>
             <div>
-              <AuthButton className="h-8 w-36 rounded-2xl -mt-4 " />
-              {/* <Button onClick={handleSignInWithEmail} className="text-sm">
-                <EnterIcon />
-                Log In
-              </Button> */}
+              {isSignedIn ? (
+                <Button
+                  onClick={() => {
+                    setOpenModal(true);
+                  }}
+                  variant="secondary"
+                  className="text-sm"
+                >
+                  <ConnectedIcon />
+                  {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
+                </Button>
+              ) : (
+                <AuthButton className="h-8 w-36 rounded-2xl -mt-4 " />
+              )}
             </div>
           </div>
         </div>
       </div>
+      <Modal
+        open={openModal}
+        onClose={() => {
+          setOpenModal(false);
+        }}
+        title="Your Smart Account"
+        className="w-[480px]"
+      >
+        <ModalContents>
+          <div className="text-center mb-4">{evmAddress}</div>
+        </ModalContents>
+        <ModalActionButtons>
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText(evmAddress!);
+              setOpenModal(false);
+            }}
+            variant="secondary"
+            className="text-sm"
+          >
+            Copy address
+          </Button>
+          <Button
+            onClick={() => {
+              signOut();
+              setOpenModal(false);
+            }}
+            variant="primary"
+            className="text-sm"
+          >
+            Sign out
+          </Button>
+          {/* <AuthButton className="!w-[240px] rounded-2xl" /> */}
+        </ModalActionButtons>
+      </Modal>
     </header>
   );
 };
