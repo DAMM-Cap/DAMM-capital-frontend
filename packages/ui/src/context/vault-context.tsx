@@ -28,11 +28,12 @@ export function VaultProvider({ children }: VaultProviderProps) {
     address && safeAddress && safeAddress.length > 0 && safeAddress.startsWith("0x");
 
   // Only call useVaultData when we have valid addresses
-  const vaultDataQuery = useVaultData(hasValidAddresses ? safeAddress : "");
+  const vaultDataQuery = useVaultData(hasValidAddresses ? safeAddress : "0x");
   const { data, isLoading } = vaultDataQuery;
 
   useEffect(() => {
-    if (!hasValidAddresses || isLoading || !address) {
+    //if (!hasValidAddresses || isLoading || !address) {
+    if (isLoading) {
       setVaults(null);
     } else if (data && address) {
       setVaults(DataWrangler({ data }));
