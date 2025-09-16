@@ -17,8 +17,6 @@ export default function Button({
   isLoading = false,
   className = "",
 }: ButtonProps) {
-  const isDisabled = disabled || isLoading;
-
   const variants: Record<NonNullable<ButtonProps["variant"]>, string> = {
     primary:
       "bg-primary border-primary text-textDark \
@@ -45,7 +43,7 @@ export default function Button({
     "button-base",
     variants[variant],
     className,
-    isDisabled && disabledClasses,
+    disabled && disabledClasses,
     isLoading && loadingClasses,
   );
 
@@ -53,8 +51,10 @@ export default function Button({
     <button
       type="button"
       onClick={onClick}
-      disabled={isDisabled}
+      disabled={disabled}
+      aria-disabled={disabled || isLoading}
       aria-busy={isLoading}
+      data-loading={isLoading || undefined}
       className={buttonClasses}
     >
       {isLoading ? (
