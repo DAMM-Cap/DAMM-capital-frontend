@@ -1,20 +1,13 @@
-import { Link, useLocation } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import React from "react";
 import Button from "../core/Button";
 import Label from "../core/Label";
 import TitleComponent from "../custom/TitleComponent";
+import NavBar from "./NavBar";
 
 const Header: React.FC = () => {
-  const location = useLocation();
-
-  const getLinkClassName = (path: string) => {
-    const isActive = location.pathname === path;
-    return `transition-colors ${isActive ? "text-[#A3E635] hover:text-[#A3E635]" : "text-[#F7FEE7] hover:text-[#A3E635]"}`;
-  };
-
   return (
-    <header className="w-full bg-[#09090B] py-4">
+    <header className="w-full bg-textDark py-4">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center text-sm">
@@ -28,25 +21,15 @@ const Header: React.FC = () => {
                 <div className="flex flex-col gap-0 w-24 items-center justify-center -mt-3 -ml-2">
                   <TitleComponent
                     title="DAMM"
-                    className="text-[#F7FEE7] font-bold text-lg [&_h4]:!text-[20px] [&_h4]:!font-black mb-0 [&_h4]:!text-center [&_h4]:!leading-none"
+                    className="text-textLight font-bold text-lg [&_h4]:!text-[20px] [&_h4]:!font-black mb-0 [&_h4]:!text-center [&_h4]:!leading-none"
                   />
                   <Label
                     label="CAPITAL"
-                    className="text-[#F7FEE7] font-bold text-lg [&_label]:!text-[12px] -mt-4 [&_label]:!text-center [&_label]:!tracking-[0.24em] [&_label]:!leading-none"
+                    className="text-textLight font-bold text-lg [&_label]:!text-[12px] -mt-4 [&_label]:!text-center [&_label]:!tracking-[0.24em] [&_label]:!leading-none"
                   />
                 </div>
               </div>
-              <nav className="flex items-center gap-8">
-                <Link to="/funds" className={getLinkClassName("/funds")}>
-                  Funds
-                </Link>
-                <Link to="/deposit" className={getLinkClassName("/deposit")}>
-                  Deposit
-                </Link>
-                <Link to="/portfolio" className={getLinkClassName("/portfolio")}>
-                  Portfolio
-                </Link>
-              </nav>
+              <NavBar />
             </div>
             <div>
               <Button onClick={() => {}} className="text-sm">

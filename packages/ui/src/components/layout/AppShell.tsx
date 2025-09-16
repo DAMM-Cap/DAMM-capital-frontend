@@ -3,7 +3,7 @@ import Header from "./Header";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-background-light dark:bg-[#09090B] text-foreground-light dark:text-foreground">
+    <div className="min-h-screen bg-background-light dark:bg-textDark text-foreground-light dark:text-foreground">
       {/* Header */}
       <Header />
 
