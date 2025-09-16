@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 
 interface LabelProps {
@@ -14,15 +15,18 @@ const Label: React.FC<LabelProps> = ({
   className = "",
 }) => {
   return (
-    <div className={`flex items-center justify-between ${className}`}>
+    <div className={clsx("flex items-center justify-between", className)}>
       <label
-        className={`font-montserrat font-normal text-xs leading-none text-[#BDBDBD] ${className}`}
+        className={clsx("font-montserrat font-normal text-xs leading-none text-neutral", className)}
       >
         {label}
       </label>
       {secondaryLabel && (
         <span
-          className={`font-montserrat font-normal text-xs leading-none text-[#BDBDBD] ${secondaryLabelAlign === "right" ? "text-right" : "text-left"}`}
+          className={clsx("font-montserrat font-normal text-xs leading-none text-neutral", {
+            "text-right": secondaryLabelAlign === "right",
+            "text-left": secondaryLabelAlign === "left",
+          })}
         >
           {secondaryLabel}
         </span>

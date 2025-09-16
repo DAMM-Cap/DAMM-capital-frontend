@@ -81,7 +81,7 @@ function Funds() {
           <Label label="Connect your wallet to deposit into any of our funds." className="pb-4" />
         </div>
         <div className="w-full flex justify-center">
-          <Button onClick={() => {}} className="text-xs">
+          <Button onClick={() => {}} className="!text-xs">
             <EnterIcon />
             Connect Wallet to Get Started
           </Button>

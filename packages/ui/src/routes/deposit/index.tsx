@@ -102,6 +102,7 @@ function Deposit() {
             setOpenModalWithdraw(true);
           }}
           variant="secondary"
+          disabled={true}
         >
           <RedeemIcon />
           Withdraw

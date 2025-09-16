@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = ({ leftIcon, children, className = "", variant
   });
 
   return (
-    <div className={`border border-disabled ${variantClasses} rounded-2xl p-4 my-4 ${className}`}>
+    <div className={clsx("card-base", variantClasses, className)}>
       <div className="flex items-center gap-3">
         {leftIcon && <div className="flex-shrink-0">{leftIcon}</div>}
         <div className="font-montserrat font-normal text-xs leading-none text-neutral">

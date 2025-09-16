@@ -44,6 +44,17 @@
   @apply bg-disabled border-secondary text-neutral;
 }
 
+/* Base Button Styles */
+.button-base {
+  @apply px-4 py-2 rounded-2xl border-2 transition-all duration-200 flex items-center justify-center gap-3 font-montserrat font-medium text-base leading-none text-center; 
+  @apply focus:outline-none;
+}
+
+/* Base Card Styles */
+.card-base {
+  @apply border border-disabled rounded-2xl p-4 my-4;
+}
+
 html, body {
   margin: 0;
   padding: 0;

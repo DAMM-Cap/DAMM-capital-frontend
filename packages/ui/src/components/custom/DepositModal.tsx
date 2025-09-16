@@ -93,10 +93,9 @@ const DepositModal: React.FC<DepositModalProps> = ({
       <ModalActionButtons>
         <Button
           onClick={onDeposit}
-          variant={
-            isInsufficientBalance || invalidAmount || invalidReferral ? "disabled" : "primary"
-          }
+          variant="primary"
           isLoading={isLoading}
+          disabled={isInsufficientBalance || invalidAmount || invalidReferral}
         >
           {isInsufficientBalance ? "Insufficient balance" : "Deposit"}
         </Button>

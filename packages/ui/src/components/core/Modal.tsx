@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React, { ComponentType, ReactElement } from "react";
 import CloseIcon from "../icons/CloseIcon";
 
@@ -110,46 +111,28 @@ export default function Modal({
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50"
       onClick={onClose}
     >
-      <style>
-        {`
-          @keyframes slideUp {
-            from {
-              transform: translateY(100%);
-              opacity: 0;
-            }
-            to {
-              transform: translateY(0);
-              opacity: 1;
-            }
-          }
-        `}
-      </style>
       <div
-        className={`rounded-t-2xl p-6 w-full max-w-2xl mx-4 border overflow-hidden ${className}`}
-        style={{
-          backgroundColor: "#09090B",
-          borderColor: "#505050",
-          animation: "slideUp 0.3s ease-out",
-        }}
+        className={clsx(
+          "rounded-t-2xl p-6 w-full max-w-2xl mx-4 border overflow-hidden \
+          bg-textDark border-secondary animate-slideUp",
+          className,
+        )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
             {icon && <div className="mr-4">{icon}</div>}
-            <h3
-              className="font-montserrat font-bold text-2xl leading-none"
-              style={{ color: "#F7FEE7" }}
-            >
+            <h3 className="font-montserrat font-bold text-2xl leading-none text-textLight">
               {title}
             </h3>
             {statusIcon && <div className="ml-4">{statusIcon}</div>}
           </div>
           <button
-            onClick={() => onClose()}
-            className="text-[#F7FEE7] transition-all bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent focus:outline-none focus:ring-0 focus:border-0 hover:outline-none active:outline-none group"
-            style={{ outline: "none", border: "none" }}
+            onClick={onClose}
+            type="button"
+            className="p-1 bg-transparent border-0 outline-none hover:outline-none focus:outline-none active:outline-none group"
           >
-            <CloseIcon className="w-5 h-5 group-hover:stroke-[5]" strokeWidth={2} />
+            <CloseIcon className="w-5 h-5 transition-all stroke-[1] group-hover:stroke-[2]" />
           </button>
         </div>
         <div className="space-y-4 overflow-y-auto max-h-[60vh]">
