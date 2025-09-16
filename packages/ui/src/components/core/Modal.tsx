@@ -1,6 +1,6 @@
 import clsx from "clsx";
+import { XIcon as CloseIcon } from "lucide-react";
 import React, { ComponentType, ReactElement } from "react";
-import CloseIcon from "../icons/CloseIcon";
 
 export const ModalContents = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 ModalContents.displayName = "ModalContents";

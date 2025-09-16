@@ -1,6 +1,6 @@
 import { Button, Card, DammStableIcon, Label, TableFunds, TitleComponent } from "@/components";
-import EnterIcon from "@/components/icons/EnterIcon";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { LogInIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/funds/")({
@@ -82,7 +82,7 @@ function Funds() {
         </div>
         <div className="w-full flex justify-center">
           <Button onClick={() => {}} className="!text-xs">
-            <EnterIcon />
+            <LogInIcon size={16} />
             Connect Wallet to Get Started
           </Button>
         </div>

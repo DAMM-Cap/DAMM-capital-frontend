@@ -1,9 +1,9 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { LogInIcon } from "lucide-react";
 import React from "react";
 import Button from "../core/Button";
 import Label from "../core/Label";
 import TitleComponent from "../custom/TitleComponent";
-import EnterIcon from "../icons/EnterIcon";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -50,7 +50,7 @@ const Header: React.FC = () => {
             </div>
             <div>
               <Button onClick={() => {}} className="text-sm">
-                <EnterIcon />
+                <LogInIcon size={16} />
                 Log In
               </Button>
             </div>

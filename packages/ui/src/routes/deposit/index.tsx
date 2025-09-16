@@ -1,14 +1,15 @@
 import { Button, Card, DammStableIcon, DepositModal, InfoModal, Link } from "@/components";
 import WithdrawModal from "@/components/custom/WithdrawModal";
-import ActivityIcon from "@/components/icons/Activity";
-import BookOpenCheckIcon from "@/components/icons/BookOpenCheck";
-import EnterIcon from "@/components/icons/EnterIcon";
-import GavelIcon from "@/components/icons/Gavel";
-import MapPinIcon from "@/components/icons/MapPin";
-import RedeemIcon from "@/components/icons/RedeemIcon";
-import ScaleIcon from "@/components/icons/Scale";
-import envParsed from "@/envParsed";
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  ActivityIcon,
+  BookOpenCheckIcon,
+  GavelIcon,
+  LogInIcon,
+  LogOutIcon,
+  MapPinIcon,
+  ScaleIcon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/deposit/")({
@@ -93,7 +94,7 @@ function Deposit() {
             setOpenModalTerms(true);
           }}
         >
-          <EnterIcon />
+          <LogInIcon size={16} />
           Deposit
         </Button>
 
@@ -104,7 +105,7 @@ function Deposit() {
           variant="secondary"
           disabled={true}
         >
-          <RedeemIcon />
+          <LogOutIcon size={16} />
           Withdraw
         </Button>
 

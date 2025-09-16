@@ -1,7 +1,6 @@
 import clsx from "clsx";
+import { AlertCircleIcon as AlertIcon, CheckIcon } from "lucide-react";
 import React from "react";
-import AlertIcon from "../icons/AlertIcon";
-import CheckIcon from "../icons/CheckIcon";
 import CircledExclamationIcon from "../icons/CircledExclamationIcon";
 import Button from "./Button";
 
@@ -82,13 +81,13 @@ export default function Input({
         {/* Validation Icon */}
         {validation === "invalid" && (
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-            <AlertIcon color="var(--color-invalid)" />
+            <AlertIcon color="var(--color-invalid)" size={16} />
           </div>
         )}
 
         {validation === "success" && (
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-            <CheckIcon color="var(--color-success)" />
+            <CheckIcon className="text-success" size={14} />
           </div>
         )}
 
