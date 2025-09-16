@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import clsx from "clsx";
+import React from "react";
 import AlertIcon from "../icons/AlertIcon";
 import CheckIcon from "../icons/CheckIcon";
 import CircledExclamationIcon from "../icons/CircledExclamationIcon";
@@ -46,88 +47,22 @@ export default function Input({
   leftIcon,
   className,
 }: InputProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [hasValue, setHasValue] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const baseClasses =
-    "w-full h-12 rounded-lg font-montserrat font-medium text-base leading-none transition-all duration-200 focus:outline-none focus:ring-0 focus:border-0 px-4";
-
-  const getInputStyles = () => {
-    if (disabled) {
-      return {
-        backgroundColor: "#09090B",
-        border: "1px solid #18181B",
-        color: "#303030",
-      };
-    }
-
-    if (validation === "invalid") {
-      return {
-        backgroundColor: "#18181B",
-        border: "1px solid #EF4444",
-        color: "#BDBDBD",
-      };
-    }
-
-    if (validation === "success") {
-      return {
-        backgroundColor: "#18181B",
-        border: "1px solid #14B8A6",
-        color: "#BDBDBD",
-      };
-    }
-
-    if (isFocused || hasValue) {
-      return {
-        backgroundColor: "#18181B",
-        border: "1px solid #A3E635",
-        color: "#BDBDBD",
-      };
-    }
-
-    if (isHovered) {
-      return {
-        backgroundColor: "#505050",
-        border: "1px solid #505050",
-        color: "#BDBDBD",
-      };
-    }
-
-    return {
-      backgroundColor: "#18181B",
-      border: "1px solid #505050",
-      color: "#BDBDBD",
-    };
-  };
+  const inputClassName = clsx("input-base", {
+    "!border-invalid": validation === "invalid",
+    "!border-success": validation === "success",
+    "!bg-disabled !border-secondary !text-neutral": noEdit, // noEdit is disabled input forced to default styles
+    "!pl-12": leftIcon,
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    setHasValue(newValue.length > 0);
     onChange(newValue);
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-    setHasValue(false);
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
   };
 
   return (
     <div className={className}>
       {label && (
-        <label className="block mb-2 font-montserrat font-normal text-sm leading-none text-[#BDBDBD] w-[400px] h-[17px]">
+        <label className="block mb-2 font-montserrat font-normal text-sm leading-none text-neutral w-[400px] h-[17px]">
           {label}
         </label>
       )}
@@ -141,24 +76,19 @@ export default function Input({
           onChange={handleChange}
           placeholder={placeholder}
           disabled={disabled || noEdit}
-          className={`${baseClasses} ${leftIcon ? "pl-12" : ""}`}
-          style={getInputStyles()}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          className={inputClassName}
         />
 
         {/* Validation Icon */}
         {validation === "invalid" && (
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-            <AlertIcon color="#EF4444" />
+            <AlertIcon color="var(--color-invalid)" />
           </div>
         )}
 
         {validation === "success" && (
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-            <CheckIcon color="#14B8A6" />
+            <CheckIcon color="var(--color-success)" />
           </div>
         )}
 
@@ -181,9 +111,10 @@ export default function Input({
         {/* Validation Message */}
         {validation && validationMessage && (
           <div
-            className={`font-inter font-normal text-sm leading-none tracking-wider ${
-              validation === "invalid" ? "text-[#EF4444]" : "text-[#14B8A6]"
-            }`}
+            className={clsx("font-inter font-normal text-sm leading-none tracking-wider", {
+              "text-invalid": validation === "invalid",
+              "text-success": validation === "success",
+            })}
           >
             {validationMessage}
           </div>
@@ -192,9 +123,10 @@ export default function Input({
         {/* Secondary Label */}
         {secondaryLabel && !validation && (
           <div
-            className={`font-montserrat font-normal text-xs leading-none text-[#BDBDBD] ${
-              secondaryLabelAlign === "right" ? "text-right" : "text-left"
-            }`}
+            className={clsx("font-montserrat font-normal text-xs leading-none text-neutral", {
+              "text-right": secondaryLabelAlign === "right",
+              "text-left": secondaryLabelAlign === "left",
+            })}
           >
             {secondaryLabel}
           </div>
@@ -203,13 +135,17 @@ export default function Input({
         {/* Complex Label */}
         {complexLabel && !validation && (
           <div
-            className={`font-montserrat font-normal text-xs leading-none flex items-center gap-2 ${
-              complexLabel.align === "right" ? "justify-end" : "justify-start"
-            }`}
+            className={clsx(
+              "font-montserrat font-normal text-xs leading-none flex items-center gap-2",
+              {
+                "justify-end": complexLabel.align === "right",
+                "justify-start": complexLabel.align === "left",
+              },
+            )}
           >
-            <span className="text-[#BDBDBD]">{complexLabel.leftText}</span>
-            <span className="text-[#BDBDBD]">{complexLabel.icon}</span>
-            <span className="text-[#A3E635] flex items-center gap-1">
+            <span className="text-neutral">{complexLabel.leftText}</span>
+            <span className="text-neutral">{complexLabel.icon}</span>
+            <span className="text-primary flex items-center gap-1">
               {complexLabel.rightText} <CircledExclamationIcon size={14} />
             </span>
           </div>

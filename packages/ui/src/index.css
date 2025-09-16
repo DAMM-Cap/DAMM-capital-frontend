@@ -16,10 +16,32 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Color system */
+  --color-primary: #A3E635;
+  --color-secondary: #505050;
+  --color-accent: #F7FEE7;
+  --color-neutral: #BDBDBD;
+  --color-disabled: rgba(24,24,27,0.8);
+  --color-text-dark: #09090B;
+  --color-text-light: #F7FEE7;
+  --color-text-muted: #505050;
+  --color-input-txt-disabled: #303030;
+  --color-invalid: #EF4444;
+  --color-success: #14B8A6;
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* Base Input Styles */
+.input-base {
+  @apply w-full h-12 rounded-lg font-montserrat font-medium text-base leading-none transition-all duration-200 focus:outline-none focus:ring-0 px-4 border;
+  @apply hover:bg-secondary hover:border-secondary hover:text-neutral;
+  @apply focus:bg-disabled focus:border-primary focus:text-neutral;
+  @apply disabled:bg-textDark disabled:border-disabled disabled:text-inputTxtDisabled;
+  @apply bg-disabled border-secondary text-neutral;
 }
 
 html, body {
