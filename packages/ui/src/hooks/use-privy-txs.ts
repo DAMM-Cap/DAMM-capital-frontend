@@ -26,7 +26,15 @@ export function usePrivyTxs() {
     const txHash = await client.sendUserOperation({
       calls,
     });
-    const txResponse = { txHash: txHash };
+
+    const txResponse = {
+      hash: txHash,
+      wait: () =>
+        client.waitForUserOperationReceipt({
+          hash: txHash,
+        }),
+    };
+
     return txResponse as unknown as TransactionResponse;
   };
 
