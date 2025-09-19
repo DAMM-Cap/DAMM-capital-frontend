@@ -17,12 +17,12 @@ const RequestDepositABI = VaultABI.filter(
 export function useDeposit() {
   const networkConfig = getNetworkConfig();
   const { user } = useUser();
-  const smartAccount = user?.smartWallet?.address;
-  const { executeSmartAccountTransactionBatch } = usePrivyTxs();
+  const usersAccount = user?.smartWallet?.address || user?.wallet?.address || undefined;
+  const { executePrivyTransactions } = usePrivyTxs();
 
   const cancelDepositRequest = async (vaultAddress: string) => {
     if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount) throw new Error("Failed smart account");
+    if (!usersAccount) throw new Error("Failed smart account");
 
     const txs: EvmBatchCall = [];
 
@@ -36,10 +36,10 @@ export function useDeposit() {
     txs.push(cancelDepositRequestCall);
 
     try {
-      const txResponse = await executeSmartAccountTransactionBatch(txs);
+      const txResponse = await executePrivyTransactions(txs);
       return txResponse as unknown as TransactionResponse;
     } catch (error) {
-      console.error("Error executing safe transaction:", error);
+      console.error("Error executing transaction:", error);
       throw new Error("Cannot execute cancel deposit request");
     }
   };
@@ -52,8 +52,14 @@ export function useDeposit() {
     entranceRate: number,
     amount: string,
   ) => {
+    console.log("usersAccount", usersAccount);
+    console.log("connector type", user?.wallet?.connectorType);
+    console.log("wallet client type", user?.wallet?.walletClientType);
+    console.log("chainId", networkConfig.chain.id);
+    //return;
+
     if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount) throw new Error("Failed smart account");
+    if (!usersAccount) throw new Error("Failed smart account");
 
     const txs: EvmCall[] = [];
 
@@ -61,7 +67,7 @@ export function useDeposit() {
 
     // Approve tokens to be transferred from smartAccount to the vault
     const approveTx = await getApproveTx(
-      smartAccount,
+      usersAccount,
       vaultAddress,
       underlyingTokenAddress,
       BigNumber.from(amountInWei),
@@ -98,12 +104,12 @@ export function useDeposit() {
       value: 0n,
       abi: RequestDepositABI,
       functionName: "requestDeposit",
-      args: [depositAmount, smartAccount, smartAccount, smartAccount],
+      args: [depositAmount, usersAccount, usersAccount, usersAccount],
     };
     txs.push(requestDepositCall);
 
     try {
-      const txResponse = await executeSmartAccountTransactionBatch(txs);
+      const txResponse = await executePrivyTransactions(txs);
       return txResponse as unknown as TransactionResponse;
     } catch (error) {
       console.error("Error executing smart account transaction:", error);

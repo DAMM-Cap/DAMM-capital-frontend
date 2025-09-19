@@ -10,8 +10,8 @@ import { EvmBatchCall, EvmCall, usePrivyTxs } from "./use-privy-txs";
 export function useWithdraw() {
   const networkConfig = getNetworkConfig();
   const { user } = useUser();
-  const smartAccount = user?.smartWallet?.address;
-  const { executeSmartAccountTransactionBatch } = usePrivyTxs();
+  const usersAccount = user?.smartWallet?.address || user?.wallet?.address || undefined;
+  const { executePrivyTransactions } = usePrivyTxs();
 
   const submitRedeem = async (
     vaultAddress: string,
@@ -21,7 +21,7 @@ export function useWithdraw() {
     amount: string,
   ) => {
     if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount) throw new Error("Failed smart account");
+    if (!usersAccount) throw new Error("Failed smart account");
 
     const txs: EvmBatchCall = [];
 
@@ -32,11 +32,11 @@ export function useWithdraw() {
       value: 0n,
       abi: VaultABI,
       functionName: "redeem",
-      args: [amountInWei, smartAccount, smartAccount],
+      args: [amountInWei, usersAccount, usersAccount],
     };
     txs.push(redeemCall);
 
-    // Transfer exit_fee from safe to fee_receiver
+    // Transfer exit_fee from smart account (or user wallet) to fee_receiver
     const fee = BigNumber.from(amountInWei)
       .mul(BigNumber.from(Math.floor(exitRate * 10000)))
       .div(10000);
@@ -52,10 +52,10 @@ export function useWithdraw() {
     if (transferFeeTx) txs.push(transferFeeTx);
 
     try {
-      const txResponse = await executeSmartAccountTransactionBatch(txs);
+      const txResponse = await executePrivyTransactions(txs);
       return txResponse as unknown as TransactionResponse;
     } catch (error) {
-      console.error("Error executing safe transaction:", error);
+      console.error("Error executing transaction:", error);
       throw new Error("Cannot execute redeem");
     }
   };
@@ -64,7 +64,7 @@ export function useWithdraw() {
   // has closed state. This is a synchronous operation.
   const submitWithdraw = async (vaultAddress: string, amount: string) => {
     if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount) throw new Error("Failed smart account");
+    if (!usersAccount) throw new Error("Failed smart account");
 
     const txs: EvmBatchCall = [];
 
@@ -75,22 +75,22 @@ export function useWithdraw() {
       value: 0n,
       abi: VaultABI,
       functionName: "withdraw",
-      args: [amountInWei, smartAccount, smartAccount],
+      args: [amountInWei, usersAccount, usersAccount],
     };
     txs.push(withdrawCall);
 
     try {
-      const txResponse = await executeSmartAccountTransactionBatch(txs);
+      const txResponse = await executePrivyTransactions(txs);
       return txResponse as unknown as TransactionResponse;
     } catch (error) {
-      console.error("Error executing safe transaction:", error);
+      console.error("Error executing transaction:", error);
       throw new Error("Cannot execute withdraw");
     }
   };
 
   const submitRequestWithdraw = async (vaultAddress: string, amount: string) => {
     if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount) throw new Error("Failed smart account");
+    if (!usersAccount) throw new Error("Failed smart account");
 
     const txs: EvmCall[] = [];
 
@@ -106,10 +106,10 @@ export function useWithdraw() {
     txs.push(claimSharesAndRequestRedeemCall);
 
     try {
-      const txResponse = await executeSmartAccountTransactionBatch(txs);
+      const txResponse = await executePrivyTransactions(txs);
       return txResponse as unknown as TransactionResponse;
     } catch (error) {
-      console.error("Error executing safe transaction:", error);
+      console.error("Error executing transaction:", error);
       throw new Error("Cannot execute claim shares and request redeem");
     }
   };

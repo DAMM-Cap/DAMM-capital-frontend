@@ -1,10 +1,8 @@
 import { useVaultData } from "@/hooks/use-vault-data";
 import { DataWrangler } from "@/lib/data/data-wrangler";
 import { DataPresenter } from "@/lib/data/types/data-presenter";
-import { useUser } from "@privy-io/react-auth";
+import { usePrivy } from "@privy-io/react-auth";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { useAccount } from "wagmi";
-
 interface VaultContextType {
   vaults: DataPresenter | null;
   setVaults: (vaults: DataPresenter | null) => void;
@@ -18,18 +16,17 @@ interface VaultProviderProps {
 }
 
 export function VaultProvider({ children }: VaultProviderProps) {
-  const { address } = useAccount();
-  const { user } = useUser();
-  const safeAddress = user?.smartWallet?.address;
+  const { user, authenticated } = usePrivy();
+  const usersAccount = user?.smartWallet?.address || user?.wallet?.address;
 
   const [vaults, setVaults] = useState<DataPresenter | null>(null);
 
   // Check if we have valid addresses
   const hasValidAddresses =
-    address && safeAddress && safeAddress.length > 0 && safeAddress.startsWith("0x");
+    authenticated && usersAccount && usersAccount.length > 0 && usersAccount.startsWith("0x");
 
   // Only call useVaultData when we have valid addresses
-  const vaultDataQuery = useVaultData(hasValidAddresses ? safeAddress : "0x");
+  const vaultDataQuery = useVaultData(hasValidAddresses ? usersAccount : "0x");
   const { data, isLoading } = vaultDataQuery;
 
   useEffect(() => {
@@ -38,7 +35,7 @@ export function VaultProvider({ children }: VaultProviderProps) {
     } else if (data) {
       setVaults(DataWrangler({ data }));
     }
-  }, [isLoading, data, address, hasValidAddresses]);
+  }, [isLoading, data, hasValidAddresses]);
 
   return (
     <VaultContext.Provider
