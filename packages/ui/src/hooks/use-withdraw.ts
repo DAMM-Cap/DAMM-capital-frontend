@@ -1,22 +1,17 @@
 import { getNetworkConfig } from "@/lib/network";
+import IERC20ABI from "@/lib/protocols/abis/IERC20.json";
 import VaultABI from "@/lib/protocols/abis/Vault.json";
-import { getERC20TransferTx } from "@/lib/protocols/utils/eip2612";
-import { EvmAddress, EvmCall } from "@coinbase/cdp-core";
-import { useEvmAddress, useIsInitialized, useIsSignedIn } from "@coinbase/cdp-hooks";
 import { TransactionResponse } from "@ethersproject/providers";
+import { useUser } from "@privy-io/react-auth";
 import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils";
-import { encodeFunctionData } from "viem";
-import { useAccount } from "wagmi";
-import { useCDPTxs } from "./use-cdp-txs";
+import { EvmBatchCall, EvmCall, usePrivyTxs } from "./use-privy-txs";
 
 export function useWithdraw() {
-  const { address } = useAccount();
   const networkConfig = getNetworkConfig();
-  const { evmAddress: smartAccount } = useEvmAddress();
-  const isSignedIn = useIsSignedIn();
-  const { isInitialized } = useIsInitialized();
-  const { executeSmartAccountTransactionBatch } = useCDPTxs();
+  const { user } = useUser();
+  const smartAccount = user?.smartWallet?.address;
+  const { executeSmartAccountTransactionBatch } = usePrivyTxs();
 
   const submitRedeem = async (
     vaultAddress: string,
@@ -25,22 +20,19 @@ export function useWithdraw() {
     exitRate: number,
     amount: string,
   ) => {
-    if (!isInitialized) throw new Error("Failed to initialize");
-    if (!address || !networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount || !isSignedIn) throw new Error("Failed smart account");
+    if (!networkConfig.chain.id) throw new Error("Failed connection");
+    if (!smartAccount) throw new Error("Failed smart account");
 
-    const txs: EvmCall[] = [];
+    const txs: EvmBatchCall = [];
 
     const amountInWei = parseEther(amount);
 
     const redeemCall = {
-      to: vaultAddress as EvmAddress,
+      to: vaultAddress as `0x${string}`,
       value: 0n,
-      data: encodeFunctionData({
-        abi: VaultABI,
-        functionName: "redeem",
-        args: [amountInWei, smartAccount, smartAccount],
-      }) as `0x${string}`,
+      abi: VaultABI,
+      functionName: "redeem",
+      args: [amountInWei, smartAccount, smartAccount],
     };
     txs.push(redeemCall);
 
@@ -48,11 +40,14 @@ export function useWithdraw() {
     const fee = BigNumber.from(amountInWei)
       .mul(BigNumber.from(Math.floor(exitRate * 10000)))
       .div(10000);
-    const transferFeeTx = getERC20TransferTx({
-      to: feeReceiverAddress as EvmAddress,
-      amount: fee.toBigInt(),
-      token: underlyingTokenAddress as EvmAddress,
-    });
+
+    const transferFeeTx: EvmCall = {
+      to: underlyingTokenAddress as `0x${string}`,
+      value: 0n,
+      abi: IERC20ABI,
+      functionName: "transfer",
+      args: [feeReceiverAddress, fee.toBigInt()],
+    };
 
     if (transferFeeTx) txs.push(transferFeeTx);
 
@@ -68,22 +63,19 @@ export function useWithdraw() {
   // This should be used instead of submitRequestWithdraw only if the vault
   // has closed state. This is a synchronous operation.
   const submitWithdraw = async (vaultAddress: string, amount: string) => {
-    if (!isInitialized) throw new Error("Failed to initialize");
-    if (!address || !networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount || !isSignedIn) throw new Error("Failed smart account");
+    if (!networkConfig.chain.id) throw new Error("Failed connection");
+    if (!smartAccount) throw new Error("Failed smart account");
 
-    const txs: EvmCall[] = [];
+    const txs: EvmBatchCall = [];
 
     const amountInWei = parseEther(amount);
 
     const withdrawCall = {
-      to: vaultAddress as EvmAddress,
+      to: vaultAddress as `0x${string}`,
       value: 0n,
-      data: encodeFunctionData({
-        abi: VaultABI,
-        functionName: "withdraw",
-        args: [amountInWei, smartAccount, smartAccount],
-      }) as `0x${string}`,
+      abi: VaultABI,
+      functionName: "withdraw",
+      args: [amountInWei, smartAccount, smartAccount],
     };
     txs.push(withdrawCall);
 
@@ -97,22 +89,19 @@ export function useWithdraw() {
   };
 
   const submitRequestWithdraw = async (vaultAddress: string, amount: string) => {
-    if (!isInitialized) throw new Error("Failed to initialize");
-    if (!address || !networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount || !isSignedIn) throw new Error("Failed smart account");
+    if (!networkConfig.chain.id) throw new Error("Failed connection");
+    if (!smartAccount) throw new Error("Failed smart account");
 
     const txs: EvmCall[] = [];
 
     const amountInWei = parseEther(amount);
 
     const claimSharesAndRequestRedeemCall = {
-      to: vaultAddress as EvmAddress,
+      to: vaultAddress as `0x${string}`,
       value: 0n,
-      data: encodeFunctionData({
-        abi: VaultABI,
-        functionName: "claimSharesAndRequestRedeem",
-        args: [amountInWei],
-      }) as `0x${string}`,
+      abi: VaultABI,
+      functionName: "claimSharesAndRequestRedeem",
+      args: [amountInWei],
     };
     txs.push(claimSharesAndRequestRedeemCall);
 

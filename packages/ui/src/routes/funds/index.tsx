@@ -1,7 +1,7 @@
 import { Button, Card, DammStableIcon, Label, TableFunds } from "@/components";
 import { useVaults } from "@/context/vault-context";
 import { VaultsDataView } from "@/lib/data/types/data-presenter";
-//import { useIsSignedIn } from "@coinbase/cdp-hooks";
+import { usePrivy } from "@privy-io/react-auth";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -12,8 +12,8 @@ export const Route = createFileRoute("/funds/")({
 
 function Funds() {
   const navigate = useNavigate();
-  //const { isSignedIn } = useIsSignedIn();
-  const isSignedIn = false;
+  const { authenticated } = usePrivy();
+  const isSignedIn = authenticated;
   const [isLoadingFund, setIsLoadingFund] = useState(false);
   const { vaults, isLoading } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = useMemo(
@@ -59,7 +59,6 @@ function Funds() {
               navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
             },
             isLoading: isLoadingFund,
-            //isLoading: isLoading,
           })) || []
         }
       />

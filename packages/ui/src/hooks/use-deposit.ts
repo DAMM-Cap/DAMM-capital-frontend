@@ -1,15 +1,13 @@
 import { getNetworkConfig } from "@/lib/network";
+import IERC20ABI from "@/lib/protocols/abis/IERC20.json";
 import VaultABI from "@/lib/protocols/abis/Vault.json";
-import { getERC20TransferTx } from "@/lib/protocols/utils/eip2612";
 import { getApproveTx } from "@/lib/protocols/utils/token-utils";
-import { EvmAddress, EvmCall } from "@coinbase/cdp-core";
-import { useEvmAddress, useIsInitialized, useIsSignedIn } from "@coinbase/cdp-hooks";
 import { TransactionResponse } from "@ethersproject/providers";
+import { useUser } from "@privy-io/react-auth";
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
-import { Abi, encodeFunctionData } from "viem";
-import { useAccount } from "wagmi";
-import { useCDPTxs } from "./use-cdp-txs";
+import { Abi } from "viem";
+import { EvmBatchCall, EvmCall, usePrivyTxs } from "./use-privy-txs";
 
 // Filter ABI to only include the 4-parameter requestDeposit function
 const RequestDepositABI = VaultABI.filter(
@@ -17,28 +15,23 @@ const RequestDepositABI = VaultABI.filter(
 ) as Abi;
 
 export function useDeposit() {
-  const { address } = useAccount();
   const networkConfig = getNetworkConfig();
-  const { evmAddress: smartAccount } = useEvmAddress();
-  const isSignedIn = useIsSignedIn();
-  const { isInitialized } = useIsInitialized();
-  const { executeSmartAccountTransactionBatch } = useCDPTxs();
+  const { user } = useUser();
+  const smartAccount = user?.smartWallet?.address;
+  const { executeSmartAccountTransactionBatch } = usePrivyTxs();
 
   const cancelDepositRequest = async (vaultAddress: string) => {
-    if (!isInitialized) throw new Error("Failed to initialize");
-    if (!address || !networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount || !isSignedIn) throw new Error("Failed smart account");
+    if (!networkConfig.chain.id) throw new Error("Failed connection");
+    if (!smartAccount) throw new Error("Failed smart account");
 
-    const txs: EvmCall[] = [];
+    const txs: EvmBatchCall = [];
 
-    const cancelDepositRequestCall = {
-      to: vaultAddress as EvmAddress,
+    const cancelDepositRequestCall: EvmCall = {
+      to: vaultAddress as `0x${string}`,
       value: 0n,
-      data: encodeFunctionData({
-        abi: VaultABI,
-        functionName: "cancelRequestDeposit",
-        args: [],
-      }),
+      abi: VaultABI,
+      functionName: "cancelRequestDeposit",
+      args: [],
     };
     txs.push(cancelDepositRequestCall);
 
@@ -59,9 +52,8 @@ export function useDeposit() {
     entranceRate: number,
     amount: string,
   ) => {
-    if (!isInitialized) throw new Error("Failed to initialize");
-    if (!address || !networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount || !isSignedIn) throw new Error("Failed smart account");
+    if (!networkConfig.chain.id) throw new Error("Failed connection");
+    if (!smartAccount) throw new Error("Failed smart account");
 
     const txs: EvmCall[] = [];
 
@@ -76,9 +68,11 @@ export function useDeposit() {
     );
     if (approveTx) {
       txs.push({
-        to: approveTx.target as EvmAddress,
+        to: approveTx.target as `0x${string}`,
         value: 0n,
-        data: approveTx.callData as `0x${string}`,
+        abi: IERC20ABI,
+        functionName: "approve",
+        args: [vaultAddress, amountInWei],
       });
     }
 
@@ -88,22 +82,23 @@ export function useDeposit() {
     const depositAmount = BigNumber.from(amountInWei).sub(fee);
 
     // Transfer entrance_fee from smartAccount to fee_receiver
-    const transferFeeTx = getERC20TransferTx({
-      to: feeReceiverAddress as EvmAddress,
-      amount: fee.toBigInt(),
-      token: underlyingTokenAddress as EvmAddress,
-    }) as EvmCall;
+    const transferFeeTx: EvmCall = {
+      to: underlyingTokenAddress as `0x${string}`,
+      value: 0n,
+      abi: IERC20ABI,
+      functionName: "transfer",
+      args: [feeReceiverAddress, fee.toBigInt()],
+    };
+
     if (transferFeeTx) txs.push(transferFeeTx);
 
     // Request deposit with referral (4 parameters)
     const requestDepositCall = {
-      to: vaultAddress as EvmAddress,
+      to: vaultAddress as `0x${string}`,
       value: 0n,
-      data: encodeFunctionData({
-        abi: RequestDepositABI,
-        functionName: "requestDeposit",
-        args: [depositAmount, smartAccount, smartAccount, smartAccount],
-      }) as `0x${string}`,
+      abi: RequestDepositABI,
+      functionName: "requestDeposit",
+      args: [depositAmount, smartAccount, smartAccount, smartAccount],
     };
     txs.push(requestDepositCall);
 
