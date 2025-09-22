@@ -14,12 +14,14 @@ export default {
         accent: "var(--color-accent)",
         neutral: "var(--color-neutral)",
         disabled: "var(--color-disabled)",
+        disabledDark: "var(--color-disabled-dark)",
         textDark: "var(--color-text-dark)",
         textLight: "var(--color-text-light)",
         textMuted: "var(--color-text-muted)",
         inputTxtDisabled: "var(--color-input-txt-disabled)",
         invalid: "var(--color-invalid)",
         success: "var(--color-success)",
+        linkHover: "var(--color-link-hover)",
       },
       keyframes: {
         slideUp: {

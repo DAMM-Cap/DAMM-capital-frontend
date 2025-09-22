@@ -46,7 +46,7 @@ const InfoLabel: React.FC<InfoLabelProps> = ({ children }) => {
               result.push(
                 <div
                   key={result.length}
-                  className="!text-sm text-[#BDBDBD] font-montserrat font-normal leading-none"
+                  className="!text-sm text-neutral font-montserrat font-normal leading-none"
                 >
                   {lineWithPeriod}
                 </div>,
@@ -74,7 +74,7 @@ const InfoLabel: React.FC<InfoLabelProps> = ({ children }) => {
       result.push(
         <div
           key={result.length}
-          className="!text-sm text-[#BDBDBD] font-montserrat font-normal leading-none"
+          className="!text-sm text-neutral font-montserrat font-normal leading-none"
         >
           {lineWithPeriod}
         </div>,

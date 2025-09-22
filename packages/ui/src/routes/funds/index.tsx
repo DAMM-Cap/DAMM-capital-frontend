@@ -23,7 +23,7 @@ function Funds() {
       <TitleComponent title="Funds" className="mb-2 [&_h4]:!text-[30px]" />
       <Label
         label="Choose from our selection of DeFi Funds."
-        className="-mt-4 pb-4 [&_label]:!text-[17px] !font-bold text-[#F7FEE7]"
+        className="-mt-4 pb-4 [&_label]:!text-[17px] !font-bold text-textLight]"
       />
 
       <TableFunds

@@ -23,12 +23,14 @@
   --color-accent: #F7FEE7;
   --color-neutral: #BDBDBD;
   --color-disabled: rgba(24,24,27,0.8);
+  --color-disabled-dark: #18181B;
   --color-text-dark: #09090B;
   --color-text-light: #F7FEE7;
   --color-text-muted: #505050;
   --color-input-txt-disabled: #303030;
   --color-invalid: #EF4444;
   --color-success: #14B8A6;
+  --color-link-hover: #84CC16;
 }
 
 * {

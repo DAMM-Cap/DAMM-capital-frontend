@@ -20,7 +20,7 @@ const Link: React.FC<LinkProps> = ({
       href={href}
       target={target}
       rel={rel}
-      className={`text-[#A3E635] hover:text-[#84CC16] underline ${className}`}
+      className={`text-primary hover:text-linkHover underline ${className}`}
     >
       {children}
     </a>

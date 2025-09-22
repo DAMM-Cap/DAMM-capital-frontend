@@ -25,27 +25,27 @@ const TableFunds: React.FC<TableFundsProps> = ({ funds, className = "" }) => {
       {/* Header */}
       <div className="grid grid-cols-12 gap-2 items-center mb-4 px-4">
         <div className="col-span-4">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-[#BDBDBD] text-left">
+          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-left">
             Name
           </div>
         </div>
         <div className="col-span-2">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-[#BDBDBD] text-center">
+          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-center">
             Net APY
           </div>
         </div>
         <div className="col-span-2">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-[#BDBDBD] text-center">
+          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-center">
             30 days Net APY
           </div>
         </div>
         <div className="col-span-2">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-[#BDBDBD] text-center">
+          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-center">
             AUM
           </div>
         </div>
         <div className="col-span-2">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-[#BDBDBD] text-left">
+          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-left">
             Underlying Asset
           </div>
         </div>

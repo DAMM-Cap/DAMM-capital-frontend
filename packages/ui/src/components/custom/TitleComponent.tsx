@@ -18,15 +18,15 @@ const TitleComponent: React.FC<TitleComponentProps> = ({
   return (
     <div className={`flex flex-col gap-2 mb-8 mt-4 ${className}`}>
       {label && (
-        <label className="block font-montserrat font-normal text-sm leading-none text-[#BDBDBD] w-[400px] h-[17px]">
+        <label className="block font-montserrat font-normal text-sm leading-none text-neutral w-[400px] h-[17px]">
           {label}
         </label>
       )}
       <div className="flex items-center gap-3">
         {leftIcon && leftIcon}
-        <h4 className="font-montserrat font-bold text-xl leading-none text-[#F7FEE7]">{title}</h4>
+        <h4 className="font-montserrat font-bold text-xl leading-none text-textLight">{title}</h4>
         {secondaryTitle && (
-          <span className="font-montserrat font-large text-base leading-none text-[#F7FEE7]">
+          <span className="font-montserrat font-large text-base leading-none text-textLight">
             ({secondaryTitle})
           </span>
         )}

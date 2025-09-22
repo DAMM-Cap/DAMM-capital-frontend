@@ -29,7 +29,7 @@ const Fund: React.FC<FundProps> = ({
 }) => {
   return (
     <div
-      className={`w-full border border-[#18181B] hover:border-[#A3E635] bg-[#18181BCC] rounded-2xl p-4 transition-colors duration-200 cursor-pointer ${className}`}
+      className={`w-full border border-disabledDark hover:border-primary bg-disabled rounded-2xl p-4 transition-colors duration-200 cursor-pointer ${className}`}
       onClick={onClick}
     >
       <div className="grid grid-cols-12 gap-2 items-center h-[48px] w-full">
@@ -38,29 +38,29 @@ const Fund: React.FC<FundProps> = ({
             {/* First column: Loading skeleton */}
             <div className="col-span-4 w-full">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#505050] rounded-full flex-shrink-0"></div>
-                <div className="flex-1 h-6 bg-[#505050] rounded-2xl"></div>
+                <div className="w-8 h-8 bg-secondary rounded-full flex-shrink-0"></div>
+                <div className="flex-1 h-6 bg-secondary rounded-2xl"></div>
               </div>
             </div>
 
             {/* Second column: Loading skeleton */}
             <div className="col-span-2 w-full">
-              <div className="w-full h-6 bg-[#505050] rounded-2xl text-center"></div>
+              <div className="w-full h-6 bg-secondary rounded-2xl text-center"></div>
             </div>
 
             {/* Third column: Loading skeleton */}
             <div className="col-span-2 w-full">
-              <div className="w-full h-6 bg-[#505050] rounded-2xl text-center"></div>
+              <div className="w-full h-6 bg-secondary rounded-2xl text-center"></div>
             </div>
 
             {/* Fourth column: Loading skeleton */}
             <div className="col-span-2 w-full">
-              <div className="w-full h-6 bg-[#505050] rounded-2xl text-center"></div>
+              <div className="w-full h-6 bg-secondary rounded-2xl text-center"></div>
             </div>
 
             {/* Fifth column: Loading skeleton */}
             <div className="col-span-2 w-full">
-              <div className="w-full h-6 bg-[#505050] rounded-2xl text-center"></div>
+              <div className="w-full h-6 bg-secondary rounded-2xl text-center"></div>
             </div>
           </>
         ) : (
@@ -76,10 +76,10 @@ const Fund: React.FC<FundProps> = ({
                     : leftIcon}
                 </div>
                 <div className="flex-1">
-                  <div className="font-montserrat font-bold text-lg leading-none text-[#F7FEE7]">
+                  <div className="font-montserrat font-bold text-lg leading-none text-textLight">
                     {title}
                   </div>
-                  <div className="font-montserrat font-normal text-[10px] leading-none text-[#F7FEE7] mt-1">
+                  <div className="font-montserrat font-normal text-[10px] leading-none text-textLight mt-1">
                     {subtitle}
                   </div>
                 </div>
@@ -88,21 +88,21 @@ const Fund: React.FC<FundProps> = ({
 
             {/* Second column: Green text */}
             <div className="col-span-2 w-full">
-              <div className="text-[#A3E635] font-montserrat font-normal text-xs leading-none text-center">
+              <div className="text-primary font-montserrat font-normal text-xs leading-none text-center">
                 {secondColumnText}
               </div>
             </div>
 
             {/* Third column: Light text */}
             <div className="col-span-2 w-full">
-              <div className="text-[#F7FEE7] font-montserrat font-normal text-xs leading-none text-center">
+              <div className="text-textLight font-montserrat font-normal text-xs leading-none text-center">
                 {thirdColumnText}
               </div>
             </div>
 
             {/* Fourth column: Light text */}
             <div className="col-span-2 w-full">
-              <div className="text-[#F7FEE7] font-montserrat font-normal text-xs leading-none text-center">
+              <div className="text-textLight font-montserrat font-normal text-xs leading-none text-center">
                 {fourthColumnText}
               </div>
             </div>
@@ -111,7 +111,7 @@ const Fund: React.FC<FundProps> = ({
             <div className="col-span-2 w-full">
               <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">{tokenIcon}</div>
-                <div className="font-montserrat font-normal text-xs leading-none text-[#F7FEE7]">
+                <div className="font-montserrat font-normal text-xs leading-none text-textLight">
                   {tokenName}
                 </div>
               </div>
