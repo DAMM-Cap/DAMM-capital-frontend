@@ -10,13 +10,13 @@ interface DepositModalProps {
   open: boolean;
   onClose: () => void;
   amount: string;
-  onAmountChange: (value: string) => void;
+  onAmountChange: React.ChangeEventHandler<HTMLInputElement>;
   onMaxClick: () => void;
   max: number;
   position: number;
   positionConverted: number;
   referralCode: string;
-  onReferralCodeChange: (value: string) => void;
+  onReferralCodeChange: React.ChangeEventHandler<HTMLInputElement>;
   onDeposit: () => void;
   isLoading: boolean;
   isInsufficientBalance: boolean;

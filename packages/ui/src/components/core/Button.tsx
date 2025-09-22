@@ -1,12 +1,8 @@
 import clsx from "clsx";
 
-interface ButtonProps {
-  children: React.ReactNode;
-  onClick: () => void;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "tertiary";
-  disabled?: boolean;
   isLoading?: boolean;
-  className?: string;
 }
 
 export default function Button({
@@ -16,6 +12,7 @@ export default function Button({
   disabled = false,
   isLoading = false,
   className = "",
+  ...props
 }: ButtonProps) {
   const variants: Record<NonNullable<ButtonProps["variant"]>, string> = {
     primary:
@@ -49,6 +46,7 @@ export default function Button({
 
   return (
     <button
+      {...props}
       type="button"
       onClick={onClick}
       disabled={disabled}

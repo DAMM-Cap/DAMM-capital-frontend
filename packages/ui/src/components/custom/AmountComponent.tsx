@@ -10,7 +10,7 @@ interface AmountComponentProps {
   tokenSecondaryLabel: string;
   noEdit: boolean;
   amount: string;
-  onAmountChange: (value: string) => void;
+  onAmountChange: React.ChangeEventHandler<HTMLInputElement>;
   onMaxClick: () => void;
   max?: number;
   validation?: "invalid" | "success" | null;

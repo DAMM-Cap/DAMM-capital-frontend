@@ -4,12 +4,8 @@ import React from "react";
 import CircledExclamationIcon from "../icons/CircledExclamationIcon";
 import Button from "./Button";
 
-interface InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: "text" | "email" | "password" | "number";
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  disabled?: boolean;
   label?: string;
   noEdit?: boolean;
   max?: number;
@@ -25,7 +21,6 @@ interface InputProps {
     align?: "left" | "right";
   };
   leftIcon?: React.ReactNode;
-  className?: string;
 }
 
 export default function Input({
@@ -45,6 +40,7 @@ export default function Input({
   complexLabel,
   leftIcon,
   className,
+  ...props
 }: InputProps) {
   const inputClassName = clsx("input-base", {
     "!border-invalid": validation === "invalid",
@@ -54,14 +50,13 @@ export default function Input({
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    onChange(newValue);
+    onChange?.(e);
   };
 
   return (
     <div className={className}>
       {label && (
-        <label className="block mb-2 font-montserrat font-normal text-sm leading-none text-neutral w-[400px] h-[17px]">
+        <label className="block mb-2 font-montserrat font-normal text-sm leading-none text-neutral h-[1.2em]">
           {label}
         </label>
       )}
@@ -70,6 +65,7 @@ export default function Input({
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2">{leftIcon}</div>
         )}
         <input
+          {...props}
           type={type}
           value={value}
           onChange={handleChange}

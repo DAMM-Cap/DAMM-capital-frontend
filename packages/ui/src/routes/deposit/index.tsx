@@ -114,7 +114,7 @@ function Deposit() {
           open={openModal}
           onClose={() => handleCloseModal()}
           amount={amount}
-          onAmountChange={setAmount}
+          onAmountChange={(e) => setAmount(e.target.value)}
           onMaxClick={() => setAmount(max.toString())}
           max={max}
           position={position}
@@ -123,7 +123,7 @@ function Deposit() {
           referralCode={referral}
           invalidReferral={invalidReferral}
           validReferral={validReferral}
-          onReferralCodeChange={setReferral}
+          onReferralCodeChange={(e) => setReferral(e.target.value)}
           onDeposit={() => handleDeposit()}
           isLoading={isLoading}
           isInsufficientBalance={isInsufficientBalance}
