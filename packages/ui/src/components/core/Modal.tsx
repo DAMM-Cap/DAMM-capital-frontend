@@ -5,58 +5,7 @@ import React, { ComponentType, ReactElement } from "react";
 export const ModalContents = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 ModalContents.displayName = "ModalContents";
 
-export const ModalActionButtons = ({ children }: { children: React.ReactNode }) => {
-  const childrenArray = React.Children.toArray(children);
-  const buttonCount = childrenArray.length;
-
-  const getAutoWidth = (count: number) => {
-    switch (count) {
-      case 1:
-        return "w-full";
-      case 2:
-        return "w-1/2";
-      case 3:
-        return "w-1/3";
-      case 4:
-        return "w-1/4";
-      case 5:
-        return "w-1/5";
-      default:
-        return "flex-1";
-    }
-  };
-
-  return (
-    <div className="flex flex-row w-full gap-3">
-      {React.Children.map(children, (child) => {
-        if (
-          React.isValidElement(child) &&
-          typeof child.props === "object" &&
-          child.props !== null
-        ) {
-          const props = child.props as { className?: string };
-          // If child has custom width, use it; otherwise apply automatic width
-          const hasCustomWidth = props.className && props.className.includes("w-");
-
-          if (hasCustomWidth) {
-            // Keep the existing className as-is for custom widths
-            return child;
-          } else {
-            // Apply automatic width for buttons without custom widths
-            const autoWidth = getAutoWidth(buttonCount);
-            const finalClassName = `${props.className || ""} ${autoWidth}`.trim();
-
-            return React.cloneElement(child as React.ReactElement<any>, {
-              ...props,
-              className: finalClassName,
-            });
-          }
-        }
-        return child;
-      })}
-    </div>
-  );
-};
+export const ModalActionButtons = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 ModalActionButtons.displayName = "ModalActionButtons";
 
 type ModalChildren = [
@@ -81,28 +30,16 @@ export default function Modal({
   children: ModalChildren;
   className?: string;
 }) {
-  let contents: ReactElement | null = null;
-  let actions: ReactElement | null = null;
-
-  React.Children.forEach(children, (child) => {
-    if (!React.isValidElement(child)) return;
-
-    const type = child.type;
-    if (
-      typeof type === "function" &&
-      (type as ComponentType & { displayName?: string }).displayName === ModalContents.displayName
-    ) {
-      contents = child;
-    } else if (
-      typeof type === "function" &&
-      (type as ComponentType & { displayName?: string }).displayName ===
-        ModalActionButtons.displayName
-    ) {
-      actions = child;
-    } else {
-      throw new Error("Modal only accepts ModalContents and ModalActionButtons as children.");
-    }
-  });
+  const contents: ReactElement | undefined = children.find(
+    (child) =>
+      (child.type as ComponentType & { displayName?: string }).displayName ===
+      ModalContents.displayName,
+  );
+  const actions: ReactElement | undefined = children.find(
+    (child) =>
+      (child.type as ComponentType & { displayName?: string }).displayName ===
+      ModalActionButtons.displayName,
+  );
 
   if (!open) return null;
 

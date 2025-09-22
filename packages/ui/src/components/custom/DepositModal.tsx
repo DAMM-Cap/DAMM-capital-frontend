@@ -96,6 +96,7 @@ const DepositModal: React.FC<DepositModalProps> = ({
           variant="primary"
           isLoading={isLoading}
           disabled={isInsufficientBalance || invalidAmount || invalidReferral}
+          className="w-full"
         >
           {isInsufficientBalance ? "Insufficient balance" : "Deposit"}
         </Button>

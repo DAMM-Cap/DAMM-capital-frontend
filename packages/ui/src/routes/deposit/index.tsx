@@ -181,6 +181,7 @@ function Deposit() {
             secondary: {
               text: "Close",
               onClick: () => setOpenModalWhitelisting(false),
+              className: "w-full",
             },
           }}
         >
