@@ -37,7 +37,6 @@ export default function Button({
   const loadingClasses = "!bg-primary !border-primary !text-textDark";
 
   const buttonClasses = clsx(
-    "button-base",
     variants[variant],
     className,
     disabled && disabledClasses,

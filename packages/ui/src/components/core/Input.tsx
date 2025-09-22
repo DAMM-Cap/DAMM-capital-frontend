@@ -42,16 +42,12 @@ export default function Input({
   className,
   ...props
 }: InputProps) {
-  const inputClassName = clsx("input-base", {
+  const inputClassName = clsx({
     "!border-invalid": validation === "invalid",
     "!border-success": validation === "success",
     "!bg-disabled !border-secondary !text-neutral": noEdit, // noEdit is disabled input forced to default styles
     "!pl-12": leftIcon,
   });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange?.(e);
-  };
 
   return (
     <div className={className}>
@@ -68,7 +64,7 @@ export default function Input({
           {...props}
           type={type}
           value={value}
-          onChange={handleChange}
+          onChange={onChange}
           placeholder={placeholder}
           disabled={disabled || noEdit}
           className={inputClassName}

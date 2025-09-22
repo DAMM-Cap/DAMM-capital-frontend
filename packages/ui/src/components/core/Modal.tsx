@@ -1,17 +1,6 @@
 import clsx from "clsx";
 import { XIcon as CloseIcon } from "lucide-react";
-import React, { ComponentType, ReactElement } from "react";
-
-export const ModalContents = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-ModalContents.displayName = "ModalContents";
-
-export const ModalActionButtons = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-ModalActionButtons.displayName = "ModalActionButtons";
-
-type ModalChildren = [
-  React.ReactElement<typeof ModalContents>,
-  React.ReactElement<typeof ModalActionButtons>,
-];
+import React from "react";
 
 export default function Modal({
   title,
@@ -21,26 +10,17 @@ export default function Modal({
   onClose,
   children,
   className,
+  actions,
 }: {
   title: string;
   icon?: React.ReactNode;
   statusIcon?: React.ReactNode;
   open: boolean;
   onClose: () => void;
-  children: ModalChildren;
+  children: React.ReactNode;
   className?: string;
+  actions?: () => React.ReactNode;
 }) {
-  const contents: ReactElement | undefined = children.find(
-    (child) =>
-      (child.type as ComponentType & { displayName?: string }).displayName ===
-      ModalContents.displayName,
-  );
-  const actions: ReactElement | undefined = children.find(
-    (child) =>
-      (child.type as ComponentType & { displayName?: string }).displayName ===
-      ModalActionButtons.displayName,
-  );
-
   if (!open) return null;
 
   return (
@@ -73,8 +53,8 @@ export default function Modal({
           </button>
         </div>
         <div className="space-y-4 overflow-y-auto max-h-[60vh]">
-          {contents}
-          <div className="flex space-x-3">{actions}</div>
+          {children}
+          {actions && <div className="flex space-x-3">{actions()}</div>}
         </div>
       </div>
     </div>

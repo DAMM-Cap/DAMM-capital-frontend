@@ -2,7 +2,7 @@ export { default as Button } from "./core/Button";
 export { default as Card } from "./core/Card";
 export { default as Input } from "./core/Input";
 export { default as Label } from "./core/Label";
-export { default as Modal, ModalActionButtons, ModalContents } from "./core/Modal";
+export { default as Modal } from "./core/Modal";
 export { default as AmountComponent } from "./custom/AmountComponent";
 export { default as DepositModal } from "./custom/DepositModal";
 export { default as Fund } from "./custom/Fund";

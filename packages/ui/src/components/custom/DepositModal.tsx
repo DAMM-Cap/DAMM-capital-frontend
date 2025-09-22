@@ -2,7 +2,7 @@ import React from "react";
 import Button from "../core/Button";
 import Input from "../core/Input";
 import Label from "../core/Label";
-import Modal, { ModalActionButtons, ModalContents } from "../core/Modal";
+import Modal from "../core/Modal";
 import AmountComponent from "./AmountComponent";
 import TitleComponent from "./TitleComponent";
 
@@ -50,47 +50,11 @@ const DepositModal: React.FC<DepositModalProps> = ({
   conversionValue,
 }) => {
   return (
-    <Modal title="Deposit" open={open} onClose={onClose}>
-      <ModalContents>
-        <TitleComponent
-          label="My position"
-          title={`${position} ${tokenSymbol}`}
-          leftIcon={TokenIcon}
-          secondaryTitle={`$${positionConverted}`}
-        />
-        <AmountComponent
-          tokenLabel={tokenSymbol}
-          tokenIcon={TokenIcon}
-          tokenSecondaryLabel={`$${max}`}
-          conversionLeftText="1 USDC"
-          conversionRightText={`${conversionValue} ${tokenSymbol}`}
-          amount={amount}
-          onAmountChange={onAmountChange}
-          onMaxClick={onMaxClick}
-          max={max}
-          noEdit={isLoading}
-          validation={invalidAmount ? "invalid" : undefined}
-          validationMessage="Invalid amount"
-        />
-        <Input
-          label="Referral code"
-          type="text"
-          value={referralCode}
-          noEdit={isLoading}
-          placeholder="Type here"
-          onChange={onReferralCodeChange}
-          className="w-full pt-4"
-          validation={invalidReferral ? "invalid" : validReferral ? "success" : undefined}
-          validationMessage={
-            validReferral ? "Referral address validated" : "Invalid referral address"
-          }
-        />
-        <div className="flex flex-col gap-2 pt-0 pb-4">
-          <Label label="Completion time" secondaryLabel="~ 48 hours" />
-          <Label label="Note: You can cancel your deposit before it's confirmed." />
-        </div>
-      </ModalContents>
-      <ModalActionButtons>
+    <Modal
+      title="Deposit"
+      open={open}
+      onClose={onClose}
+      actions={() => (
         <Button
           onClick={onDeposit}
           variant="primary"
@@ -100,7 +64,45 @@ const DepositModal: React.FC<DepositModalProps> = ({
         >
           {isInsufficientBalance ? "Insufficient balance" : "Deposit"}
         </Button>
-      </ModalActionButtons>
+      )}
+    >
+      <TitleComponent
+        label="My position"
+        title={`${position} ${tokenSymbol}`}
+        leftIcon={TokenIcon}
+        secondaryTitle={`$${positionConverted}`}
+      />
+      <AmountComponent
+        tokenLabel={tokenSymbol}
+        tokenIcon={TokenIcon}
+        tokenSecondaryLabel={`$${max}`}
+        conversionLeftText="1 USDC"
+        conversionRightText={`${conversionValue} ${tokenSymbol}`}
+        amount={amount}
+        onAmountChange={onAmountChange}
+        onMaxClick={onMaxClick}
+        max={max}
+        noEdit={isLoading}
+        validation={invalidAmount ? "invalid" : undefined}
+        validationMessage="Invalid amount"
+      />
+      <Input
+        label="Referral code"
+        type="text"
+        value={referralCode}
+        noEdit={isLoading}
+        placeholder="Type here"
+        onChange={onReferralCodeChange}
+        className="w-full pt-4"
+        validation={invalidReferral ? "invalid" : validReferral ? "success" : undefined}
+        validationMessage={
+          validReferral ? "Referral address validated" : "Invalid referral address"
+        }
+      />
+      <div className="flex flex-col gap-2 pt-0 pb-4">
+        <Label label="Completion time" secondaryLabel="~ 48 hours" />
+        <Label label="Note: You can cancel your deposit before it's confirmed." />
+      </div>
     </Modal>
   );
 };
