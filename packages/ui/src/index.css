@@ -37,26 +37,6 @@
   box-sizing: border-box;
 }
 
-/* Base Input Styles */
-.input-base {
-  @apply w-full h-12 rounded-lg font-montserrat font-medium text-base leading-none transition-all duration-200 focus:outline-none focus:ring-0 px-4 border;
-  @apply hover:bg-secondary hover:border-secondary hover:text-neutral;
-  @apply focus:bg-disabled focus:border-primary focus:text-neutral;
-  @apply disabled:bg-textDark disabled:border-disabled disabled:text-inputTxtDisabled;
-  @apply bg-disabled border-secondary text-neutral;
-}
-
-/* Base Button Styles */
-.button-base {
-  @apply px-4 py-2 rounded-2xl border-2 transition-all duration-200 flex items-center justify-center gap-3 font-montserrat font-medium text-base leading-none text-center; 
-  @apply focus:outline-none;
-}
-
-/* Base Card Styles */
-.card-base {
-  @apply border border-disabled rounded-2xl p-4 my-4;
-}
-
 html, body {
   margin: 0;
   padding: 0;
@@ -69,8 +49,8 @@ html, body {
 a {
   font-weight: 500;
   color: #A3E635;
-  text-decoration: inherit;
   transition: color 0.2s ease;
+  text-decoration: inherit;
 }
 a:hover {
   color: #84CC16;
@@ -81,16 +61,31 @@ h1, h2, h3, h4, h5, h6 {
   color: #F7FEE7;
 }
 
-button {
-  font-family: 'Montserrat', sans-serif;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* Base Input Styles */
+input {
+  @apply w-full h-12 rounded-lg font-montserrat font-medium text-base leading-none transition-all duration-200 px-4 border bg-disabled border-secondary text-neutral;
+}
+input:hover {
+  @apply bg-secondary border-secondary text-neutral;
+}
+input:focus {
+  @apply bg-disabled border-primary text-neutral outline-none ring-0;
+}
+input:disabled {
+  @apply bg-textDark border-disabled text-inputTxtDisabled;
 }
 
-button:focus,
-button:focus-visible {
-  outline: 2px solid #A3E635;
-  outline-offset: 2px;
+/* Base Button Styles */
+button {
+  @apply px-4 py-2 rounded-2xl border-2 transition-all duration-200 flex items-center justify-center gap-3 font-montserrat font-medium text-base leading-none text-center;
+}
+button:focus {
+  @apply outline-none;
+}
+
+/* Base Card Styles */
+.card {
+  @apply border border-disabled rounded-2xl p-4 my-4;
 }
 
 /* Custom scrollbar */

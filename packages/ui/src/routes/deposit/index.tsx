@@ -1,4 +1,4 @@
-import { Button, Card, DammStableIcon, DepositModal, InfoModal, Link } from "@/components";
+import { Button, Card, DammStableIcon, DepositModal, InfoModal } from "@/components";
 import WithdrawModal from "@/components/custom/WithdrawModal";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -169,8 +169,11 @@ function Deposit() {
         >
           Your deposit has been successfully submitted and is now awaiting confirmation. Processing
           may take up to 48 hours. To check the status of your deposit, you can track the
-          transaction on <Link href="https://etherscan.io/">Etherscan</Link> using your wallet
-          address.
+          transaction on{" "}
+          <a className="underline" href="https://etherscan.io/">
+            Etherscan
+          </a>{" "}
+          using your wallet address.
         </InfoModal>
 
         <InfoModal
@@ -186,8 +189,15 @@ function Deposit() {
           }}
         >
           Your wallet address is not whitelisted, so deposits are not allowed. To request access,
-          please email us at <Link href="mailto:team@dammcap.finance">team@dammcap.finance</Link> or
-          ask in our <Link href="">FAQ Telegram Group</Link>.
+          please email us at{" "}
+          <a className="underline" href="mailto:team@dammcap.finance">
+            team@dammcap.finance
+          </a>{" "}
+          or ask in our{" "}
+          <a className="underline" href="">
+            FAQ Telegram Group
+          </a>
+          .
         </InfoModal>
 
         <InfoModal
@@ -208,8 +218,14 @@ function Deposit() {
           }}
         >
           By accessing or using DAMM Capital’s products and services, I agree to the{" "}
-          <Link href="">Terms And Conditions</Link> and <Link href="">Cookies and privacy</Link>. I
-          further confirm that:{" "}
+          <a className="underline" href="">
+            Terms And Conditions
+          </a>{" "}
+          and{" "}
+          <a className="underline" href="">
+            Cookies and privacy
+          </a>
+          . I further confirm that:{" "}
           <Card leftIcon={<MapPinIcon size={20} />}>
             I am not located in a jurisdiction where the use of DAMM services is restricted by law.
           </Card>

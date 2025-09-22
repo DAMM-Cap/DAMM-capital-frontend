@@ -8,7 +8,6 @@ export { default as DepositModal } from "./custom/DepositModal";
 export { default as Fund } from "./custom/Fund";
 export { default as InfoLabel } from "./custom/InfoLabel";
 export { default as InfoModal } from "./custom/InfoModal";
-export { default as Link } from "./custom/Link";
 export { default as TableFunds } from "./custom/TableFunds";
 export { default as TitleComponent } from "./custom/TitleComponent";
 export { default as DammStableIcon } from "./icons/DammStableIcon";

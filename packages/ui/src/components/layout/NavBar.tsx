@@ -13,10 +13,10 @@ export default function NavBar() {
         <Link
           key={it.to}
           to={it.to}
-          className="transition-colors hover:text-primary"
+          className="transition-colors hover:text-linkHover"
           activeOptions={{ exact: false }}
           activeProps={{
-            className: "!text-primary hover:!text-primary",
+            className: "!text-primary hover:!text-linkHover",
             "aria-current": "page",
           }}
           inactiveProps={{ className: "text-textLight" }}

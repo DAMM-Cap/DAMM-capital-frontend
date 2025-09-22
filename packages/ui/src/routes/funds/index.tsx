@@ -73,7 +73,7 @@ function Funds() {
         ]}
       />
 
-      <Card variant="fund" className="flex flex-col gap-0 items-center text-center">
+      <Card variant="fund" className="flex flex-col gap-0 items-center text-center !p-8 !mt-16">
         <div className="w-full flex justify-center -mb-4">
           <TitleComponent title="Ready to start Earning?" className="mb-2 [&_h4]:!text-[17px]" />
         </div>
