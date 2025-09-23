@@ -21,12 +21,12 @@ const Header: React.FC = () => {
                 <div className="flex flex-col gap-0 w-16 sm:w-20 lg:w-24 items-center justify-center -mt-3 sm:-mt-4 -ml-1 sm:-ml-2">
                   <TitleLabel
                     title="DAMM"
-                    className="text-textLight font-bold text-base sm:text-lg mb-0"
-                    titleClassName="text-textLight font-bold text-base sm:text-lg text-body font-black -mb-2 sm:-mb-2 -ml-1 lg:ml-1 text-center leading-none"
+                    className="text-textLight font-bold mb-0"
+                    titleClassName="!text-sm sm:!text-lg text-textLight font-bold text-body font-black -mb-2 sm:-mb-2 -ml-1 lg:ml-1 text-center leading-none"
                   />
                   <Label
                     label="CAPITAL"
-                    className="text-textLight font-bold text-[0.48rem] sm:text-[0.625rem] md:text-[0.75rem] lg:text-xs -mt-1 sm:-mt-3 lg:-mt-4 lg:ml-1 ml-0 sm:ml-2 [&_label]:!text-center [&_label]:!tracking-[0.24em] [&_label]:!leading-none"
+                    className="text-textLight font-bold text-capital lg:text-xs -mt-1 sm:-mt-3 lg:-mt-4 lg:ml-1 -ml-0.5 sm:ml-2 [&_label]:!text-center [&_label]:!tracking-[0.24em] [&_label]:!leading-none"
                   />
                 </div>
               </div>

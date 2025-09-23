@@ -11,17 +11,30 @@ const FundSkeleton: React.FC<{ className?: string }> = ({ className }) => (
   >
     {/* Mobile Layout */}
     <div className="block sm:hidden">
-      <div className="flex items-center gap-3 mb-3">
+      <div className="flex items-center justify-center gap-3 mb-3 w-3/4 mx-auto">
         <Skeleton variant="rounded" />
-        <div className="flex-1">
-          <Skeleton />
-        </div>
+        <Skeleton />
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <Skeleton />
-        <Skeleton />
-        <Skeleton />
-        <Skeleton />
+      <div className="grid grid-cols-2 gap-2 gap-y-3 mt-5">
+        {/* Net APY */}
+        <div className="text-center">
+          <Skeleton className="h-3 w-16" />
+        </div>
+
+        {/* 30 days Net APY */}
+        <div className="text-center">
+          <Skeleton className="h-3 w-16" />
+        </div>
+
+        {/* AUM */}
+        <div className="text-center mt-3">
+          <Skeleton className="h-3 w-16" />
+        </div>
+
+        {/* Underlying Asset */}
+        <div className="text-center mt-3">
+          <Skeleton className="h-3 w-16" />
+        </div>
       </div>
     </div>
 
