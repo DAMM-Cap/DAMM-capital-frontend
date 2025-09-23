@@ -154,26 +154,24 @@ function Deposit() {
           open={openModalInProgress}
           onClose={() => setOpenModalInProgress(false)}
           title="Deposit in Progress"
-          actions={() => {
-            return (
-              <>
-                <Button
-                  className="w-1/4"
-                  onClick={() => setOpenModalInProgress(false)}
-                  variant="secondary"
-                >
-                  Close
-                </Button>
-                <Button
-                  className="w-3/4"
-                  onClick={() => setOpenModalInProgress(false)}
-                  variant="primary"
-                >
-                  Go to my Portfolio
-                </Button>
-              </>
-            );
-          }}
+          actions={() => (
+            <>
+              <Button
+                className="w-1/4"
+                onClick={() => setOpenModalInProgress(false)}
+                variant="secondary"
+              >
+                Close
+              </Button>
+              <Button
+                className="w-3/4"
+                onClick={() => setOpenModalInProgress(false)}
+                variant="primary"
+              >
+                Go to my Portfolio
+              </Button>
+            </>
+          )}
         >
           Your deposit has been successfully submitted and is now awaiting confirmation. Processing
           may take up to 48 hours. To check the status of your deposit, you can track the
@@ -188,19 +186,15 @@ function Deposit() {
           open={openModalWhitelisting}
           onClose={() => setOpenModalWhitelisting(false)}
           title="Whitelisting Required"
-          actions={() => {
-            return (
-              <>
-                <Button
-                  className="w-full"
-                  onClick={() => setOpenModalWhitelisting(false)}
-                  variant="secondary"
-                >
-                  Close
-                </Button>
-              </>
-            );
-          }}
+          actions={() => (
+            <Button
+              className="w-full"
+              onClick={() => setOpenModalWhitelisting(false)}
+              variant="secondary"
+            >
+              Close
+            </Button>
+          )}
         >
           Your wallet address is not whitelisted, so deposits are not allowed. To request access,
           please email us at{" "}
@@ -218,27 +212,20 @@ function Deposit() {
           open={openModalTerms}
           onClose={() => setOpenModalTerms(false)}
           title="Acknowledge Terms"
-          actions={() => {
-            return (
-              <>
-                <Button
-                  className="w-1/4"
-                  onClick={() => setOpenModalTerms(false)}
-                  variant="secondary"
-                >
-                  Reject
-                </Button>
-
-                <Button
-                  className="w-3/4"
-                  onClick={() => setOpenModalTerms(false)}
-                  variant="primary"
-                >
-                  Accept
-                </Button>
-              </>
-            );
-          }}
+          actions={() => (
+            <>
+              <Button
+                className="w-1/4"
+                onClick={() => setOpenModalTerms(false)}
+                variant="secondary"
+              >
+                Reject
+              </Button>
+              <Button className="w-3/4" onClick={() => setOpenModalTerms(false)} variant="primary">
+                Accept
+              </Button>
+            </>
+          )}
         >
           By accessing or using DAMM Capital’s products and services, I agree to the{" "}
           <a className="underline" href="">
