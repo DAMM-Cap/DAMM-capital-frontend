@@ -2,7 +2,7 @@ import { ArrowRightLeftIcon as ConversionIcon } from "lucide-react";
 import React from "react";
 import Input from "../core/Input";
 
-interface AmountComponentProps {
+interface TokenAmountInputProps {
   tokenLabel: string;
   tokenIcon: React.ReactNode;
   conversionLeftText: string;
@@ -17,7 +17,7 @@ interface AmountComponentProps {
   validationMessage?: string;
 }
 
-const AmountComponent: React.FC<AmountComponentProps> = ({
+const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
   tokenLabel,
   tokenIcon,
   noEdit,
@@ -64,4 +64,4 @@ const AmountComponent: React.FC<AmountComponentProps> = ({
   );
 };
 
-export default AmountComponent;
+export default TokenAmountInput;

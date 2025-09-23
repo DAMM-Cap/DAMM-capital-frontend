@@ -1,6 +1,6 @@
 import React from "react";
 
-interface TitleComponentProps {
+interface TitleLabelProps {
   label?: string;
   title: string;
   leftIcon?: React.ReactNode;
@@ -8,7 +8,7 @@ interface TitleComponentProps {
   className?: string;
 }
 
-const TitleComponent: React.FC<TitleComponentProps> = ({
+const TitleLabel: React.FC<TitleLabelProps> = ({
   label,
   title,
   leftIcon,
@@ -35,4 +35,4 @@ const TitleComponent: React.FC<TitleComponentProps> = ({
   );
 };
 
-export default TitleComponent;
+export default TitleLabel;

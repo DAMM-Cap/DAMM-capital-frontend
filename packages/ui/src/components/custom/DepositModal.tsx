@@ -3,8 +3,8 @@ import Button from "../core/Button";
 import Input from "../core/Input";
 import Label from "../core/Label";
 import Modal from "../core/Modal";
-import AmountComponent from "./AmountComponent";
-import TitleComponent from "./TitleComponent";
+import TitleLabel from "./TitleLabel";
+import TokenAmountInput from "./TokenAmountInput";
 
 interface DepositModalProps {
   open: boolean;
@@ -66,13 +66,13 @@ const DepositModal: React.FC<DepositModalProps> = ({
         </Button>
       )}
     >
-      <TitleComponent
+      <TitleLabel
         label="My position"
         title={`${position} ${tokenSymbol}`}
         leftIcon={TokenIcon}
         secondaryTitle={`$${positionConverted}`}
       />
-      <AmountComponent
+      <TokenAmountInput
         tokenLabel={tokenSymbol}
         tokenIcon={TokenIcon}
         tokenSecondaryLabel={`$${max}`}

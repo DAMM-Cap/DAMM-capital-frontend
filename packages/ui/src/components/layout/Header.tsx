@@ -2,7 +2,7 @@ import { LogInIcon } from "lucide-react";
 import React from "react";
 import Button from "../core/Button";
 import Label from "../core/Label";
-import TitleComponent from "../custom/TitleComponent";
+import TitleLabel from "../custom/TitleLabel";
 import NavBar from "./NavBar";
 
 const Header: React.FC = () => {
@@ -19,7 +19,7 @@ const Header: React.FC = () => {
                   className="w-8 h-8 flex-shrink-0 self-center"
                 />
                 <div className="flex flex-col gap-0 w-24 items-center justify-center -mt-3 -ml-2">
-                  <TitleComponent
+                  <TitleLabel
                     title="DAMM"
                     className="text-textLight font-bold text-lg [&_h4]:!text-[20px] [&_h4]:!font-black mb-0 [&_h4]:!text-center [&_h4]:!leading-none"
                   />
