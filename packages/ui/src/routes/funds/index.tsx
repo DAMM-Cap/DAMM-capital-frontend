@@ -73,10 +73,12 @@ function Funds() {
         ]}
       />
 
+
       <Card
         variant="fund"
         className="flex flex-col gap-0 items-center text-center !p-6 lg:!p-8 !mt-2 lg:!mt-16"
       >
+
         <div className="w-full flex justify-center -mb-4">
           <TitleLabel title="Ready to start Earning?" className="mb-2" titleClassName="text-body" />
         </div>
