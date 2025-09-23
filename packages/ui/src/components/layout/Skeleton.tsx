@@ -1,10 +1,21 @@
-function Skeleton({ className, variant }: { className?: string; variant?: "rounded" | "default" }) {
-  return variant === "rounded" ? (
-    <div className={`w-8 h-8 bg-secondary rounded-full flex-shrink-0 ${className}`}></div>
-  ) : (
-    <div className="col-span-2 w-full">
-      <div className={`w-full h-6 bg-secondary rounded-2xl text-center ${className}`}></div>
-    </div>
+import clsx from "clsx";
+
+function Skeleton({
+  className,
+  variant = "default",
+}: {
+  className?: string;
+  variant?: "rounded" | "default";
+}) {
+  return (
+    <div
+      className={clsx(
+        "bg-secondary",
+        { "w-8 h-8 rounded-full flex-shrink-0": variant === "rounded" },
+        { "w-full h-6 rounded-2xl text-center": variant === "default" },
+        className,
+      )}
+    />
   );
 }
 

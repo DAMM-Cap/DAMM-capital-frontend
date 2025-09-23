@@ -89,7 +89,7 @@ export default function Input({
               onClick={onMaxClick}
               variant="secondary"
               disabled={noEdit}
-              className="w-[42px] h-[21px] !rounded"
+              className="w-10 h-5 !rounded"
             >
               max.
             </Button>
@@ -98,7 +98,7 @@ export default function Input({
       </div>
 
       {/* Always reserve space for bottom content */}
-      <div className="mt-2 h-[20px] items-center">
+      <div className="mt-2 h-5 items-center">
         {/* Validation Message */}
         {validation && validationMessage && (
           <div
@@ -137,7 +137,7 @@ export default function Input({
             <span className="text-neutral">{complexLabel.leftText}</span>
             <span className="text-neutral">{complexLabel.icon}</span>
             <span className="text-primary flex items-center gap-1">
-              {complexLabel.rightText} <CircledExclamationIcon size={14} />
+              {complexLabel.rightText} <CircledExclamationIcon size={12} />
             </span>
           </div>
         )}

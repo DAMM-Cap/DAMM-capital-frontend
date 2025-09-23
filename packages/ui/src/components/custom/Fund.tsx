@@ -1,11 +1,15 @@
+import clsx from "clsx";
 import React from "react";
 import { Skeleton } from "../index";
 
 const FundSkeleton: React.FC<{ className?: string }> = ({ className }) => (
   <div
-    className={`w-full border border-disabledDark hover:border-primary bg-disabled rounded-2xl p-4 transition-colors duration-200 cursor-pointer ${className}`}
+    className={clsx(
+      "w-full border border-disabledDark hover:border-primary bg-disabled rounded-2xl p-4 transition-colors duration-200 cursor-pointer",
+      className,
+    )}
   >
-    <div className="grid grid-cols-12 gap-2 items-center h-[48px] w-full">
+    <div className="grid grid-cols-12 gap-2 items-center h-12 !rounded w-full">
       {/* First column: Loading skeleton */}
       <div className="col-span-4 w-full">
         <div className="flex items-center gap-3">
@@ -15,16 +19,24 @@ const FundSkeleton: React.FC<{ className?: string }> = ({ className }) => (
       </div>
 
       {/* Second column: Loading skeleton */}
-      <Skeleton />
+      <div className="col-span-2 w-full">
+        <Skeleton />
+      </div>
 
       {/* Third column: Loading skeleton */}
-      <Skeleton />
+      <div className="col-span-2 w-full">
+        <Skeleton />
+      </div>
 
       {/* Fourth column: Loading skeleton */}
-      <Skeleton />
+      <div className="col-span-2 w-full">
+        <Skeleton />
+      </div>
 
       {/* Fifth column: Loading skeleton */}
-      <Skeleton />
+      <div className="col-span-2 w-full">
+        <Skeleton />
+      </div>
     </div>
   </div>
 );
@@ -62,10 +74,13 @@ const Fund: React.FC<FundProps> = ({
 
   return (
     <div
-      className={`w-full border border-disabledDark hover:border-primary bg-disabled rounded-2xl p-4 transition-colors duration-200 cursor-pointer ${className}`}
+      className={clsx(
+        "w-full border border-disabledDark hover:border-primary bg-disabled rounded-2xl p-4 transition-colors duration-200 cursor-pointer",
+        className,
+      )}
       onClick={onClick}
     >
-      <div className="grid grid-cols-12 gap-2 items-center h-[48px] w-full">
+      <div className="grid grid-cols-12 gap-2 items-center h-12 !rounded w-full">
         {/* First column: Icon, title, and subtitle */}
         <div className="col-span-4 w-full">
           <div className="flex items-center gap-3">
@@ -80,7 +95,7 @@ const Fund: React.FC<FundProps> = ({
               <div className="font-montserrat font-bold text-lg leading-none text-textLight">
                 {title}
               </div>
-              <div className="font-montserrat font-normal text-[10px] leading-none text-textLight mt-1">
+              <div className="font-montserrat font-normal text-tiny leading-none text-textLight mt-1">
                 {subtitle}
               </div>
             </div>

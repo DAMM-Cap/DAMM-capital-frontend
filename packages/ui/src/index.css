@@ -88,6 +88,33 @@ button:focus {
   @apply border border-disabled rounded-2xl p-4 my-4;
 }
 
+/* Title Styles */
+.text-main-title { /* text-[30px] */
+  /* @apply text-lg md:text-xl lg:text-2xl; */
+  @apply text-xl md:text-2xl lg:text-3xl;
+}
+
+.text-sub-title { /* text-[20px] */
+  @apply text-base md:text-lg lg:text-xl;
+}
+
+.text-body { /* text-[17px] */
+  @apply text-sm md:text-[1.0625rem] lg:text-lg;
+}
+
+.text-small { /* text-[12px] */
+  @apply text-xs md:text-sm lg:text-base;
+}
+
+.text-tiny { /* text-[10px] */
+  @apply text-[0.625rem] md:text-xs lg:text-sm;
+}
+
+.text-mini {
+  /* text-[6px] */
+  @apply text-[0.375rem] md:text-[0.625rem] lg:text-xs;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

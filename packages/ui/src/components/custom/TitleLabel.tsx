@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 
 interface TitleLabelProps {
@@ -6,6 +7,7 @@ interface TitleLabelProps {
   leftIcon?: React.ReactNode;
   secondaryTitle?: string;
   className?: string;
+  titleClassName?: string;
 }
 
 const TitleLabel: React.FC<TitleLabelProps> = ({
@@ -14,17 +16,25 @@ const TitleLabel: React.FC<TitleLabelProps> = ({
   leftIcon,
   secondaryTitle,
   className = "",
+  titleClassName = "",
 }) => {
   return (
-    <div className={`flex flex-col gap-2 mb-8 mt-4 ${className}`}>
+    <div className={clsx("flex flex-col gap-2 mb-8 mt-4", className)}>
       {label && (
-        <label className="block font-montserrat font-normal text-sm leading-none text-neutral w-[400px] h-[17px]">
+        <label className="block font-montserrat font-normal text-sm leading-none text-neutral h-4 !rounded">
           {label}
         </label>
       )}
       <div className="flex items-center gap-3">
         {leftIcon && leftIcon}
-        <h4 className="font-montserrat font-bold text-xl leading-none text-textLight">{title}</h4>
+        <h4
+          className={clsx(
+            "font-montserrat font-bold text-xl leading-none text-textLight",
+            titleClassName,
+          )}
+        >
+          {title}
+        </h4>
         {secondaryTitle && (
           <span className="font-montserrat font-large text-base leading-none text-textLight">
             ({secondaryTitle})

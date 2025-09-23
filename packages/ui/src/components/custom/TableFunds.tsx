@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 import Fund from "./Fund";
 
@@ -21,34 +22,21 @@ interface TableFundsProps {
 
 const TableFunds: React.FC<TableFundsProps> = ({ funds, className = "" }) => {
   return (
-    <div className={`w-full mx-auto ${className}`}>
+    <div className={clsx("w-full mx-auto", className)}>
       {/* Header */}
       <div className="grid grid-cols-12 gap-2 items-center mb-4 px-4">
-        <div className="col-span-4">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-left">
-            Name
+        {["Name", "Net APY", "30 days Net APY", "AUM", "Underlying Asset"].map((item, index) => (
+          <div key={index} className={clsx("col-span-2", { "!col-span-4": index === 0 })}>
+            <div
+              className={clsx(
+                "font-montserrat font-normal text-tiny leading-none text-neutral text-center",
+                { "!text-left": index === 0 || index === 4 },
+              )}
+            >
+              {item}
+            </div>
           </div>
-        </div>
-        <div className="col-span-2">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-center">
-            Net APY
-          </div>
-        </div>
-        <div className="col-span-2">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-center">
-            30 days Net APY
-          </div>
-        </div>
-        <div className="col-span-2">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-center">
-            AUM
-          </div>
-        </div>
-        <div className="col-span-2">
-          <div className="font-montserrat font-normal text-[10px] leading-none text-neutral text-left">
-            Underlying Asset
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Funds */}

@@ -1,4 +1,4 @@
-import Icon from "@/components/core/Icon";
+import clsx from "clsx";
 
 const CircledExclamationIcon = ({
   size = 14,
@@ -6,15 +6,16 @@ const CircledExclamationIcon = ({
 }: {
   size?: number;
   className?: string;
-}) => (
-  <Icon size={size} className={className}>
-    {/* Circle */}
-    <circle cx="12" cy="12" r="10" />
+}) => {
+  const sizeClass = size <= 12 ? "w-3 h-3" : size <= 16 ? "w-4 h-4" : "w-5 h-5";
 
-    {/* Vertically mirrored exclamation mark */}
-    <path d="M12 18v-6" />
-    <path d="M12 6h.01" />
-  </Icon>
-);
+  return (
+    <img
+      src="/circled-exclamation.svg"
+      alt="Circled Exclamation Icon"
+      className={clsx(sizeClass, className)}
+    />
+  );
+};
 
 export default CircledExclamationIcon;
