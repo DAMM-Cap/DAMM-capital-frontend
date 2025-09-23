@@ -23,7 +23,7 @@ function Funds() {
       <TitleLabel title="Funds" className="mb-2" titleClassName="text-main-title" />
       <Label
         label="Choose from our selection of DeFi Funds."
-        className="-mt-6 pb-4 text-small !font-bold text-textLight"
+        className="-mt-3 lg:-mt-6 pb-4 text-small !font-bold text-textLight"
       />
 
       <TableFunds
@@ -73,7 +73,10 @@ function Funds() {
         ]}
       />
 
-      <Card variant="fund" className="flex flex-col gap-0 items-center text-center !p-8 !mt-16">
+      <Card
+        variant="fund"
+        className="flex flex-col gap-0 items-center text-center !p-6 lg:!p-8 !mt-2 lg:!mt-16"
+      >
         <div className="w-full flex justify-center -mb-4">
           <TitleLabel title="Ready to start Earning?" className="mb-2" titleClassName="text-body" />
         </div>

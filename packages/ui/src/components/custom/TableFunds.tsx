@@ -23,8 +23,8 @@ interface TableFundsProps {
 const TableFunds: React.FC<TableFundsProps> = ({ funds, className = "" }) => {
   return (
     <div className={clsx("w-full mx-auto", className)}>
-      {/* Header */}
-      <div className="grid grid-cols-12 gap-2 items-center mb-4 px-4">
+      {/* Desktop Header */}
+      <div className="hidden sm:grid grid-cols-12 gap-2 items-center mb-4 px-4">
         {["Name", "Net APY", "30 days Net APY", "AUM", "Underlying Asset"].map((item, index) => (
           <div key={index} className={clsx("col-span-2", { "!col-span-4": index === 0 })}>
             <div

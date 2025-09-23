@@ -63,7 +63,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Base Input Styles */
 input {
-  @apply w-full h-12 rounded-lg font-montserrat font-medium text-base leading-none transition-all duration-200 px-4 border bg-disabled border-secondary text-neutral;
+  @apply w-full h-10 sm:h-12 rounded-lg font-montserrat font-medium text-sm sm:text-base leading-none transition-all duration-200 px-3 sm:px-4 border bg-disabled border-secondary text-neutral;
 }
 input:hover {
   @apply bg-secondary border-secondary text-neutral;
@@ -77,7 +77,7 @@ input:disabled {
 
 /* Base Button Styles */
 button {
-  @apply px-4 py-2 rounded-2xl border-2 transition-all duration-200 flex items-center justify-center gap-3 font-montserrat font-medium text-base leading-none text-center;
+  @apply px-3 sm:px-4 py-2 rounded-3xl border-2 transition-all duration-200 flex items-center justify-center gap-2 sm:gap-3 font-montserrat font-medium text-sm sm:text-base leading-none text-center;
 }
 button:focus {
   @apply outline-none;
@@ -90,29 +90,28 @@ button:focus {
 
 /* Title Styles */
 .text-main-title { /* text-[30px] */
-  /* @apply text-lg md:text-xl lg:text-2xl; */
-  @apply text-xl md:text-2xl lg:text-3xl;
+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
 }
 
 .text-sub-title { /* text-[20px] */
-  @apply text-base md:text-lg lg:text-xl;
+  @apply text-sm sm:text-base md:text-lg lg:text-xl;
 }
 
 .text-body { /* text-[17px] */
-  @apply text-sm md:text-[1.0625rem] lg:text-lg;
+  @apply text-xs sm:text-sm md:text-[1.0625rem] lg:text-lg;
 }
 
 .text-small { /* text-[12px] */
-  @apply text-xs md:text-sm lg:text-base;
+  @apply text-[0.625rem] sm:text-xs md:text-sm lg:text-base;
 }
 
 .text-tiny { /* text-[10px] */
-  @apply text-[0.625rem] md:text-xs lg:text-sm;
+  @apply text-[0.5rem] sm:text-[0.625rem] md:text-xs lg:text-sm;
 }
 
 .text-mini {
   /* text-[6px] */
-  @apply text-[0.375rem] md:text-[0.625rem] lg:text-xs;
+  @apply text-[0.25rem] sm:text-[0.375rem] md:text-[0.625rem] lg:text-xs;
 }
 
 /* Custom scrollbar */

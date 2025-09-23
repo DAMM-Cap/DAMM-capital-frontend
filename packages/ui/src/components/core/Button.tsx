@@ -55,12 +55,14 @@ export default function Button({
       className={buttonClasses}
     >
       {isLoading ? (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-h-[1.1rem] [&>*:first-child]:mr-2 [&>*:last-child]:ml-2">
           <span>{children}</span>
           <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
-        children
+        <div className="flex items-center min-h-[1.1rem] [&>*:first-child]:mr-2 [&>*:last-child]:ml-2">
+          {children}
+        </div>
       )}
     </button>
   );
