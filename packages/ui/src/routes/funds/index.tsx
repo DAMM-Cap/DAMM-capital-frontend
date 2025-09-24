@@ -1,4 +1,4 @@
-import { Button, Card, DammStableIcon, Label, TableFunds, TitleLabel } from "@/components";
+import { Button, Card, DammStableIcon, Label, TableFunds } from "@/components";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -20,11 +20,13 @@ function Funds() {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <TitleLabel title="Funds" className="mb-2" titleClassName="text-main-title" />
-      <Label
-        label="Choose from our selection of DeFi Funds."
-        className="-mt-3 lg:-mt-6 pb-4 text-small !font-bold text-textLight"
-      />
+      <div className="flex flex-col">
+        <Label label="Funds" className="domain-title" />
+        <Label
+          label="Choose from our selection of DeFi Funds."
+          className="domain-subtitle pb-4 pt-1"
+        />
+      </div>
 
       <TableFunds
         funds={[
@@ -73,14 +75,12 @@ function Funds() {
         ]}
       />
 
-
       <Card
         variant="fund"
         className="flex flex-col gap-0 items-center text-center !p-6 lg:!p-8 !mt-2 lg:!mt-16"
       >
-
-        <div className="w-full flex justify-center -mb-4">
-          <TitleLabel title="Ready to start Earning?" className="mb-2" titleClassName="text-body" />
+        <div className="w-full flex justify-center">
+          <Label label="Ready to start Earning?" className="mb-4 domain-secondary-title" />
         </div>
         <div className="w-full flex justify-center">
           <Label label="Connect your wallet to deposit into any of our funds." className="pb-4" />

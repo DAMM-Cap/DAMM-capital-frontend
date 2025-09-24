@@ -114,6 +114,18 @@ button:focus {
   @apply text-[0.25rem] sm:text-[0.375rem] md:text-[0.625rem] lg:text-xs;
 }
 
+.domain-title {
+  @apply text-[1.800rem] font-black font-[650] text-textLight;
+}
+
+.domain-subtitle {
+  @apply text-[0.950rem] font-black font-[350] text-textLight;
+}
+
+.domain-secondary-title {
+  @apply text-[1.250rem] font-black font-[650] text-textLight;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

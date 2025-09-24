@@ -9,25 +9,21 @@ const Header: React.FC = () => {
   const isMobile = useIsMobile();
 
   return (
-    <header className="w-full bg-textDark py-3 sm:py-4">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-4 sm:gap-8 lg:gap-20">
-              <BrandHeader />
-              {!isMobile && <NavBar />}
-            </div>
-            <div className="flex items-center">
-              {isMobile ? (
-                <NavBar />
-              ) : (
-                <Button onClick={() => {}} className="text-xs sm:text-sm px-2 sm:px-4">
-                  <LogInIcon size={14} className="sm:w-4 sm:h-4" />
-                  <span className="xs:inline">Log In</span>
-                </Button>
-              )}
-            </div>
-          </div>
+    <header className="w-full bg-textDark py-3 px-2">
+      <div className="flex flex-row w-full max-w-6xl mx-auto justify-between items-center text-sm">
+        <div className="flex items-center gap-8">
+          <BrandHeader />
+          {!isMobile && <NavBar />}
+        </div>
+        <div className="flex items-center">
+          {isMobile ? (
+            <NavBar />
+          ) : (
+            <Button onClick={() => {}} className="text-sm px-4">
+              <LogInIcon size={14} className="w-4 h-4" />
+              <span className="inline">Log In</span>
+            </Button>
+          )}
         </div>
       </div>
     </header>
