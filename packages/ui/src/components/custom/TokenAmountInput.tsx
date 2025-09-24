@@ -40,7 +40,7 @@ const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
         value={tokenLabel}
         onChange={() => {}}
         noEdit
-        className="w-1/4"
+        className="w-1/3 sm:w-1/4"
         leftIcon={tokenIcon}
       />
       <Input
@@ -56,7 +56,7 @@ const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
           rightText: conversionRightText,
           align: "right",
         }}
-        className="w-3/4"
+        className="w-2/3 sm:w-3/4"
         validation={validation}
         validationMessage={validationMessage}
       />

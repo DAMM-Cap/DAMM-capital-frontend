@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-function Skeleton({
+function LoadingField({
   className,
   variant = "default",
 }: {
@@ -19,4 +19,4 @@ function Skeleton({
   );
 }
 
-export default Skeleton;
+export default LoadingField;
