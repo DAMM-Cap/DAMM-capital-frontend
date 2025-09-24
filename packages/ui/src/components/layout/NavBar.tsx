@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { LogInIcon, MenuIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import Button from "../core/Button";
+import { useIsMobile } from "../hooks/use-is-mobile";
 
 const items = [
   { to: "/funds", label: "Funds" },
@@ -11,39 +12,42 @@ const items = [
 
 export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   return (
     <div className="relative">
       {/* Desktop Navigation */}
-      <nav aria-label="Main" className="hidden sm:flex items-center gap-6 lg:gap-8">
-        {items.map((it) => (
-          <Link
-            key={it.to}
-            to={it.to}
-            className="transition-colors hover:text-linkHover text-sm lg:text-base"
-            activeOptions={{ exact: false }}
-            activeProps={{
-              className: "!text-primary hover:!text-linkHover",
-              "aria-current": "page",
-            }}
-            inactiveProps={{ className: "text-textLight" }}
-            preload="intent"
-          >
-            {it.label}
-          </Link>
-        ))}
-      </nav>
+      {!isMobile && (
+        <nav aria-label="Main" className="flex items-center gap-6 lg:gap-8">
+          {items.map((it) => (
+            <Link
+              key={it.to}
+              to={it.to}
+              className="transition-colors hover:text-linkHover text-sm lg:text-base"
+              activeOptions={{ exact: false }}
+              activeProps={{
+                className: "!text-primary hover:!text-linkHover",
+                "aria-current": "page",
+              }}
+              inactiveProps={{ className: "text-textLight" }}
+              preload="intent"
+            >
+              {it.label}
+            </Link>
+          ))}
+        </nav>
+      )}
 
       {/* Mobile Menu Button */}
-      <div className="sm:hidden">
+      {isMobile && (
         <Button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2">
           {isMobileMenuOpen ? <XIcon size={16} /> : <MenuIcon size={16} />}
         </Button>
-      </div>
+      )}
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-full right-0 bg-textDark border border-secondary rounded-lg shadow-lg z-50 sm:hidden min-w-[200px]">
+        <div className="absolute top-full right-0 bg-textDark border border-secondary rounded-lg shadow-lg z-50 min-w-[200px]">
           <nav className="flex flex-col p-4 space-y-2">
             {items.map((it) => (
               <Link

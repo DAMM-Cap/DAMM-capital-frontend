@@ -16,7 +16,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
   title,
   children,
   actions,
-  className = "w-full sm:w-[40rem]",
+  className = "max-w-full sm:max-w-[40rem]",
 }) => {
   return (
     <Modal open={open} onClose={onClose} title={title} className={className} actions={actions}>

@@ -114,10 +114,6 @@ button:focus {
   @apply text-[0.25rem] sm:text-[0.375rem] md:text-[0.625rem] lg:text-xs;
 }
 
-.text-capital {
-  @apply text-[0.5rem] sm:text-[0.625rem] md:text-[0.75rem] lg:text-xs;
-}
-
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
