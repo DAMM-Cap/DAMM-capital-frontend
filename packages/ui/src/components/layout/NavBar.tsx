@@ -18,12 +18,12 @@ export default function NavBar() {
     <div className="relative">
       {/* Desktop Navigation */}
       {!isMobile && (
-        <nav aria-label="Main" className="flex items-center gap-6 lg:gap-8">
+        <nav aria-label="Main" className="flex items-center gap-8">
           {items.map((it) => (
             <Link
               key={it.to}
               to={it.to}
-              className="transition-colors hover:text-linkHover text-sm lg:text-base"
+              className="transition-colors hover:text-linkHover text-base"
               activeOptions={{ exact: false }}
               activeProps={{
                 className: "!text-primary hover:!text-linkHover",
