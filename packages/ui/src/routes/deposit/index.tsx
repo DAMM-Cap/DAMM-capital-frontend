@@ -1,6 +1,8 @@
 import { Button, Card, DammStableIcon, DepositModal, InfoModal } from "@/components";
 import WithdrawModal from "@/components/custom/WithdrawModal";
-import { createFileRoute } from "@tanstack/react-router";
+import { useVaults } from "@/context/vault-context";
+import { useDeposit } from "@/hooks/use-deposit";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
 import {
   ActivityIcon,
   BookOpenCheckIcon,
@@ -11,12 +13,22 @@ import {
   ScaleIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { z } from "zod";
+
+const depositSearchSchema = z.object({
+  vaultId: z.string(),
+});
 
 export const Route = createFileRoute("/deposit/")({
   component: Deposit,
+  validateSearch: (search) => depositSearchSchema.parse(search),
 });
 
 function Deposit() {
+  const { vaultId } = useSearch({ from: "/deposit/" });
+  const { vaults } = useVaults();
+  const selectedVault = vaults?.vaultsData?.find((v) => v.staticData.vault_id === vaultId);
+
   const max = 1000;
   const position = 3500;
   const conversionValue = 0.935;
@@ -32,6 +44,8 @@ function Deposit() {
   const [openModalInProgress, setOpenModalInProgress] = useState(false);
   const [openModalWhitelisting, setOpenModalWhitelisting] = useState(false);
   const [openModalTerms, setOpenModalTerms] = useState(false);
+
+  const { submitRequestDeposit } = useDeposit();
 
   useEffect(() => {
     if (referral.length > 0) {
@@ -65,8 +79,21 @@ function Deposit() {
     setIsLoading(false);
   };
 
-  const handleDeposit = () => {
+  const handleDeposit = async () => {
     setIsLoading(true);
+    // Execute transaction
+    const tx = await submitRequestDeposit(
+      selectedVault!.staticData.vault_address,
+      selectedVault!.staticData.token_address,
+      selectedVault!.staticData.token_decimals,
+      selectedVault!.staticData.fee_receiver_address,
+      selectedVault!.vaultData.entranceRate,
+      amount,
+    );
+
+    // Wait for confirmation
+    await tx.wait();
+
     setTimeout(() => {
       setIsLoading(false);
       setOpenModal(false);
