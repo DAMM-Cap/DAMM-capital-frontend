@@ -135,6 +135,7 @@ export function convertIntegratedPosition(
     );
 
     const formattedPositionValue = p.position_value / 10 ** p.token_decimals;
+    const formattedUserTotalSharesValue = p.user_total_shares / 10 ** p.vault_decimals;
 
     const thisVaultData: IntegratedDataResponse = {
       staticData: {
@@ -162,10 +163,11 @@ export function convertIntegratedPosition(
         exitRate: p.exit_rate,
         performanceFee: p.performance_fee,
         managementFee: p.management_fee,
+        sharePrice: Number(p.share_price),
       },
       positionData: {
-        totalValue: formattedPositionValue,
-        totalValueUSD: formattedPositionValue * wldUsdPrice,
+        totalValue: formattedUserTotalSharesValue,
+        totalValueUSD: formattedUserTotalSharesValue * wldUsdPrice,
         availableToRedeem: availableToRedeemWLD,
         availableToRedeemUSD: availableToRedeemWLD * wldUsdPrice,
         claimableShares: claimableShares,

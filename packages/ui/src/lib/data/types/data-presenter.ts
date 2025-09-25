@@ -26,11 +26,13 @@ export interface VaultDataView {
   exitRate: number;
   performanceFee: number;
   managementFee: number;
+  sharePrice: number;
 }
 
 export interface PositionDataView {
   totalValue: string;
   totalValueUSD: string;
+  totalValueRaw: number;
   wldBalance: string;
   usdcBalance: string;
   availableToRedeem: string;
