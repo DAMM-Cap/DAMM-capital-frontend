@@ -53,7 +53,7 @@ const WalletService: React.FC = () => {
 
   if (!ready) {
     return (
-      <Button onClick={() => {}} variant="secondary" className="text-sm">
+      <Button onClick={() => {}} variant="tertiary" className="text-sm">
         <ConnectedIcon color="#EF4444" />
         Connecting...
       </Button>
