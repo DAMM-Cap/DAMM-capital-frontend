@@ -6,7 +6,6 @@ import { APP_CONFIG, CDP_CONFIG } from "@/lib/config";
 import { getNetworkConfig } from "@/lib/network";
 import { theme } from "@/lib/theme";
 import { Config } from "@coinbase/cdp-core";
-import { CDPHooksProvider } from "@coinbase/cdp-hooks";
 import { CDPReactProvider } from "@coinbase/cdp-react";
 import { createCDPEmbeddedWalletConnector } from "@coinbase/cdp-wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -50,7 +49,6 @@ interface ProvidersWrapperProps {
 export default function ProvidersWrapper({ children }: ProvidersWrapperProps) {
   return (
     <CDPReactProvider config={CDP_CONFIG} app={APP_CONFIG} theme={theme}>
-      {/* <CDPHooksProvider config={CDP_CONFIG}> */}
       <WagmiProvider config={wagmiConfig}>
         {/* <SessionProvider> */}
         <LayoutProvider>
@@ -62,7 +60,6 @@ export default function ProvidersWrapper({ children }: ProvidersWrapperProps) {
         </LayoutProvider>
         {/* </SessionProvider> */}
       </WagmiProvider>
-      {/* </CDPHooksProvider> */}
     </CDPReactProvider>
   );
 }
