@@ -3,6 +3,7 @@ import clsx from "clsx";
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "tertiary";
   isLoading?: boolean;
+  className?: string;
 }
 
 export default function Button({
