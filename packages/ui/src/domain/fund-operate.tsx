@@ -9,10 +9,10 @@ import {
   TitleLabel,
 } from "@/components";
 import WithdrawModal from "@/components/custom/WithdrawModal";
+import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { useDeposit } from "@/services/lagoon/use-deposit";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
-import { usePrivy } from "@privy-io/react-auth";
 import { useSearch } from "@tanstack/react-router";
 import {
   ActivityIcon,
@@ -29,8 +29,7 @@ export default function FundOperate() {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { vaults } = useVaults();
   const selectedVault = vaults?.vaultsData?.find((v) => v.staticData.vault_id === vaultId);
-  const { authenticated } = usePrivy();
-  const isSignedIn = authenticated;
+  const { isSignedIn } = useSession();
 
   const max = 1000;
   const position = selectedVault?.positionData.totalValueRaw || 0;

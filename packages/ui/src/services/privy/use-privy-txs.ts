@@ -1,6 +1,7 @@
+import { useSession } from "@/context/session-context";
 import { getNetworkConfig } from "@/lib/network";
 import { TransactionResponse } from "@ethersproject/providers";
-import { useSendTransaction, useUser } from "@privy-io/react-auth";
+import { useSendTransaction } from "@privy-io/react-auth";
 import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
 import { createWalletClient, encodeFunctionData, http } from "viem";
 import { waitForTransactionReceipt } from "viem/actions";
@@ -16,20 +17,20 @@ export type EvmBatchCall = Array<EvmCall>;
 
 export function usePrivyTxs() {
   const networkConfig = getNetworkConfig();
-  const { user } = useUser();
-  const smartAccount = user?.smartWallet?.address;
-  const wallet = user?.wallet?.address;
+  const { isSignedIn, evmAddress: usersAccount, isSmartAccount } = useSession();
+
   const { client } = useSmartWallets();
   const { sendTransaction } = useSendTransaction();
 
   const executeWalletTransactionSequence = async (calls: EvmBatchCall) => {
-    if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!wallet) throw new Error("Failed wallet");
+    if (!networkConfig.chain.id || !isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
+    if (isSmartAccount) throw new Error("Smart account detected. Wrong execution mode");
 
     const walletClient = createWalletClient({
       chain: networkConfig.chain,
       transport: http(),
-      account: wallet as `0x${string}`,
+      account: usersAccount as `0x${string}`,
     });
 
     var txResponse: TransactionResponse | undefined;
@@ -46,7 +47,7 @@ export function usePrivyTxs() {
             args: call.args,
           }),
         },
-        { address: wallet },
+        { address: usersAccount },
       );
       txResponse = {
         hash: tx.hash,
@@ -57,9 +58,10 @@ export function usePrivyTxs() {
   };
 
   const executeSmartAccountTransactionBatch = async (calls: EvmBatchCall) => {
-    if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!smartAccount) throw new Error("Failed smart account");
+    if (!networkConfig.chain.id || !isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
     if (!client) throw new Error("Failed to get client");
+    if (!isSmartAccount) throw new Error("Wallet account detected. Wrong execution mode");
 
     const txHash = await client.sendUserOperation({
       calls,
@@ -74,15 +76,11 @@ export function usePrivyTxs() {
   };
 
   const executePrivyTransactions = async (calls: EvmBatchCall) => {
-    if (!networkConfig.chain.id) throw new Error("Failed connection");
+    if (!networkConfig.chain.id || !isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
 
-    if (smartAccount) {
-      return executeSmartAccountTransactionBatch(calls);
-    } else if (wallet) {
-      return executeWalletTransactionSequence(calls);
-    } else {
-      throw new Error("Failed to execute transactions");
-    }
+    if (isSmartAccount) return executeSmartAccountTransactionBatch(calls);
+    else return executeWalletTransactionSequence(calls);
   };
 
   return {

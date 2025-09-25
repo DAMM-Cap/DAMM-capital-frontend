@@ -1,4 +1,5 @@
 import { LayoutProvider } from "@/context/layout-context";
+import { SessionProvider } from "@/context/session-context";
 import { VaultProvider } from "@/context/vault-context";
 import envParsed from "@/envParsed";
 import { privyConfig, wagmiConfig } from "@/services/privy/config";
@@ -23,7 +24,9 @@ export default function ProvidersWrapper({ children }: ProvidersWrapperProps) {
         <LayoutProvider>
           <QueryClientProvider client={queryClient}>
             <PrivyWagmiProvider config={wagmiConfig} reconnectOnMount={false}>
-              <VaultProvider>{children}</VaultProvider>
+              <SessionProvider>
+                <VaultProvider>{children}</VaultProvider>
+              </SessionProvider>
             </PrivyWagmiProvider>
           </QueryClientProvider>
         </LayoutProvider>

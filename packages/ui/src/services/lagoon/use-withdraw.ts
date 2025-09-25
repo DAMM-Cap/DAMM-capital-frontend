@@ -1,16 +1,14 @@
+import { useSession } from "@/context/session-context";
 import { getNetworkConfig } from "@/lib/network";
 import IERC20ABI from "@/lib/protocols/abis/IERC20.json";
 import VaultABI from "@/lib/protocols/abis/Vault.json";
 import { TransactionResponse } from "@ethersproject/providers";
-import { useUser } from "@privy-io/react-auth";
 import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils";
 import { EvmBatchCall, EvmCall, usePrivyTxs } from "../privy/use-privy-txs";
 
 export function useWithdraw() {
-  const networkConfig = getNetworkConfig();
-  const { user } = useUser();
-  const usersAccount = user?.smartWallet?.address || user?.wallet?.address || undefined;
+  const { isSignedIn, evmAddress: usersAccount } = useSession();
   const { executePrivyTransactions } = usePrivyTxs();
 
   const submitRedeem = async (
@@ -20,8 +18,8 @@ export function useWithdraw() {
     exitRate: number,
     amount: string,
   ) => {
-    if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!usersAccount) throw new Error("Failed smart account");
+    if (!isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
 
     const txs: EvmBatchCall = [];
 
@@ -63,8 +61,8 @@ export function useWithdraw() {
   // This should be used instead of submitRequestWithdraw only if the vault
   // has closed state. This is a synchronous operation.
   const submitWithdraw = async (vaultAddress: string, amount: string) => {
-    if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!usersAccount) throw new Error("Failed smart account");
+    if (!isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
 
     const txs: EvmBatchCall = [];
 
@@ -89,8 +87,8 @@ export function useWithdraw() {
   };
 
   const submitRequestWithdraw = async (vaultAddress: string, amount: string) => {
-    if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!usersAccount) throw new Error("Failed smart account");
+    if (!isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
 
     const txs: EvmCall[] = [];
 

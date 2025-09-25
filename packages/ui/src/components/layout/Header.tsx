@@ -3,7 +3,7 @@ import React from "react";
 import { useIsMobile } from "../hooks/use-is-mobile";
 import BrandHeader from "./BrandHeader";
 import NavBar from "./NavBar";
-import WalletService from "./WalletService";
+import Wallet from "./Wallet";
 
 const Header: React.FC = () => {
   const isMobile = useIsMobile();
@@ -15,7 +15,7 @@ const Header: React.FC = () => {
           <BrandHeader />
           {!isMobile && <NavBar />}
         </div>
-        <div className="flex items-center">{isMobile ? <NavBar /> : <WalletService />}</div>
+        <div className="flex items-center">{isMobile ? <NavBar /> : <Wallet />}</div>
       </div>
     </header>
   );

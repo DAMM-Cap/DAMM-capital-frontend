@@ -1,15 +1,14 @@
 import { Button, Card, DammStableIcon, Label, TableFunds } from "@/components";
+import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { VaultsDataView } from "@/lib/data/types/data-presenter";
-import { usePrivy } from "@privy-io/react-auth";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Funds() {
   const navigate = useNavigate();
-  const { authenticated } = usePrivy();
-  const isSignedIn = authenticated;
+  const { isSignedIn } = useSession();
   const [isLoadingFund, setIsLoadingFund] = useState(false);
   const { vaults, isLoading } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = useMemo(

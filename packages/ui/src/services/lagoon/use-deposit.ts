@@ -1,9 +1,8 @@
-import { getNetworkConfig } from "@/lib/network";
+import { useSession } from "@/context/session-context";
 import IERC20ABI from "@/lib/protocols/abis/IERC20.json";
 import VaultABI from "@/lib/protocols/abis/Vault.json";
 import { getApproveTx } from "@/lib/protocols/utils/token-utils";
 import { TransactionResponse } from "@ethersproject/providers";
-import { useUser } from "@privy-io/react-auth";
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { Abi } from "viem";
@@ -15,14 +14,12 @@ const RequestDepositABI = VaultABI.filter(
 ) as Abi;
 
 export function useDeposit() {
-  const networkConfig = getNetworkConfig();
-  const { user } = useUser();
-  const usersAccount = user?.smartWallet?.address || user?.wallet?.address || undefined;
+  const { isSignedIn, evmAddress: usersAccount } = useSession();
   const { executePrivyTransactions } = usePrivyTxs();
 
   const cancelDepositRequest = async (vaultAddress: string) => {
-    if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!usersAccount) throw new Error("Failed smart account");
+    if (!isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
 
     const txs: EvmBatchCall = [];
 
@@ -52,8 +49,8 @@ export function useDeposit() {
     entranceRate: number,
     amount: string,
   ) => {
-    if (!networkConfig.chain.id) throw new Error("Failed connection");
-    if (!usersAccount) throw new Error("Failed smart account");
+    if (!isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
 
     const txs: EvmCall[] = [];
 
