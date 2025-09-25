@@ -1,3 +1,4 @@
+import envParsed from "@/envParsed";
 import {
   convertIntegratedPosition,
   getNullMockedIntegratedPosition,
@@ -10,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useVaultData(wallet: string) {
   const network = getNetworkConfig().chain;
+  const { API_GATEWAY } = envParsed();
 
   return useQuery<VaultDataResponse>({
     queryKey: ["vaultData", wallet],
@@ -22,9 +24,7 @@ export function useVaultData(wallet: string) {
         //throw new Error("test");
 
         const integratedPositionResponse = await fetch(
-          `${
-            import.meta.env.VITE_API_GATEWAY
-          }/lagoon/integrated/test/${wallet}?offset=0&limit=10&chain_id=${network.id}`,
+          `${API_GATEWAY}/lagoon/integrated/test/${wallet}?offset=0&limit=10&chain_id=${network.id}`,
         );
         if (!integratedPositionResponse.ok) throw new Error("Failed to fetch vault data");
 

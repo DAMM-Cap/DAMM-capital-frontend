@@ -1,23 +1,18 @@
 import {
-  useActiveWallet,
   useConnectOrCreateWallet,
   useLogout,
   useMfaEnrollment,
   usePrivy,
-  useWallets,
 } from "@privy-io/react-auth";
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import Button from "../core/Button";
-import Modal from "../core/Modal";
 import ConnectedIcon from "../icons/ConnectedIcon";
+import { Button, Modal } from "../index";
 
 const WalletService: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
   const [evmAddress, setEvmAddress] = useState<string>("");
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const { wallets } = useWallets();
-  const { wallet, network } = useActiveWallet();
 
   const { showMfaEnrollmentModal } = useMfaEnrollment();
   const { logout } = useLogout();
@@ -26,10 +21,6 @@ const WalletService: React.FC = () => {
 
   const { connectOrCreateWallet } = useConnectOrCreateWallet();
   const { address } = useAccount();
-
-  const handleConnectOrCreateWallet = async () => {
-    connectOrCreateWallet();
-  };
 
   useEffect(() => {
     if (ready) {
@@ -41,13 +32,6 @@ const WalletService: React.FC = () => {
         setIsSignedIn(false);
         setEvmAddress("");
       }
-      console.log("ready", ready);
-      console.log("wallets", wallets);
-      console.log("address", address);
-      console.log("activeWallet", wallet);
-      console.log("network", network);
-      console.log("user", user);
-      console.log("authenticated", authenticated);
     }
   }, [ready, user, authenticated, address]);
 
@@ -75,12 +59,7 @@ const WalletService: React.FC = () => {
             {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
           </Button>
         ) : (
-          <Button
-            onClick={() => {
-              handleConnectOrCreateWallet();
-            }}
-            className="text-sm"
-          >
+          <Button onClick={connectOrCreateWallet} className="text-sm">
             Sign in
           </Button>
         )}
@@ -106,7 +85,7 @@ const WalletService: React.FC = () => {
               Copy address
             </Button>
             <Button onClick={showMfaEnrollmentModal} variant="secondary" className="text-sm w-full">
-              MFA
+              Configure MFA
             </Button>
             <Button
               onClick={() => {

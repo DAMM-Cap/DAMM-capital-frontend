@@ -1,6 +1,6 @@
-import { useVaultData } from "@/hooks/use-vault-data";
 import { DataWrangler } from "@/lib/data/data-wrangler";
 import { DataPresenter } from "@/lib/data/types/data-presenter";
+import { useVaultData } from "@/services/api/use-vault-data";
 import { usePrivy } from "@privy-io/react-auth";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 interface VaultContextType {

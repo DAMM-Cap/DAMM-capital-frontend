@@ -1,20 +1,29 @@
-import { NetworkConfig } from "@/lib/types/network";
+import envParsed from "@/envParsed";
 import { base, baseSepolia, sepolia } from "viem/chains";
 
+import type { Chain } from "viem";
+
+export type NetworkConfig = {
+  chain: Chain;
+  rpcUrl?: string;
+  network: "base" | "base-sepolia" | "ethereum-sepolia";
+  explorerUrl: string;
+};
+
 export const getNetworkConfig = (): NetworkConfig => {
-  if (import.meta.env.VITE_USE_MAINNET === "true") {
-    baseNetworkConfig.rpcUrl = import.meta.env.VITE_BASE_NODE_URL || "https://base.drpc.org";
+  const { USE_MAINNET, USE_SEPOLIA, BASE_NODE_URL, SEPOLIA_NODE_URL } = envParsed();
+
+  if (USE_MAINNET === "true") {
+    baseNetworkConfig.rpcUrl = BASE_NODE_URL || "https://base.drpc.org";
     return baseNetworkConfig;
   }
 
-  if (import.meta.env.VITE_USE_SEPOLIA === "true") {
-    sepoliaNetworkConfig.rpcUrl =
-      import.meta.env.VITE_SEPOLIA_NODE_URL || "https://sepolia.gateway.tenderly.co";
+  if (USE_SEPOLIA === "true") {
+    sepoliaNetworkConfig.rpcUrl = SEPOLIA_NODE_URL || "https://sepolia.gateway.tenderly.co";
     return sepoliaNetworkConfig;
   }
 
-  baseSepoliaNetworkConfig.rpcUrl =
-    import.meta.env.VITE_BASE_NODE_URL || "https://base-sepolia-rpc.publicnode.com";
+  baseSepoliaNetworkConfig.rpcUrl = BASE_NODE_URL || "https://base-sepolia-rpc.publicnode.com";
   return baseSepoliaNetworkConfig;
 };
 

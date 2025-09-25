@@ -7,7 +7,7 @@ import { useUser } from "@privy-io/react-auth";
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { Abi } from "viem";
-import { EvmBatchCall, EvmCall, usePrivyTxs } from "./use-privy-txs";
+import { EvmBatchCall, EvmCall, usePrivyTxs } from "../privy/use-privy-txs";
 
 // Filter ABI to only include the 4-parameter requestDeposit function
 const RequestDepositABI = VaultABI.filter(
@@ -52,12 +52,6 @@ export function useDeposit() {
     entranceRate: number,
     amount: string,
   ) => {
-    console.log("usersAccount", usersAccount);
-    console.log("connector type", user?.wallet?.connectorType);
-    console.log("wallet client type", user?.wallet?.walletClientType);
-    console.log("chainId", networkConfig.chain.id);
-    //return;
-
     if (!networkConfig.chain.id) throw new Error("Failed connection");
     if (!usersAccount) throw new Error("Failed smart account");
 

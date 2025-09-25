@@ -5,7 +5,7 @@ import { TransactionResponse } from "@ethersproject/providers";
 import { useUser } from "@privy-io/react-auth";
 import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils";
-import { EvmBatchCall, EvmCall, usePrivyTxs } from "./use-privy-txs";
+import { EvmBatchCall, EvmCall, usePrivyTxs } from "../privy/use-privy-txs";
 
 export function useWithdraw() {
   const networkConfig = getNetworkConfig();
