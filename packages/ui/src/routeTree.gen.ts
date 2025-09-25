@@ -10,129 +10,129 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
-import { Route as PortfolioIndexImport } from './routes/portfolio/index'
-import { Route as FundsIndexImport } from './routes/funds/index'
-import { Route as DepositIndexImport } from './routes/deposit/index'
-import { Route as AboutIndexImport } from './routes/about/index'
+import { Route as rootRoute } from "./routes/__root";
+import { Route as AboutIndexImport } from "./routes/about/index";
+import { Route as DepositIndexImport } from "./routes/deposit/index";
+import { Route as FundsIndexImport } from "./routes/funds/index";
+import { Route as IndexImport } from "./routes/index";
+import { Route as PortfolioIndexImport } from "./routes/portfolio/index";
 
 // Create/Update Routes
 
 const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const PortfolioIndexRoute = PortfolioIndexImport.update({
-  id: '/portfolio/',
-  path: '/portfolio/',
+  id: "/portfolio/",
+  path: "/portfolio/",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const FundsIndexRoute = FundsIndexImport.update({
-  id: '/funds/',
-  path: '/funds/',
+  id: "/funds/",
+  path: "/funds/",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const DepositIndexRoute = DepositIndexImport.update({
-  id: '/deposit/',
-  path: '/deposit/',
+  id: "/deposit/",
+  path: "/deposit/",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const AboutIndexRoute = AboutIndexImport.update({
-  id: '/about/',
-  path: '/about/',
+  id: "/about/",
+  path: "/about/",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 // Populate the FileRoutesByPath interface
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/about/': {
-      id: '/about/'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/deposit/': {
-      id: '/deposit/'
-      path: '/deposit'
-      fullPath: '/deposit'
-      preLoaderRoute: typeof DepositIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/funds/': {
-      id: '/funds/'
-      path: '/funds'
-      fullPath: '/funds'
-      preLoaderRoute: typeof FundsIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/portfolio/': {
-      id: '/portfolio/'
-      path: '/portfolio'
-      fullPath: '/portfolio'
-      preLoaderRoute: typeof PortfolioIndexImport
-      parentRoute: typeof rootRoute
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/about/": {
+      id: "/about/";
+      path: "/about";
+      fullPath: "/about";
+      preLoaderRoute: typeof AboutIndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/deposit/": {
+      id: "/deposit/";
+      path: "/deposit";
+      fullPath: "/deposit";
+      preLoaderRoute: typeof DepositIndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/funds/": {
+      id: "/funds/";
+      path: "/funds";
+      fullPath: "/funds";
+      preLoaderRoute: typeof FundsIndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/portfolio/": {
+      id: "/portfolio/";
+      path: "/portfolio";
+      fullPath: "/portfolio";
+      preLoaderRoute: typeof PortfolioIndexImport;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
-  '/deposit': typeof DepositIndexRoute
-  '/funds': typeof FundsIndexRoute
-  '/portfolio': typeof PortfolioIndexRoute
+  "/": typeof IndexRoute;
+  "/about": typeof AboutIndexRoute;
+  "/deposit": typeof DepositIndexRoute;
+  "/funds": typeof FundsIndexRoute;
+  "/portfolio": typeof PortfolioIndexRoute;
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
-  '/deposit': typeof DepositIndexRoute
-  '/funds': typeof FundsIndexRoute
-  '/portfolio': typeof PortfolioIndexRoute
+  "/": typeof IndexRoute;
+  "/about": typeof AboutIndexRoute;
+  "/deposit": typeof DepositIndexRoute;
+  "/funds": typeof FundsIndexRoute;
+  "/portfolio": typeof PortfolioIndexRoute;
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/about/': typeof AboutIndexRoute
-  '/deposit/': typeof DepositIndexRoute
-  '/funds/': typeof FundsIndexRoute
-  '/portfolio/': typeof PortfolioIndexRoute
+  __root__: typeof rootRoute;
+  "/": typeof IndexRoute;
+  "/about/": typeof AboutIndexRoute;
+  "/deposit/": typeof DepositIndexRoute;
+  "/funds/": typeof FundsIndexRoute;
+  "/portfolio/": typeof PortfolioIndexRoute;
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/deposit' | '/funds' | '/portfolio'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/deposit' | '/funds' | '/portfolio'
-  id: '__root__' | '/' | '/about/' | '/deposit/' | '/funds/' | '/portfolio/'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: "/" | "/about" | "/deposit" | "/funds" | "/portfolio";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/about" | "/deposit" | "/funds" | "/portfolio";
+  id: "__root__" | "/" | "/about/" | "/deposit/" | "/funds/" | "/portfolio/";
+  fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AboutIndexRoute: typeof AboutIndexRoute
-  DepositIndexRoute: typeof DepositIndexRoute
-  FundsIndexRoute: typeof FundsIndexRoute
-  PortfolioIndexRoute: typeof PortfolioIndexRoute
+  IndexRoute: typeof IndexRoute;
+  AboutIndexRoute: typeof AboutIndexRoute;
+  DepositIndexRoute: typeof DepositIndexRoute;
+  FundsIndexRoute: typeof FundsIndexRoute;
+  PortfolioIndexRoute: typeof PortfolioIndexRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -141,11 +141,11 @@ const rootRouteChildren: RootRouteChildren = {
   DepositIndexRoute: DepositIndexRoute,
   FundsIndexRoute: FundsIndexRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
-}
+};
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
 /* ROUTE_MANIFEST_START
 {
