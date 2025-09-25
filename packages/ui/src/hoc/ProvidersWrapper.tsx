@@ -1,36 +1,21 @@
 import { LayoutProvider } from "@/context/layout-context";
 import { VaultProvider } from "@/context/vault-context";
-import { WalletProvider } from "@/context/wallet-context";
-import { APP_CONFIG, CDP_CONFIG } from "@/lib/config";
 import { getNetworkConfig } from "@/lib/network";
-import { theme } from "@/lib/theme";
-import { CDPReactProvider } from "@coinbase/cdp-react";
-import { createCDPEmbeddedWalletConnector } from "@coinbase/cdp-wagmi";
-import { PrivyProvider } from "@privy-io/react-auth";
+import { PrivyClientConfig, PrivyProvider } from "@privy-io/react-auth";
 import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets";
+import { createConfig, WagmiProvider as PrivyWagmiProvider } from "@privy-io/wagmi";
+import React from "react";
+import { http } from "wagmi";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import React from "react";
-import { createConfig, http, WagmiProvider } from "wagmi";
-
 const { chain, rpcUrl } = getNetworkConfig();
-
-const connector = createCDPEmbeddedWalletConnector({
-  cdpConfig: CDP_CONFIG,
-  providerConfig: {
-    chains: [chain],
-    transports: {
-      [chain.id]: http(rpcUrl),
-    },
-  },
-});
 
 export const wagmiConfig = createConfig({
   chains: [chain],
   transports: {
     [chain.id]: http(rpcUrl),
   },
-  connectors: [connector],
 });
 
 const queryClient = new QueryClient();
@@ -39,34 +24,51 @@ interface ProvidersWrapperProps {
   children: React.ReactNode;
 }
 
+const privyConfig: PrivyClientConfig = {
+  defaultChain: chain,
+  supportedChains: [chain],
+  // Create embedded wallets for users who don't have a wallet
+  embeddedWallets: {
+    ethereum: {
+      createOnLogin: "users-without-wallets",
+    },
+    showWalletUIs: true,
+  },
+  externalWallets: {
+    walletConnect: { enabled: true },
+    coinbaseWallet: {
+      config: { preference: { options: "smartWalletOnly" } },
+    },
+  },
+  loginMethods: ["email", "sms", "wallet", "twitter", "google", "github", "passkey"],
+  appearance: {
+    showWalletLoginFirst: false,
+    walletList: [
+      "metamask",
+      "coinbase_wallet",
+      "wallet_connect_qr",
+      "rabby_wallet",
+      "zerion",
+      "binance",
+    ],
+  },
+};
+
 export default function ProvidersWrapper({ children }: ProvidersWrapperProps) {
   return (
     <PrivyProvider
       appId={import.meta.env.VITE_PRIVY_APP_ID}
       clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
-      config={{
-        defaultChain: chain,
-        // Create embedded wallets for users who don't have a wallet
-        embeddedWallets: {
-          ethereum: {
-            createOnLogin: "users-without-wallets",
-          },
-          showWalletUIs: true,
-        },
-      }}
+      config={privyConfig}
     >
       <SmartWalletsProvider>
-        {/* <CDPReactProvider config={CDP_CONFIG} app={APP_CONFIG} theme={theme}> */}
-        <WagmiProvider config={wagmiConfig}>
-          <LayoutProvider>
-            {/* <WalletProvider> */}
-            <QueryClientProvider client={queryClient}>
+        <LayoutProvider>
+          <QueryClientProvider client={queryClient}>
+            <PrivyWagmiProvider config={wagmiConfig} reconnectOnMount={false}>
               <VaultProvider>{children}</VaultProvider>
-            </QueryClientProvider>
-            {/* </WalletProvider> */}
-          </LayoutProvider>
-        </WagmiProvider>
-        {/* </CDPReactProvider> */}
+            </PrivyWagmiProvider>
+          </QueryClientProvider>
+        </LayoutProvider>
       </SmartWalletsProvider>
     </PrivyProvider>
   );

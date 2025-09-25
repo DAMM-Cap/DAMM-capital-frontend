@@ -1,7 +1,7 @@
 import { useVaultData } from "@/hooks/use-vault-data";
 import { DataWrangler } from "@/lib/data/data-wrangler";
 import { DataPresenter } from "@/lib/data/types/data-presenter";
-//import { useEvmAddress } from "@coinbase/cdp-hooks";
+import { useUser } from "@privy-io/react-auth";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
@@ -19,8 +19,8 @@ interface VaultProviderProps {
 
 export function VaultProvider({ children }: VaultProviderProps) {
   const { address } = useAccount();
-  const safeAddress = "0x";
-  //const { evmAddress: safeAddress } = useEvmAddress();
+  const { user } = useUser();
+  const safeAddress = user?.smartWallet?.address;
 
   const [vaults, setVaults] = useState<DataPresenter | null>(null);
 
@@ -33,10 +33,9 @@ export function VaultProvider({ children }: VaultProviderProps) {
   const { data, isLoading } = vaultDataQuery;
 
   useEffect(() => {
-    //if (!hasValidAddresses || isLoading || !address) {
     if (isLoading) {
       setVaults(null);
-    } else if (data && address) {
+    } else if (data) {
       setVaults(DataWrangler({ data }));
     }
   }, [isLoading, data, address, hasValidAddresses]);
