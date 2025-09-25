@@ -6,7 +6,7 @@ import { useIsMobile } from "../hooks/use-is-mobile";
 
 const items = [
   { to: "/funds", label: "Funds" },
-  { to: "/deposit", label: "Deposit" },
+  { to: "/fund-operate", label: "Fund Operate" },
   { to: "/portfolio", label: "Portfolio" },
 ];
 

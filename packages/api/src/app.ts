@@ -10,7 +10,6 @@ import { cors } from "hono/cors";
 import env from "./env";
 import configureOpenAPI from "./lib/configure-open-api";
 import createApp from "./lib/create-app";
-import account from "./routes/account/account.index";
 import example from "./routes/example/example.index";
 import index from "./routes/index.route";
 
@@ -42,7 +41,7 @@ app.use(
  * Each route is an OpenAPIHono instance with its own definitions
  * @type {Array<import('./lib/types').AppOpenAPI>}
  */
-const routes = [index, example, account];
+const routes = [index, example];
 
 /**
  * Configures OpenAPI/Swagger documentation for the API
@@ -64,11 +63,7 @@ routes.forEach((route) => {
  * - /example : Example route that demonstrates basic endpoint structure
  * @type {import('./lib/types').AppOpenAPI}
  */
-const apiRoutes = app
-  .basePath("/api")
-  .route("/", index)
-  .route("/example", example)
-  .route("/account", account);
+const apiRoutes = app.basePath("/api").route("/", index).route("/example", example);
 
 /**
  * Exported type that represents the API route structure

@@ -1,16 +1,12 @@
-import { LogInIcon } from "lucide-react";
-import React, { useState } from "react";
-import { Button, Modal } from "..";
-import { useAuth } from "../hooks/use-auth";
+import React from "react";
+
 import { useIsMobile } from "../hooks/use-is-mobile";
-import ConnectedIcon from "../icons/ConnectedIcon";
 import BrandHeader from "./BrandHeader";
 import NavBar from "./NavBar";
+import WalletService from "./WalletService";
 
 const Header: React.FC = () => {
   const isMobile = useIsMobile();
-  const { isSignedIn, evmAddress, signOut } = useAuth();
-  const [openModal, setOpenModal] = useState(false);
 
   return (
     <header className="w-full bg-textDark py-3 px-2">
@@ -19,62 +15,8 @@ const Header: React.FC = () => {
           <BrandHeader />
           {!isMobile && <NavBar />}
         </div>
-        <div className="flex items-center">
-          {isMobile ? (
-            <NavBar />
-          ) : isSignedIn ? (
-            <Button
-              onClick={() => {
-                setOpenModal(true);
-              }}
-              variant="secondary"
-              className="text-sm"
-            >
-              <ConnectedIcon />
-              {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
-            </Button>
-          ) : (
-            <Button onClick={() => {}} className="text-sm px-4">
-              <LogInIcon size={14} className="w-4 h-4" />
-              <span className="inline">Log In</span>
-            </Button>
-          )}
-        </div>
+        <div className="flex items-center">{isMobile ? <NavBar /> : <WalletService />}</div>
       </div>
-      <Modal
-        open={openModal}
-        onClose={() => {
-          setOpenModal(false);
-        }}
-        title="Your Smart Account"
-        className="w-[480px]"
-        actions={() => (
-          <>
-            <Button
-              onClick={() => {
-                navigator.clipboard.writeText(evmAddress!);
-                setOpenModal(false);
-              }}
-              variant="secondary"
-              className="text-sm"
-            >
-              Copy address
-            </Button>
-            <Button
-              onClick={() => {
-                signOut();
-                setOpenModal(false);
-              }}
-              variant="primary"
-              className="text-sm"
-            >
-              Sign out
-            </Button>
-          </>
-        )}
-      >
-        <div className="text-center mb-4">{evmAddress}</div>
-      </Modal>
     </header>
   );
 };

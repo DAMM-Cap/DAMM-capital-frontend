@@ -5,12 +5,14 @@ import {
   DepositModal,
   Fund,
   InfoModal,
+  Label,
   TitleLabel,
 } from "@/components";
 import WithdrawModal from "@/components/custom/WithdrawModal";
 import { useVaults } from "@/context/vault-context";
 import { useDeposit } from "@/hooks/use-deposit";
 import { useWithdraw } from "@/hooks/use-withdraw";
+import { usePrivy } from "@privy-io/react-auth";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import {
   ActivityIcon,
@@ -25,7 +27,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 
 const depositSearchSchema = z.object({
-  vaultId: z.string(),
+  vaultId: z.string().optional(),
 });
 
 export const Route = createFileRoute("/fund-operate/")({
@@ -37,6 +39,8 @@ function FundOperate() {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { vaults } = useVaults();
   const selectedVault = vaults?.vaultsData?.find((v) => v.staticData.vault_id === vaultId);
+  const { authenticated } = usePrivy();
+  const isSignedIn = authenticated;
 
   const max = 1000;
   const position = selectedVault?.positionData.totalValueRaw || 0;
@@ -154,6 +158,7 @@ function FundOperate() {
     selectedVault && (
       <div className="flex flex-1 items-center justify-center">
         <div className="flex flex-col gap-4 w-full">
+          <Label label="Selected Fund" className="domain-title mb-[0.5rem]" />
           <Fund
             leftIcon={<DammStableIcon size={20} />}
             title={selectedVault.staticData.vault_name}
@@ -173,51 +178,48 @@ function FundOperate() {
             isLoading={isLoading}
             className="w-full"
           />
+          {isSignedIn && (
+            <>
+              <Label label="My position" className="domain-title mt-[1.5rem]" />
+              <TitleLabel
+                title={selectedVault.positionData.totalValue}
+                secondaryTitle={selectedVault.positionData.vaultShare}
+                label={selectedVault.positionData.claimableShares}
+              />
 
-          <TitleLabel
-            title={selectedVault.positionData.totalValue}
-            secondaryTitle={selectedVault.positionData.vaultShare}
-            label={selectedVault.positionData.claimableShares}
-          />
-
-          {/* Button custom */}
-
-          <Button
-            onClick={() => {
-              setOpenModal(true);
-              setOpenModalWhitelisting(true);
-              setOpenModalTerms(true);
-            }}
-          >
-            <LogInIcon size={16} />
-            Deposit
-          </Button>
-
-          {(selectedVault.positionData.availableToRedeemRaw &&
-            selectedVault.positionData.availableToRedeemRaw > 0) ||
-          selectedVault.staticData.vault_status !== "open" ? (
-            <Button onClick={() => handleRedeem()}>
-              <LogOutIcon size={16} />
-              <span>
-                {/* Claim  */}
-                {selectedVault.positionData.availableToRedeemRaw}{" "}
-                {selectedVault.staticData.token_symbol}
-              </span>
-            </Button>
-          ) : (
-            <Button
-              onClick={() => {
-                setOpenModalWithdraw(true);
-              }}
-              variant="secondary"
-              disabled={true}
-            >
-              <LogOutIcon size={16} />
-              Withdraw
-            </Button>
+              <Button
+                onClick={() => {
+                  setOpenModal(true);
+                  setOpenModalWhitelisting(true);
+                  setOpenModalTerms(true);
+                }}
+              >
+                <LogInIcon size={16} />
+                Deposit
+              </Button>
+              {(selectedVault.positionData.availableToRedeemRaw &&
+                selectedVault.positionData.availableToRedeemRaw > 0) ||
+              selectedVault.staticData.vault_status !== "open" ? (
+                <Button onClick={() => handleRedeem()}>
+                  <LogOutIcon size={16} />
+                  <span>
+                    {selectedVault.positionData.availableToRedeemRaw}{" "}
+                    {selectedVault.staticData.token_symbol}
+                  </span>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    setOpenModalWithdraw(true);
+                  }}
+                  variant="secondary"
+                >
+                  <LogOutIcon size={16} />
+                  Withdraw
+                </Button>
+              )}
+            </>
           )}
-
-          {/* Modal */}
           <DepositModal
             open={openModal}
             onClose={() => handleCloseModal()}
@@ -239,7 +241,6 @@ function FundOperate() {
             tokenSymbol="DUSDC"
             tokenIcon={<DammStableIcon size={20} />}
           />
-
           <WithdrawModal
             open={openModalWithdraw}
             onClose={() => setOpenModalWithdraw(false)}
@@ -257,7 +258,6 @@ function FundOperate() {
             tokenIcon={<DammStableIcon size={20} />}
             conversionValue={conversionValue}
           />
-
           <InfoModal
             open={openModalInProgress}
             onClose={() => setOpenModalInProgress(false)}
@@ -289,7 +289,6 @@ function FundOperate() {
             </a>{" "}
             using your wallet address.
           </InfoModal>
-
           <InfoModal
             open={openModalWhitelisting}
             onClose={() => setOpenModalWhitelisting(false)}
@@ -315,7 +314,6 @@ function FundOperate() {
             </a>
             .
           </InfoModal>
-
           <InfoModal
             open={openModalTerms}
             onClose={() => setOpenModalTerms(false)}

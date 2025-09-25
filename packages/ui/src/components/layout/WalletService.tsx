@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import Button from "../core/Button";
-import Modal, { ModalActionButtons, ModalContents } from "../core/Modal";
+import Modal from "../core/Modal";
 import ConnectedIcon from "../icons/ConnectedIcon";
 
 const WalletService: React.FC = () => {
@@ -68,7 +68,7 @@ const WalletService: React.FC = () => {
             onClick={() => {
               setOpenModal(true);
             }}
-            variant="secondary"
+            variant="tertiary"
             className="text-sm"
           >
             <ConnectedIcon />
@@ -93,34 +93,36 @@ const WalletService: React.FC = () => {
         }}
         title="Your Smart Account"
         className="w-[480px]"
+        actions={() => (
+          <>
+            <Button
+              onClick={() => {
+                navigator.clipboard.writeText(evmAddress!);
+                setOpenModal(false);
+              }}
+              variant="secondary"
+              className="text-sm w-full"
+            >
+              Copy address
+            </Button>
+            <Button onClick={showMfaEnrollmentModal} variant="secondary" className="text-sm w-full">
+              MFA
+            </Button>
+            <Button
+              onClick={() => {
+                logout();
+                setOpenModal(false);
+              }}
+              variant="primary"
+              className="text-sm w-full"
+              disabled={!ready || (ready && !authenticated)}
+            >
+              Sign out
+            </Button>
+          </>
+        )}
       >
-        <ModalContents>
-          <div className="text-center mb-4">{evmAddress}</div>
-        </ModalContents>
-        <ModalActionButtons>
-          <Button
-            onClick={() => {
-              navigator.clipboard.writeText(evmAddress!);
-              setOpenModal(false);
-            }}
-            variant="secondary"
-            className="text-sm"
-          >
-            Copy address
-          </Button>
-          <Button onClick={showMfaEnrollmentModal}>MFA</Button>
-          <Button
-            onClick={() => {
-              logout();
-              setOpenModal(false);
-            }}
-            variant="primary"
-            className="text-sm"
-            disabled={!ready || (ready && !authenticated)}
-          >
-            Sign out
-          </Button>
-        </ModalActionButtons>
+        <div className="text-center mb-4">{evmAddress}</div>
       </Modal>
     </>
   );

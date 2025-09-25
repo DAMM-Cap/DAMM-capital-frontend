@@ -51,6 +51,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
           variant="primary"
           isLoading={isLoading}
           disabled={isInsufficientShares || invalidAmount}
+          className="w-full"
         >
           {isInsufficientShares ? "Insufficient shares" : "Request Withdraw"}
         </Button>
