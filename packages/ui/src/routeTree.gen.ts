@@ -37,6 +37,18 @@ const FundsIndexRoute = FundsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any);
 
+const PortfolioIndexRoute = PortfolioIndexImport.update({
+  id: "/portfolio/",
+  path: "/portfolio/",
+  getParentRoute: () => rootRoute,
+} as any);
+
+const FundsIndexRoute = FundsIndexImport.update({
+  id: "/funds/",
+  path: "/funds/",
+  getParentRoute: () => rootRoute,
+} as any);
+
 const DepositIndexRoute = DepositIndexImport.update({
   id: "/deposit/",
   path: "/deposit/",
