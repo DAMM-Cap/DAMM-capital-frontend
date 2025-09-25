@@ -18,6 +18,7 @@
     "tsx": "^4.7.1"
   },
   "dependencies": {
+    "@coinbase/cdp-sdk": "^1.36.1",
     "@hono/node-server": "^1.8.0",
     "@hono/swagger-ui": "^0.5.1",
     "@hono/zod-openapi": "^0.19.2",

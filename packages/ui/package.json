@@ -15,7 +15,9 @@
     "@tanstack/router-cli": "^1.114.17",
     "lucide-react": "^0.544.0",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "viem": "^2.26.5",
+    "wagmi": "^2.14.16"
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.114.17",
