@@ -1,7 +1,7 @@
 import { useVaultData } from "@/hooks/use-vault-data";
 import { DataWrangler } from "@/lib/data/data-wrangler";
 import { DataPresenter } from "@/lib/data/types/data-presenter";
-import { useEvmAddress } from "@coinbase/cdp-hooks";
+//import { useEvmAddress } from "@coinbase/cdp-hooks";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
@@ -19,7 +19,8 @@ interface VaultProviderProps {
 
 export function VaultProvider({ children }: VaultProviderProps) {
   const { address } = useAccount();
-  const { evmAddress: safeAddress } = useEvmAddress();
+  const safeAddress = "0x";
+  //const { evmAddress: safeAddress } = useEvmAddress();
 
   const [vaults, setVaults] = useState<DataPresenter | null>(null);
 

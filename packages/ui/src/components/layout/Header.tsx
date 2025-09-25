@@ -12,6 +12,10 @@ const Header: React.FC = () => {
   const { isSignedIn, evmAddress, signOut } = useAuth();
   const [openModal, setOpenModal] = useState(false);
 
+  if (!ready) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <header className="w-full bg-textDark py-3 px-2">
       <div className="flex flex-row w-full max-w-6xl mx-auto justify-between items-center text-sm">
