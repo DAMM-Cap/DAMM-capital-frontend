@@ -17,7 +17,7 @@
 import { RequestFaucetParams } from "@/lib/types/cdp";
 import { publicClient } from "@/lib/viem";
 import { CdpClient } from "@coinbase/cdp-sdk";
-import { baseSepolia } from "viem/chains";
+import { getNetworkConfig } from "./network";
 
 export const cdpClient: CdpClient = new CdpClient({
   apiKeyId: process.env.CDP_API_KEY_ID,
@@ -26,9 +26,10 @@ export const cdpClient: CdpClient = new CdpClient({
 });
 
 export async function requestFaucetFunds(params: RequestFaucetParams) {
+  const network = getNetworkConfig().network as "ethereum-sepolia" | "base-sepolia"; // ONLY TESTNETS
   const { transactionHash } = await cdpClient.evm.requestFaucet({
     address: params.address,
-    network: baseSepolia.network,
+    network: network,
     token: params.tokenName,
   });
 

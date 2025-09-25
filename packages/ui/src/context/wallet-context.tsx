@@ -1,6 +1,7 @@
+import { cdpClient } from "@/lib/cdp";
 import { TokenKey } from "@/lib/constants";
 import { getAccessToken, initialize } from "@coinbase/cdp-core";
-import { useEvmAddress, useIsSignedIn } from "@coinbase/cdp-hooks";
+import { useCurrentUser, useEvmAddress, useIsSignedIn } from "@coinbase/cdp-hooks";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 type WalletContextType = {
@@ -20,16 +21,39 @@ const WalletContext = createContext<WalletContextType>({
 });
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
-  const { evmAddress } = useEvmAddress();
+  const { evmAddress } = useEvmAddress(); // returns the smart account if one exists, otherwise the EOA
   const { isSignedIn } = useIsSignedIn();
+  const { currentUser } = useCurrentUser();
   const [evmAddressConnected, setEvmAddressConnected] = useState<string>();
+  const [evmSmartAddressConnected, setEvmSmartAddressConnected] = useState<string>();
   const [accountId, setAccountId] = useState<string>();
   const [balances, setBalances] = useState<Partial<Record<TokenKey, string>>>({});
   const [activeToken, setActiveToken] = useState<TokenKey>("eth");
   const [isInitialized, setIsInitialized] = useState(false);
 
+  /* const validateAccount = useCallback(async () => {
+    if (evmAddressConnected && evmSmartAddressConnected) {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        console.warn("No access token available");
+        return false;
+      }
+      const endUser = await cdpClient.endUser.validateAccessToken({
+        accessToken: accessToken!,
+      });
+      if (endUser.evmSmartAccounts.length === 0) {
+        console.warn("No smart account available");
+        return false;
+      }
+      console.log("Account validated successfully");
+      return true;
+    }
+    return false;
+  }, [evmAddressConnected, evmSmartAddressConnected]); */
+
   const fetchEvmAddress = useCallback(async () => {
     try {
+      console.log(">>>>>>> currentUser", currentUser);
       // Get the user's access token
       const accessToken = await getAccessToken();
 
@@ -49,16 +73,19 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("Account API response:", res.status);
 
       if (res.ok) {
-        const { address, accountId } = await res.json();
+        const { evmEOAAddress, evmSmartAddress, accountId } = await res.json();
 
         // Validate the address matches what CDP provides
-        if (evmAddress && address !== evmAddress) {
+        /* if (evmAddress && address !== evmAddress) {
           console.warn("EVM address mismatch between CDP and API");
-        }
+        } */
 
-        setEvmAddressConnected(address);
+        setEvmAddressConnected(evmEOAAddress);
+        setEvmSmartAddressConnected(evmSmartAddress);
         setAccountId(accountId);
-        console.log("Successfully fetched address:", address, "accountId:", accountId);
+        console.log("Successfully fetched EOA Address:", evmEOAAddress);
+        console.log("Successfully fetched Smart Address:", evmSmartAddress);
+        console.log("AccountId:", accountId);
       } else {
         const errorData = await res.json().catch(() => ({}));
         console.error("Failed to fetch EVM address:", res.status, errorData);
@@ -107,6 +134,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
 
     initializeCDP();
   }, []);
+
+  /* useEffect(() => {
+    if (isSignedIn && isInitialized) validateAccount();
+  }, [validateAccount, isSignedIn, isInitialized]); */
 
   // Fetch EVM address when user signs in and CDP is initialized
   useEffect(() => {
