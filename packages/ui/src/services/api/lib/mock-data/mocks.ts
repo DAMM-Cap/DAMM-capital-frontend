@@ -1,4 +1,4 @@
-import { PositionData, VaultData, VaultDataResponse } from "@/lib/data/types/vault-data";
+import { PositionData, VaultData, VaultDataResponse } from "@/services/api/types/vault-data";
 
 export const mockedVaultData: VaultData = {
   tvl: 133000,

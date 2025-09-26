@@ -1,4 +1,4 @@
-import { IntegratedDataResponse } from "@/lib/data/types/vault-data";
+import { IntegratedDataResponse } from "@/services/api/types/vault-data";
 import { BigNumber } from "ethers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
 

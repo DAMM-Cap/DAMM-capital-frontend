@@ -1,7 +1,7 @@
 import { Button, Card, DammStableIcon, Label, TableFunds } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
-import { VaultsDataView } from "@/lib/data/types/data-presenter";
+import { VaultsDataView } from "@/services/api/types/data-presenter";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";

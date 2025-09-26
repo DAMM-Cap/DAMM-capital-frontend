@@ -1,5 +1,5 @@
-import { DataWrangler } from "@/lib/data/data-wrangler";
-import { DataPresenter } from "@/lib/data/types/data-presenter";
+import { DataWrangler } from "@/services/api/lib/data-wrangler";
+import { DataPresenter } from "@/services/api/types/data-presenter";
 import { useVaultData } from "@/services/api/use-vault-data";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useSession } from "./session-context";

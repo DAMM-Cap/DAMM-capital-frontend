@@ -1,12 +1,12 @@
 import { useSession } from "@/context/session-context";
-import IERC20ABI from "@/lib/protocols/abis/IERC20.json";
-import VaultABI from "@/lib/protocols/abis/Vault.json";
-import { getApproveTx } from "@/lib/protocols/utils/token-utils";
+import { getApproveTx } from "@/services/lagoon/utils/token-utils";
+import { EvmBatchCall, EvmCall, usePrivyTxs } from "@/services/privy/use-privy-txs";
 import { TransactionResponse } from "@ethersproject/providers";
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { Abi } from "viem";
-import { EvmBatchCall, EvmCall, usePrivyTxs } from "../privy/use-privy-txs";
+import IERC20ABI from "./abis/IERC20.json";
+import VaultABI from "./abis/Vault.json";
 
 // Filter ABI to only include the 4-parameter requestDeposit function
 const RequestDepositABI = VaultABI.filter(

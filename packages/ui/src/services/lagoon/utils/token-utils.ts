@@ -1,5 +1,5 @@
-import { getNetworkConfig } from "@/lib/network";
 import { publicClient } from "@/services/viem/viem";
+import { getNetworkConfig } from "@/shared/config/network";
 import { BigNumber, ethers } from "ethers";
 import { createWalletClient, encodeFunctionData, http } from "viem";
 import IERC20ABI from "../abis/IERC20.json";

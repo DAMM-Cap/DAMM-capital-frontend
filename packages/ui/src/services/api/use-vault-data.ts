@@ -3,10 +3,10 @@ import {
   convertIntegratedPosition,
   getNullMockedIntegratedPosition,
   IntegratedPosition,
-} from "@/lib/data/integrated-position-converter";
-import { getNullMockedVaultData } from "@/lib/data/mocks";
-import { IntegratedDataResponse, VaultDataResponse } from "@/lib/data/types/vault-data";
-import { getNetworkConfig } from "@/lib/network";
+} from "@/services/api/lib/integrated-position-converter";
+import { getNullMockedVaultData } from "@/services/api/lib/mock-data/mocks";
+import { IntegratedDataResponse, VaultDataResponse } from "@/services/api/types/vault-data";
+import { getNetworkConfig } from "@/shared/config/network";
 import { useQuery } from "@tanstack/react-query";
 
 export function useVaultData(wallet: string) {

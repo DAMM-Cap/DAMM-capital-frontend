@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { getNetworkConfig } from "@/lib/network";
+import { getNetworkConfig } from "@/shared/config/network";
 import { createPublicClient, http } from "viem";
 
 const { chain, rpcUrl } = getNetworkConfig();

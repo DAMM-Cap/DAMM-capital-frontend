@@ -1,11 +1,10 @@
 import { useSession } from "@/context/session-context";
-import { getNetworkConfig } from "@/lib/network";
-import IERC20ABI from "@/lib/protocols/abis/IERC20.json";
-import VaultABI from "@/lib/protocols/abis/Vault.json";
+import { EvmBatchCall, EvmCall, usePrivyTxs } from "@/services/privy/use-privy-txs";
 import { TransactionResponse } from "@ethersproject/providers";
 import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils";
-import { EvmBatchCall, EvmCall, usePrivyTxs } from "../privy/use-privy-txs";
+import IERC20ABI from "./abis/IERC20.json";
+import VaultABI from "./abis/Vault.json";
 
 export function useWithdraw() {
   const { isSignedIn, evmAddress: usersAccount } = useSession();

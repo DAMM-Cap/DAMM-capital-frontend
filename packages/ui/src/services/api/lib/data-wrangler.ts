@@ -4,14 +4,14 @@ import {
   StaticDataView,
   TransactionView,
   VaultDataView,
-} from "@/lib/data/types/data-presenter";
+} from "@/services/api/types/data-presenter";
 import {
   PositionData,
   StaticData,
   Transaction,
   VaultData,
   VaultDataResponse,
-} from "@/lib/data/types/vault-data";
+} from "@/services/api/types/vault-data";
 
 export function DataWrangler({ data }: { data: VaultDataResponse }): DataPresenter {
   return {

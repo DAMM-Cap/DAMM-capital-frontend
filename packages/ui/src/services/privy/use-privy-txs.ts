@@ -1,5 +1,5 @@
 import { useSession } from "@/context/session-context";
-import { getNetworkConfig } from "@/lib/network";
+import { getNetworkConfig } from "@/shared/config/network";
 import { TransactionResponse } from "@ethersproject/providers";
 import { useSendTransaction } from "@privy-io/react-auth";
 import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
