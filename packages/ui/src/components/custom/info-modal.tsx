@@ -1,6 +1,5 @@
+import { InfoLabel, Modal } from "@/components";
 import React from "react";
-import Modal from "../core/Modal";
-import InfoLabel from "./InfoLabel";
 interface InfoModalProps {
   open: boolean;
   onClose: () => void;

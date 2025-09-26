@@ -1,7 +1,6 @@
+import { Button, ConnectedIcon, Modal } from "@/components";
 import { useSession } from "@/context/session-context";
 import React, { useState } from "react";
-import ConnectedIcon from "../icons/ConnectedIcon";
-import { Button, Modal } from "../index";
 
 const Wallet: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);

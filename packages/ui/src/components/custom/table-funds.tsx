@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import { useIsMobile } from "../hooks/use-is-mobile";
-import Fund from "./Fund";
+import Fund from "./fund";
 
 interface FundData {
   leftIcon: React.ReactNode;

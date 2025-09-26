@@ -1,7 +1,7 @@
+import { Button } from "@/components";
 import { Link } from "@tanstack/react-router";
 import { LogInIcon, MenuIcon, XIcon } from "lucide-react";
 import { useState } from "react";
-import Button from "../core/Button";
 import { useIsMobile } from "../hooks/use-is-mobile";
 
 const items = [

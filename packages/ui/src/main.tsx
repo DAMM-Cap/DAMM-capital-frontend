@@ -1,8 +1,8 @@
-import ProvidersWrapper from "@/hoc/ProvidersWrapper.tsx";
+import ProvidersWrapper from "@/hoc/providers-wrapper.tsx";
 import { Buffer } from "buffer";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
+import App from "./app.tsx";
 import "./index.css";
 (window as any).Buffer ??= Buffer;
 

@@ -1,12 +1,7 @@
+import { Button, Label, Modal, TitleLabel, TokenAmountInput } from "@/components";
 import React from "react";
-import Button from "../core/Button";
-import Input from "../core/Input";
-import Label from "../core/Label";
-import Modal from "../core/Modal";
-import TitleLabel from "./TitleLabel";
-import TokenAmountInput from "./TokenAmountInput";
 
-interface DepositModalProps {
+interface WithdrawModalProps {
   open: boolean;
   onClose: () => void;
   amount: string;
@@ -15,20 +10,16 @@ interface DepositModalProps {
   max: number;
   position: number;
   positionConverted: number;
-  referralCode: string;
-  onReferralCodeChange: React.ChangeEventHandler<HTMLInputElement>;
-  onDeposit: () => void;
+  onWithdraw: () => void;
   isLoading: boolean;
-  isInsufficientBalance: boolean;
+  isInsufficientShares: boolean;
   invalidAmount: boolean;
-  invalidReferral: boolean;
-  validReferral: boolean;
   tokenSymbol: string;
   tokenIcon: React.ReactNode;
   conversionValue: number;
 }
 
-const DepositModal: React.FC<DepositModalProps> = ({
+const WithdrawModal: React.FC<WithdrawModalProps> = ({
   open,
   onClose,
   amount,
@@ -37,37 +28,33 @@ const DepositModal: React.FC<DepositModalProps> = ({
   max,
   position,
   positionConverted,
-  referralCode,
-  onReferralCodeChange,
-  onDeposit,
+  onWithdraw,
   isLoading,
-  isInsufficientBalance,
+  isInsufficientShares,
   invalidAmount,
-  invalidReferral,
-  validReferral,
   tokenSymbol,
   tokenIcon: TokenIcon,
   conversionValue,
 }) => {
   return (
     <Modal
-      title="Deposit"
+      title="Withdraw"
       open={open}
       onClose={onClose}
       actions={() => (
         <Button
-          onClick={onDeposit}
+          onClick={onWithdraw}
           variant="primary"
           isLoading={isLoading}
-          disabled={isInsufficientBalance || invalidAmount || invalidReferral}
+          disabled={isInsufficientShares || invalidAmount}
           className="w-full"
         >
-          {isInsufficientBalance ? "Insufficient balance" : "Deposit"}
+          {isInsufficientShares ? "Insufficient shares" : "Request Withdraw"}
         </Button>
       )}
     >
       <TitleLabel
-        label="My position"
+        label="My claimable shares"
         title={`${position} ${tokenSymbol}`}
         leftIcon={TokenIcon}
         secondaryTitle={`$${positionConverted}`}
@@ -86,25 +73,11 @@ const DepositModal: React.FC<DepositModalProps> = ({
         validation={invalidAmount ? "invalid" : undefined}
         validationMessage="Invalid amount"
       />
-      <Input
-        label="Referral code"
-        type="text"
-        value={referralCode}
-        noEdit={isLoading}
-        placeholder="Type here"
-        onChange={onReferralCodeChange}
-        className="w-full pt-4"
-        validation={invalidReferral ? "invalid" : validReferral ? "success" : undefined}
-        validationMessage={
-          validReferral ? "Referral address validated" : "Invalid referral address"
-        }
-      />
       <div className="flex flex-col gap-2 pt-0 pb-4">
         <Label label="Completion time" secondaryLabel="~ 48 hours" />
-        <Label label="Note: You can cancel your deposit before it's confirmed." />
       </div>
     </Modal>
   );
 };
 
-export default DepositModal;
+export default WithdrawModal;

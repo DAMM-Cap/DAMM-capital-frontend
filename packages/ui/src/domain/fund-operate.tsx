@@ -7,8 +7,8 @@ import {
   InfoModal,
   Label,
   TitleLabel,
+  WithdrawModal,
 } from "@/components";
-import WithdrawModal from "@/components/custom/WithdrawModal";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { useDeposit } from "@/services/lagoon/use-deposit";

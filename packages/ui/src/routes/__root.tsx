@@ -1,4 +1,4 @@
-import AppShell from "@/components/layout/AppShell";
+import { AppShell } from "@/components";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import React from "react";
 

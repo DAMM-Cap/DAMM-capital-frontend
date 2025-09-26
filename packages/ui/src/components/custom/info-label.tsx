@@ -1,5 +1,5 @@
+import { Label } from "@/components";
 import React from "react";
-import Label from "../core/Label";
 
 interface InfoLabelProps {
   children: React.ReactNode;

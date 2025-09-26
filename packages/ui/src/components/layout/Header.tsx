@@ -1,9 +1,9 @@
 import React from "react";
 
 import { useIsMobile } from "../hooks/use-is-mobile";
-import BrandHeader from "./BrandHeader";
-import NavBar from "./NavBar";
-import Wallet from "./Wallet";
+import BrandHeader from "./brand-header";
+import NavBar from "./nav-bar";
+import Wallet from "./wallet";
 
 const Header: React.FC = () => {
   const isMobile = useIsMobile();
