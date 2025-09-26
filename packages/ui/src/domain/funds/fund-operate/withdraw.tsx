@@ -1,4 +1,5 @@
 import { Button, DammStableIcon } from "@/components";
+import { useModal } from "@/hooks/use-modal";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import { LogOutIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -20,7 +21,11 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
 
-  const [openModalWithdraw, setOpenModalWithdraw] = useState(false);
+  const {
+    isOpen: openModalWithdraw,
+    open: setOpenModalWithdraw,
+    close: setCloseModalWithdraw,
+  } = useModal(false, { onClose: () => setIsLoading(false) });
 
   const { submitRedeem, submitRequestWithdraw } = useWithdraw();
 
@@ -66,8 +71,7 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
     // Wait for confirmation
     await tx.wait();
 
-    setIsLoading(false);
-    setOpenModalWithdraw(false);
+    setCloseModalWithdraw();
   };
 
   const handleRedeem = async () => {
@@ -87,8 +91,7 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
     // Wait for confirmation
     await tx.wait();
 
-    setIsLoading(false);
-    setOpenModalWithdraw(false);
+    setCloseModalWithdraw();
   };
 
   return (
@@ -103,7 +106,7 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
       ) : (
         <Button
           onClick={() => {
-            setOpenModalWithdraw(true);
+            setOpenModalWithdraw();
           }}
           variant="secondary"
           className="w-full"
@@ -115,7 +118,7 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
 
       <WithdrawModal
         open={openModalWithdraw}
-        onClose={() => setOpenModalWithdraw(false)}
+        onClose={() => setCloseModalWithdraw()}
         amount={amount}
         onAmountChange={(e) => setAmount(e.target.value)}
         onMaxClick={() => setAmount(max.toString())}

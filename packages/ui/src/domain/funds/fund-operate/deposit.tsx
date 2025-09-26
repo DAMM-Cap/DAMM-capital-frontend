@@ -1,4 +1,5 @@
 import { Button, DammStableIcon } from "@/components";
+import { useModal } from "@/hooks/use-modal";
 import { useDeposit } from "@/services/lagoon/use-deposit";
 import { LogInIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -28,10 +29,26 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
   const [invalidReferral, setInvalidReferral] = useState(false);
   const [validReferral, setValidReferral] = useState(false);
 
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalInProgress, setOpenModalInProgress] = useState(false);
-  const [openModalWhitelisting, setOpenModalWhitelisting] = useState(false);
-  const [openModalTerms, setOpenModalTerms] = useState(false);
+  const {
+    isOpen: openModal,
+    open: setOpenModal,
+    close: setCloseModal,
+  } = useModal(false, { onClose: () => setIsLoading(false) });
+  const {
+    isOpen: openModalInProgress,
+    open: setOpenModalInProgress,
+    toggle: toggleModalInProgress,
+  } = useModal(false);
+  const {
+    isOpen: openModalWhitelisting,
+    open: setOpenModalWhitelisting,
+    toggle: toggleModalWhitelisting,
+  } = useModal(false);
+  const {
+    isOpen: openModalTerms,
+    open: setOpenModalTerms,
+    toggle: toggleModalTerms,
+  } = useModal(false);
 
   const { submitRequestDeposit } = useDeposit();
 
@@ -40,30 +57,17 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
   }, [isLoading]);
 
   useEffect(() => {
-    if (referral.length > 0) {
-      if (referral.startsWith("0x") && referral.length >= 4) {
-        setInvalidReferral(false);
-        setValidReferral(true);
-      } else {
-        setInvalidReferral(true);
-        setValidReferral(false);
-      }
-    } else {
-      setInvalidReferral(false);
-      setValidReferral(false);
-    }
+    const hasReferral = referral.length > 0;
+    const isValid = hasReferral && referral.startsWith("0x") && referral.length >= 4;
+    setValidReferral(isValid);
+    setInvalidReferral(hasReferral && !isValid);
   }, [referral]);
 
   useEffect(() => {
     const numericAmount = Number(amount);
-    if (isNaN(numericAmount)) {
-      setInvalidAmount(true);
-      setIsInsufficientBalance(false);
-    } else {
-      setInvalidAmount(false);
-      const isInsufficientBalance = numericAmount > max;
-      setIsInsufficientBalance(isInsufficientBalance);
-    }
+    const isNanAmount = isNaN(numericAmount);
+    setInvalidAmount(isNanAmount);
+    setIsInsufficientBalance(!isNanAmount && numericAmount > max);
   }, [amount]);
 
   // Don't render if vault is not found or still loading
@@ -81,11 +85,6 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
     entranceRate,
   } = useDepositData();
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setIsLoading(false);
-  };
-
   const handleDeposit = async () => {
     setIsLoading(true);
 
@@ -102,18 +101,17 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
     // Wait for confirmation
     await tx.wait();
 
-    setIsLoading(false);
-    setOpenModal(false);
-    setOpenModalInProgress(true);
+    setCloseModal();
+    setOpenModalInProgress();
   };
 
   return (
     <div>
       <Button
         onClick={() => {
-          setOpenModal(true);
-          setOpenModalWhitelisting(true);
-          setOpenModalTerms(true);
+          setOpenModal();
+          setOpenModalWhitelisting();
+          setOpenModalTerms();
         }}
         className="w-full"
       >
@@ -122,7 +120,7 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
       </Button>
       <DepositModal
         open={openModal}
-        onClose={() => handleCloseModal()}
+        onClose={() => setCloseModal()}
         amount={amount}
         onAmountChange={(e) => setAmount(e.target.value)}
         onMaxClick={() => setAmount(max.toString())}
@@ -144,17 +142,14 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
 
       <DepositInProgressModal
         openModalInProgress={openModalInProgress}
-        setOpenModalInProgress={setOpenModalInProgress}
+        setOpenModalInProgress={toggleModalInProgress}
       />
 
       <WhitelistingModal
         openModalWhitelisting={openModalWhitelisting}
-        setOpenModalWhitelisting={setOpenModalWhitelisting}
+        setOpenModalWhitelisting={toggleModalWhitelisting}
       />
-      <AcknowledgeTermsModal
-        openModalTerms={openModalTerms}
-        setOpenModalTerms={setOpenModalTerms}
-      />
+      <AcknowledgeTermsModal openModalTerms={openModalTerms} setOpenModalTerms={toggleModalTerms} />
     </div>
   );
 }

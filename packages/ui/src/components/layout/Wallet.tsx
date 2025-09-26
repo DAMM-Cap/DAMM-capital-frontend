@@ -1,14 +1,20 @@
 import { Button, ConnectedIcon, Modal } from "@/components";
 import { useSession } from "@/context/session-context";
+import { useModal } from "@/hooks/use-modal";
 import { LogInIcon } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
 interface WalletProps {
   onClick?: () => void;
 }
 
 const Wallet: React.FC<WalletProps> = ({ onClick }) => {
-  const [openModal, setOpenModal] = useState(false);
+  const {
+    isOpen: openModal,
+    open: setOpenModal,
+    close: setCloseModal,
+  } = useModal(false, { onClose: () => onClick?.() });
+
   const { evmAddress, isSignedIn, isConnecting, showMfaModal, logout, login } = useSession();
 
   if (isConnecting) {
@@ -25,7 +31,7 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
       {isSignedIn ? (
         <Button
           onClick={() => {
-            setOpenModal(true);
+            setOpenModal();
           }}
           variant="tertiary"
           className="text-sm"
@@ -43,8 +49,7 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
       <Modal
         open={openModal}
         onClose={() => {
-          setOpenModal(false);
-          onClick?.();
+          setCloseModal();
         }}
         title="Your Smart Account"
         actions={() => (
@@ -52,8 +57,7 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
             <Button
               onClick={() => {
                 navigator.clipboard.writeText(evmAddress!);
-                setOpenModal(false);
-                onClick?.();
+                setCloseModal();
               }}
               variant="secondary"
               className="text-sm w-full"
@@ -66,8 +70,7 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
             <Button
               onClick={() => {
                 logout();
-                setOpenModal(false);
-                onClick?.();
+                setCloseModal();
               }}
               variant="primary"
               className="text-sm w-full"
