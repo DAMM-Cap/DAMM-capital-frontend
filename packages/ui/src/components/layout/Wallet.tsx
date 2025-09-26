@@ -1,8 +1,13 @@
 import { Button, ConnectedIcon, Modal } from "@/components";
 import { useSession } from "@/context/session-context";
+import { LogInIcon } from "lucide-react";
 import React, { useState } from "react";
 
-const Wallet: React.FC = () => {
+interface WalletProps {
+  onClick?: () => void;
+}
+
+const Wallet: React.FC<WalletProps> = ({ onClick }) => {
   const [openModal, setOpenModal] = useState(false);
   const { evmAddress, isSignedIn, isConnecting, showMfaModal, logout, login } = useSession();
 
@@ -17,38 +22,38 @@ const Wallet: React.FC = () => {
 
   return (
     <>
-      <div>
-        {isSignedIn ? (
-          <Button
-            onClick={() => {
-              setOpenModal(true);
-            }}
-            variant="tertiary"
-            className="text-sm"
-          >
-            <ConnectedIcon />
-            {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
-          </Button>
-        ) : (
-          <Button onClick={login} className="text-sm">
-            Sign in
-          </Button>
-        )}
-      </div>
+      {isSignedIn ? (
+        <Button
+          onClick={() => {
+            setOpenModal(true);
+          }}
+          variant="tertiary"
+          className="text-sm"
+        >
+          <ConnectedIcon />
+          {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
+        </Button>
+      ) : (
+        <Button onClick={login} className="text-sm">
+          <LogInIcon size={16} />
+          Log in
+        </Button>
+      )}
 
       <Modal
         open={openModal}
         onClose={() => {
           setOpenModal(false);
+          onClick?.();
         }}
         title="Your Smart Account"
-        className="w-[480px]"
         actions={() => (
           <>
             <Button
               onClick={() => {
                 navigator.clipboard.writeText(evmAddress!);
                 setOpenModal(false);
+                onClick?.();
               }}
               variant="secondary"
               className="text-sm w-full"
@@ -62,6 +67,7 @@ const Wallet: React.FC = () => {
               onClick={() => {
                 logout();
                 setOpenModal(false);
+                onClick?.();
               }}
               variant="primary"
               className="text-sm w-full"

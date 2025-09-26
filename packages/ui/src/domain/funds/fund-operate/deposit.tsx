@@ -102,11 +102,9 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
     // Wait for confirmation
     await tx.wait();
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setOpenModal(false);
-      setOpenModalInProgress(true);
-    }, 2000);
+    setIsLoading(false);
+    setOpenModal(false);
+    setOpenModalInProgress(true);
   };
 
   return (

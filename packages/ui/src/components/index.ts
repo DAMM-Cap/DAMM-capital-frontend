@@ -25,3 +25,4 @@ export { default as AppShell } from "./layout/app-shell";
 export { default as Footer } from "./layout/footer";
 export { default as Header } from "./layout/header";
 export { default as NavBar } from "./layout/nav-bar";
+export { default as Wallet } from "./layout/wallet";

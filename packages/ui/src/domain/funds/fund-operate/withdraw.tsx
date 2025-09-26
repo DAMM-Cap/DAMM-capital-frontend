@@ -66,10 +66,8 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
     // Wait for confirmation
     await tx.wait();
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setOpenModalWithdraw(false);
-    }, 2000);
+    setIsLoading(false);
+    setOpenModalWithdraw(false);
   };
 
   const handleRedeem = async () => {
@@ -89,10 +87,8 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
     // Wait for confirmation
     await tx.wait();
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setOpenModalWithdraw(false);
-    }, 2000);
+    setIsLoading(false);
+    setOpenModalWithdraw(false);
   };
 
   return (

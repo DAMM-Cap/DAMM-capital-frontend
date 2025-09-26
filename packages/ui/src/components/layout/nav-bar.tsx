@@ -1,6 +1,6 @@
-import { Button } from "@/components";
+import { Button, Wallet } from "@/components";
 import { Link } from "@tanstack/react-router";
-import { LogInIcon, MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { useIsMobile } from "../hooks/use-is-mobile";
 
@@ -88,10 +88,7 @@ export default function NavBar() {
               </Link>
             ))}
             <div className="pt-2 border-t border-secondary">
-              <Button onClick={() => {}} className="w-full">
-                <LogInIcon size={16} />
-                Log In
-              </Button>
+              <Wallet onClick={() => setIsMobileMenuOpen(false)} />
             </div>
           </nav>
         </div>

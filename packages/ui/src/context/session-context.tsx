@@ -35,20 +35,22 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (ready) {
-      if (user && authenticated) {
-        const wallet = user?.wallet?.address || undefined;
-        const smartAccount = user?.smartWallet?.address || undefined;
+    if (!ready) {
+      return;
+    }
 
-        setIsSmartAccount(!!smartAccount);
-        setEvmAddress(!!smartAccount ? smartAccount! : wallet!);
-        setIsSignedIn(true);
-        setIsConnecting(false);
-      } else {
-        setIsSignedIn(false);
-        setEvmAddress("");
-        setIsConnecting(false);
-      }
+    if (user && authenticated) {
+      const wallet = user?.wallet?.address || undefined;
+      const smartAccount = user?.smartWallet?.address || undefined;
+
+      setIsSmartAccount(!!smartAccount);
+      setEvmAddress(!!smartAccount ? smartAccount! : wallet!);
+      setIsSignedIn(true);
+      setIsConnecting(false);
+    } else {
+      setIsSignedIn(false);
+      setEvmAddress("");
+      setIsConnecting(false);
     }
   }, [ready, user, authenticated]);
 
