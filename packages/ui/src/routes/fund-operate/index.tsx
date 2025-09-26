@@ -1,4 +1,4 @@
-import FundOperate from "@/domain/fund-operate";
+import FundOperate from "@/domain/funds/fund-operate";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
