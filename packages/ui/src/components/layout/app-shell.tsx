@@ -1,9 +1,8 @@
-import Footer from "./Footer";
-import Header from "./Header";
+import { Footer, Header } from "@/components";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col min-h-screen bg-background-light dark:bg-textDark text-foreground-light dark:text-foreground">
+    <div className="flex flex-col ml-16 mr-16 mt-2 min-h-screen bg-background-light dark:bg-textDark text-foreground-light dark:text-foreground">
       {/* Header */}
       <Header />
 

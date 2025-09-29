@@ -1,6 +1,6 @@
+import { Input } from "@/components";
 import { ArrowRightLeftIcon as ConversionIcon } from "lucide-react";
 import React from "react";
-import Input from "../core/Input";
 
 interface TokenAmountInputProps {
   tokenLabel: string;

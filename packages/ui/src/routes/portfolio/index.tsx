@@ -1,9 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
+import Portfolio from "@/domain/portfolio/portfolio";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/portfolio/')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  return <div>Hello "/portfolio/"!</div>
-}
+export const Route = createFileRoute("/portfolio/")({
+  component: Portfolio,
+});

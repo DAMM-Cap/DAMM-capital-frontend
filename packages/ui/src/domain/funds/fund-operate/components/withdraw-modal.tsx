@@ -1,9 +1,5 @@
+import { Button, Label, Modal, TitleLabel, TokenAmountInput } from "@/components";
 import React from "react";
-import Button from "../core/Button";
-import Label from "../core/Label";
-import Modal from "../core/Modal";
-import TitleLabel from "./TitleLabel";
-import TokenAmountInput from "./TokenAmountInput";
 
 interface WithdrawModalProps {
   open: boolean;
@@ -51,6 +47,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
           variant="primary"
           isLoading={isLoading}
           disabled={isInsufficientShares || invalidAmount}
+          className="w-full"
         >
           {isInsufficientShares ? "Insufficient shares" : "Request Withdraw"}
         </Button>

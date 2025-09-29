@@ -6,12 +6,12 @@
  * @module app
  */
 
-import createApp from "./lib/create-app";
-import env from "./env";
 import { cors } from "hono/cors";
+import env from "./env";
 import configureOpenAPI from "./lib/configure-open-api";
-import index from "./routes/index.route";
+import createApp from "./lib/create-app";
 import example from "./routes/example/example.index";
+import index from "./routes/index.route";
 
 /**
  * Main Hono application instance

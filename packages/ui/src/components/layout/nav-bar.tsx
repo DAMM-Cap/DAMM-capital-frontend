@@ -1,14 +1,15 @@
+import { Button, Wallet } from "@/components";
 import { Link } from "@tanstack/react-router";
-import { LogInIcon, MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon } from "lucide-react";
 import { useState } from "react";
-import Button from "../core/Button";
 import { useIsMobile } from "../hooks/use-is-mobile";
 
-const items = [
+const itemsLeft = [
   { to: "/funds", label: "Funds" },
-  { to: "/deposit", label: "Deposit" },
   { to: "/portfolio", label: "Portfolio" },
 ];
+
+const itemsRight = [{ to: "/my-wallet", label: "My Wallet" }];
 
 export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,24 +19,44 @@ export default function NavBar() {
     <div className="relative">
       {/* Desktop Navigation */}
       {!isMobile && (
-        <nav aria-label="Main" className="flex items-center gap-8">
-          {items.map((it) => (
-            <Link
-              key={it.to}
-              to={it.to}
-              className="transition-colors hover:text-linkHover text-base"
-              activeOptions={{ exact: false }}
-              activeProps={{
-                className: "!text-primary hover:!text-linkHover",
-                "aria-current": "page",
-              }}
-              inactiveProps={{ className: "text-textLight" }}
-              preload="intent"
-            >
-              {it.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex items-center w-full justify-between px-8">
+          <nav aria-label="MainLeft" className="flex items-center gap-8">
+            {itemsLeft.map((it) => (
+              <Link
+                key={it.to}
+                to={it.to}
+                className="transition-colors hover:text-linkHover text-base"
+                activeOptions={{ exact: false }}
+                activeProps={{
+                  className: "!text-primary hover:!text-linkHover",
+                  "aria-current": "page",
+                }}
+                inactiveProps={{ className: "text-textLight" }}
+                preload="intent"
+              >
+                {it.label}
+              </Link>
+            ))}
+          </nav>
+          <nav aria-label="MainRight" className="flex items-center gap-8">
+            {itemsRight.map((it) => (
+              <Link
+                key={it.to}
+                to={it.to}
+                className="transition-colors hover:text-linkHover text-base"
+                activeOptions={{ exact: false }}
+                activeProps={{
+                  className: "!text-primary hover:!text-linkHover",
+                  "aria-current": "page",
+                }}
+                inactiveProps={{ className: "text-textLight" }}
+                preload="intent"
+              >
+                {it.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       )}
 
       {/* Mobile Menu Button */}
@@ -49,7 +70,7 @@ export default function NavBar() {
       {isMobileMenuOpen && (
         <div className="absolute top-full right-0 bg-textDark border border-secondary rounded-lg shadow-lg z-50 min-w-[200px]">
           <nav className="flex flex-col p-4 space-y-2">
-            {items.map((it) => (
+            {itemsLeft.concat(itemsRight).map((it) => (
               <Link
                 key={it.to}
                 to={it.to}
@@ -67,10 +88,7 @@ export default function NavBar() {
               </Link>
             ))}
             <div className="pt-2 border-t border-secondary">
-              <Button onClick={() => {}} className="w-full">
-                <LogInIcon size={16} />
-                Log In
-              </Button>
+              <Wallet onClick={() => setIsMobileMenuOpen(false)} />
             </div>
           </nav>
         </div>

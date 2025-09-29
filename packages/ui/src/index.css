@@ -44,6 +44,21 @@ html, body {
   min-height: 100vh;
   background-color: #09090B;
   color: #F7FEE7;
+  --privy-color-background: #09090B;
+  --privy-color-background-2: #18181B;
+  --privy-color-background-3: #18181BCC;
+  --privy-color-foreground: #F7FEE7;
+  --privy-color-foreground-2: #505050;
+  --privy-color-foreground-3: #BDBDBD;
+  --privy-color-foreground-4: #BDBDBD;
+  --privy-color-foreground-accent: #A3E635;
+  --privy-color-accent: #A3E635;
+  --privy-color-accent-light: #84CC16;
+  --privy-color-accent-lightest: #84CC16;
+  --privy-color-accent-dark: #A3E635;
+  --privy-color-accent-darkest: #A3E635;
+  --privy-color-success: #14B8A6;
+  --privy-color-error: #EF4444;
 }
 
 a {

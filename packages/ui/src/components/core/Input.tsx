@@ -1,8 +1,7 @@
+import { Button, CircledExclamationIcon } from "@/components";
 import clsx from "clsx";
 import { AlertCircleIcon as AlertIcon, CheckIcon } from "lucide-react";
 import React from "react";
-import CircledExclamationIcon from "../icons/CircledExclamationIcon";
-import Button from "./Button";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: "text" | "email" | "password" | "number";

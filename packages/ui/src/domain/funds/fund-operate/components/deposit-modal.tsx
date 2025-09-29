@@ -1,10 +1,5 @@
+import { Button, Input, Label, Modal, TitleLabel, TokenAmountInput } from "@/components";
 import React from "react";
-import Button from "../core/Button";
-import Input from "../core/Input";
-import Label from "../core/Label";
-import Modal from "../core/Modal";
-import TitleLabel from "./TitleLabel";
-import TokenAmountInput from "./TokenAmountInput";
 
 interface DepositModalProps {
   open: boolean;
