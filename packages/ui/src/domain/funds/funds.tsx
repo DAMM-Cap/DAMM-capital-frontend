@@ -4,17 +4,14 @@ import { useVaults } from "@/context/vault-context";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Funds() {
   const navigate = useNavigate();
   const { isSignedIn } = useSession();
   const [isLoadingFund, setIsLoadingFund] = useState(false);
   const { vaults, isLoading } = useVaults();
-  const vaultsData: VaultsDataView[] | undefined = useMemo(
-    () => vaults?.vaultsData,
-    [vaults?.vaultsData],
-  );
+  const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
 
   useEffect(() => {
     setIsLoadingFund(true);

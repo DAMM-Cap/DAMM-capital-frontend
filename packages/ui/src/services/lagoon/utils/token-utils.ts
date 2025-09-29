@@ -1,7 +1,6 @@
-import { publicClient } from "@/services/viem/viem";
-import { getNetworkConfig } from "@/shared/config/network";
+import { getWalletClient, publicClient } from "@/services/viem/viem";
 import { BigNumber, ethers } from "ethers";
-import { createWalletClient, encodeFunctionData, http } from "viem";
+import { encodeFunctionData } from "viem";
 import IERC20ABI from "../abis/IERC20.json";
 
 interface Call {
@@ -56,11 +55,7 @@ export async function handleApprove(
   })) as bigint;
 
   if (BigNumber.from(allowance).lt(amountInWei)) {
-    const client = createWalletClient({
-      chain: getNetworkConfig().chain,
-      transport: http(),
-      account: account,
-    });
+    const client = getWalletClient(account as `0x${string}`);
 
     // User needs to approve the vault to spend the underlying token
     const txHash = await client.writeContract({
@@ -82,11 +77,7 @@ export async function wrapNativeETH(
   amountInETH: string,
   account: `0x${string}`,
 ) {
-  const client = createWalletClient({
-    chain: getNetworkConfig().chain,
-    transport: http(),
-    account: account,
-  });
+  const client = getWalletClient(account as `0x${string}`);
 
   const amount = BigInt(ethers.utils.parseEther(amountInETH).toString());
 
@@ -107,11 +98,7 @@ export async function unwrapWETH(
   amountInWETH: string,
   account: `0x${string}`,
 ) {
-  const client = createWalletClient({
-    chain: getNetworkConfig().chain,
-    transport: http(),
-    account: account,
-  });
+  const client = getWalletClient(account as `0x${string}`);
 
   const amount = BigInt(ethers.utils.parseEther(amountInWETH).toString());
 

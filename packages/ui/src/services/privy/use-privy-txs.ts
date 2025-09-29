@@ -3,8 +3,9 @@ import { getNetworkConfig } from "@/shared/config/network";
 import { TransactionResponse } from "@ethersproject/providers";
 import { useSendTransaction } from "@privy-io/react-auth";
 import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
-import { createWalletClient, encodeFunctionData, http } from "viem";
+import { encodeFunctionData } from "viem";
 import { waitForTransactionReceipt } from "viem/actions";
+import { getWalletClient } from "../viem/viem";
 
 export type EvmCall = {
   to: `0x${string}`;
@@ -27,11 +28,7 @@ export function usePrivyTxs() {
     if (!usersAccount) throw new Error("Failed account");
     if (isSmartAccount) throw new Error("Smart account detected. Wrong execution mode");
 
-    const walletClient = createWalletClient({
-      chain: networkConfig.chain,
-      transport: http(),
-      account: usersAccount as `0x${string}`,
-    });
+    const walletClient = getWalletClient(usersAccount as `0x${string}`);
 
     var txResponse: TransactionResponse | undefined;
 

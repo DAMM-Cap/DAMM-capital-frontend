@@ -8,6 +8,7 @@ import { getNullMockedVaultData } from "@/services/api/lib/mock-data/mocks";
 import { IntegratedDataResponse, VaultDataResponse } from "@/services/api/types/vault-data";
 import { getNetworkConfig } from "@/shared/config/network";
 import { useQuery } from "@tanstack/react-query";
+import { isAddress } from "viem";
 
 export function useVaultData(wallet: string) {
   const network = getNetworkConfig().chain;
@@ -52,10 +53,9 @@ export function useVaultData(wallet: string) {
       }
     },
     enabled:
-      typeof wallet === "string" &&
-      wallet.length > 0 &&
-      wallet.trim() !== "" &&
-      wallet.startsWith("0x") &&
+      // When wallet is 0x the user is not connected but we still want to get the funds data
+      // When wallet is not 0x the connected wallet is validated before fetching the data
+      (isAddress(wallet) || wallet === "0x") &&
       localStorage.getItem("disconnect_requested") !== "true", // Don't poll if disconnect was requested
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchInterval: 5000, // Poll every 5 seconds
