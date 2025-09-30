@@ -81,6 +81,53 @@ export default function Funds() {
         ))}
       </Table>
 
+      {/* <Table
+        tableHeaders={[
+          { label: "Name", className: "text-left" },
+          { label: "Net APY", className: "text-right" },
+          { label: "30 days Net APY", className: "text-right" },
+          { label: "AUM", className: "text-right" },
+          { label: "Underlying Asset", className: "text-right" },
+        ]}
+      >
+        {vaultsData?.map((fund) => (
+          <Row
+            isLoading={isLoadingFund}
+            rowFields={[
+              {
+                leftIcon: <DammStableIcon size={20} />,
+                value: fund.staticData.vault_name,
+                subtitle: fund.staticData.vault_symbol,
+                className: "text-left font-bold",
+              },
+              {
+                value: fund.vaultData.apr.toString(),
+                className: "text-right",
+              },
+              {
+                value: fund.vaultData.aprChange.toString(),
+                className: "text-right",
+              },
+              {
+                value: fund.vaultData.tvl.toString(),
+                className: "text-right",
+              },
+              {
+                leftIcon: (
+                  <img
+                    src={fund.staticData.vault_icon}
+                    alt={fund.staticData.vault_name}
+                    className="w-5 h-5 object-cover rounded-full"
+                  />
+                ),
+                value: fund.staticData.token_symbol,
+                className: "text-right",
+              },
+            ]}
+          />
+        ))}
+      </Table> */}
+
       {!isSignedIn && (
         <Card
           variant="fund"
