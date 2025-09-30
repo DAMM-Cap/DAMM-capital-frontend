@@ -2,6 +2,8 @@ import envParsed from "@/envParsed";
 import { base, baseSepolia, sepolia } from "viem/chains";
 
 import type { Chain } from "viem";
+import ethereumChainLogo from "../../../public/ethereum-chain-logo.png";
+import optimismChainLogo from "../../../public/optimism-chain-logo.svg";
 
 export type NetworkConfig = {
   chain: Chain;
@@ -43,4 +45,14 @@ const baseNetworkConfig: NetworkConfig = {
   chain: base,
   network: "base",
   explorerUrl: "https://basescan.org",
+};
+
+export const getChainLogo = (chain: Chain) => {
+  if (chain.id === 10) return optimismChainLogo;
+  if (chain.id === 1) return ethereumChainLogo;
+  return optimismChainLogo;
+};
+
+export const getShortAddress = (address: string) => {
+  return address?.slice(0, 6).concat("...").concat(address?.slice(-4));
 };

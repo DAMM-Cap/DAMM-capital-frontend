@@ -31,6 +31,7 @@ export default function Funds() {
       </div>
 
       <TableFunds
+        tableHeaders={["Name", "Net APY", "30 days Net APY", "AUM", "Underlying Asset"]}
         funds={
           vaultsData?.map((fund) => ({
             leftIcon: <DammStableIcon size={20} />,

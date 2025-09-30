@@ -83,11 +83,11 @@ const FundSkeleton: React.FC<{ className?: string }> = ({ className }) => {
 interface FundProps {
   leftIcon: React.ReactNode;
   title: string;
-  subtitle: string;
-  secondColumnText: string;
-  thirdColumnText: string;
-  fourthColumnText: string;
-  tokenIcon: React.ReactNode;
+  subtitle?: string;
+  secondColumnText?: string;
+  thirdColumnText?: string;
+  fourthColumnText?: string;
+  tokenIcon?: React.ReactNode;
   tokenName: string;
   className?: string;
   onClick?: () => void;
@@ -235,9 +235,18 @@ const Fund: React.FC<FundProps> = ({
 
           {/* Fifth column: Token icon and name */}
           <div className="col-span-2 w-full">
-            <div className="flex items-center gap-2">
-              <div className="flex-shrink-0">{tokenIcon}</div>
-              <div className="font-montserrat font-normal text-xs leading-none text-textLight">
+            <div
+              className={clsx("flex items-center gap-2", {
+                "justify-center": tokenIcon,
+                "justify-end": !tokenIcon,
+              })}
+            >
+              {tokenIcon && <div className="flex-shrink-0">{tokenIcon}</div>}
+              <div
+                className={clsx("font-montserrat font-normal text-xs leading-none text-textLight", {
+                  "!text-right": !tokenIcon,
+                })}
+              >
                 {tokenName}
               </div>
             </div>
