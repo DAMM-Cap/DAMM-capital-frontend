@@ -1,4 +1,4 @@
-import { Button, Label, TableFunds } from "@/components";
+import { Button, Label, Row, Table } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { useModal } from "@/hooks/use-modal";
@@ -46,26 +46,39 @@ export default function MyWallet() {
           </Button>
         </div>
       </div>
-      <TableFunds
-        tableHeaders={["Assets", "Amount"]}
-        funds={
-          vaultsData?.map((fund) => ({
-            leftIcon: (
-              <img
-                src={fund.staticData.vault_icon}
-                alt={fund.staticData.vault_name}
-                className="w-5 h-5 object-cover rounded-full"
-              />
-            ),
-            title: fund.staticData.token_symbol,
-            tokenName:
-              tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]?.availableSupply ||
-              "0",
-            onClick: () => {},
-            isLoading: isLoadingFund,
-          })) || []
-        }
-      />
+
+      <Table
+        tableHeaders={[
+          { label: "Assets", className: "text-left" },
+          { label: "Amount", className: "text-right" },
+        ]}
+      >
+        {vaultsData?.map((fund) => (
+          <Row
+            key={fund.staticData.vault_id}
+            isLoading={isLoadingFund}
+            rowFields={[
+              {
+                leftIcon: (
+                  <img
+                    src={fund.staticData.vault_icon}
+                    alt={fund.staticData.vault_name}
+                    className="w-5 h-5 object-cover rounded-full"
+                  />
+                ),
+                value: fund.staticData.token_symbol,
+                className: "text-left font-bold",
+              },
+              {
+                value:
+                  tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]
+                    ?.availableSupply || "0",
+                className: "text-right",
+              },
+            ]}
+          />
+        ))}
+      </Table>
       <ReceiveTokensDialog isOpen={isOpen} onClose={close} address={evmAddress} chain={chain} />
     </div>
   );

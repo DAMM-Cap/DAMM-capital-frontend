@@ -3,6 +3,11 @@ import type { Config } from "tailwindcss";
 
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  safelist: [
+    {
+      pattern: /grid-cols-(2|3|4|5)/,
+    },
+  ],
   theme: {
     extend: {
       screens: {

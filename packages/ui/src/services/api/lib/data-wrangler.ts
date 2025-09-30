@@ -17,8 +17,12 @@ export function DataWrangler({ data }: { data: VaultDataResponse }): DataPresent
   return {
     vaultsData: data.vaultsData.map((vault) => ({
       staticData: transformStaticData(vault.staticData),
-      vaultData: transformVaultData(vault.vaultData),
-      positionData: transformPositionData(vault.positionData),
+      vaultData: transformVaultData(vault.vaultData, vault.staticData.token_symbol),
+      positionData: transformPositionData(
+        vault.positionData,
+        vault.staticData.token_symbol,
+        vault.staticData.vault_symbol,
+      ),
     })),
     //activityData: transformActivityData(data.activityData),
   };
@@ -40,16 +44,16 @@ export function transformStaticData(staticData: StaticData): StaticDataView {
   };
 }
 
-export function transformVaultData(vaultData: VaultData): VaultDataView {
+export function transformVaultData(vaultData: VaultData, tokenSymbol: string): VaultDataView {
   return {
     tvl: `$${vaultData.tvl}`,
     tvlChange: `(${vaultData.tvlChange > 0 ? "+" : ""}${vaultData.tvlChange}%)`,
     apr: `${vaultData.apr}%`,
     aprRaw: vaultData.apr,
     aprChange: `(${Number(vaultData.aprChange) > 0 ? "+" : ""}${vaultData.aprChange}%)`,
-    valueGained: `${vaultData.valueGained} WLD`,
+    valueGained: `${vaultData.valueGained} ${tokenSymbol}`,
     valueGainedUSD: `≈ $${vaultData.valueGainedUSD}`,
-    position: `${vaultData.position} WLD`,
+    position: `${vaultData.position} ${tokenSymbol}`,
     positionRaw: vaultData.position,
     positionUSD: `≈ $${vaultData.positionUSD}`,
     entranceRate: vaultData.entranceRate,
@@ -60,19 +64,23 @@ export function transformVaultData(vaultData: VaultData): VaultDataView {
   };
 }
 
-export function transformPositionData(positionData: PositionData): PositionDataView {
+export function transformPositionData(
+  positionData: PositionData,
+  tokenSymbol: string,
+  vaultSymbol: string,
+): PositionDataView {
   return {
-    totalValue: `${positionData.totalValue} WLD`,
+    totalValue: `${positionData.totalValue} ${tokenSymbol}`,
     totalValueUSD: `≈ $${positionData.totalValueUSD}`,
     totalValueRaw: positionData.totalValue,
-    wldBalance: `${positionData.wldBalance} WLD`,
+    wldBalance: `${positionData.wldBalance} ${tokenSymbol}`,
     usdcBalance: `${positionData.usdcBalance} USDC`,
-    availableToRedeem: `${positionData.availableToRedeem} WLD`,
+    availableToRedeem: `${positionData.availableToRedeem} ${tokenSymbol}`,
     availableToRedeemRaw: positionData.availableToRedeem,
     availableToRedeemUSD: `≈ $${positionData.availableToRedeemUSD}`,
     vaultShare: `${positionData.vaultShare}%`,
-    claimableShares: `${positionData.claimableShares} vWLD`,
-    sharesInWallet: `${positionData.sharesInWallet} vWLD`,
+    claimableShares: `${positionData.claimableShares} ${vaultSymbol}`,
+    sharesInWallet: `${positionData.sharesInWallet} ${vaultSymbol}`,
   };
 }
 

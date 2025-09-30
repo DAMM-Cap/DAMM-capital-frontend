@@ -9,6 +9,7 @@ import {
   DepositModal,
   WhitelistingModal,
 } from "./components";
+import InsufficientBalanceModal from "./components/insufficient-balance-modal";
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
 
 interface DepositProps {
@@ -17,7 +18,6 @@ interface DepositProps {
 }
 
 export default function Deposit({ vaultId, handleLoading }: DepositProps) {
-  const max = 1000;
   const { useDepositData, isLoading: vaultLoading } = useFundOperateData(vaultId);
 
   const [amount, setAmount] = useState("");
@@ -28,6 +28,17 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
   const [invalidAmount, setInvalidAmount] = useState(false);
   const [invalidReferral, setInvalidReferral] = useState(false);
   const [validReferral, setValidReferral] = useState(false);
+
+  const {
+    position,
+    conversionValue,
+    vault_address,
+    token_address,
+    token_decimals,
+    fee_receiver_address,
+    entranceRate,
+    walletBalance: max,
+  } = useDepositData();
 
   const {
     isOpen: openModal,
@@ -48,6 +59,11 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
     isOpen: openModalTerms,
     open: setOpenModalTerms,
     toggle: toggleModalTerms,
+  } = useModal(false);
+  const {
+    isOpen: openModalInsufficientBalance,
+    open: setOpenModalInsufficientBalance,
+    toggle: toggleModalInsufficientBalance,
   } = useModal(false);
 
   const { submitRequestDeposit } = useDeposit();
@@ -70,21 +86,6 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
     setIsInsufficientBalance(!isNanAmount && numericAmount > max);
   }, [amount]);
 
-  // Don't render if vault is not found or still loading
-  if (vaultLoading) {
-    return null;
-  }
-
-  const {
-    position,
-    conversionValue,
-    vault_address,
-    token_address,
-    token_decimals,
-    fee_receiver_address,
-    entranceRate,
-  } = useDepositData();
-
   const handleDeposit = async () => {
     setIsLoading(true);
 
@@ -105,13 +106,24 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
     setOpenModalInProgress();
   };
 
+  // Don't render if vault is not found or still loading
+  if (vaultLoading) {
+    return null;
+  }
+
   return (
     <div>
       <Button
         onClick={() => {
-          setOpenModal();
-          setOpenModalWhitelisting();
-          setOpenModalTerms();
+          if (max === 0) {
+            setOpenModalInsufficientBalance();
+          } else {
+            setOpenModal();
+            setOpenModalTerms();
+          }
+
+          // TODO: Implement whitelisting check
+          //setOpenModalWhitelisting();
         }}
         className="w-full"
       >
@@ -150,6 +162,10 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
         setOpenModalWhitelisting={toggleModalWhitelisting}
       />
       <AcknowledgeTermsModal openModalTerms={openModalTerms} setOpenModalTerms={toggleModalTerms} />
+      <InsufficientBalanceModal
+        openModalInsufficientBalance={openModalInsufficientBalance}
+        setOpenModalInsufficientBalance={toggleModalInsufficientBalance}
+      />
     </div>
   );
 }

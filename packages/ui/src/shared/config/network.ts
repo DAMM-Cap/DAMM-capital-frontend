@@ -2,8 +2,8 @@ import envParsed from "@/envParsed";
 import { base, baseSepolia, sepolia } from "viem/chains";
 
 import type { Chain } from "viem";
-import ethereumChainLogo from "../../../public/ethereum-chain-logo.png";
-import optimismChainLogo from "../../../public/optimism-chain-logo.svg";
+import ethereumChainLogo from "/ethereum-chain-logo.png";
+import optimismChainLogo from "/optimism-chain-logo.svg";
 
 export type NetworkConfig = {
   chain: Chain;

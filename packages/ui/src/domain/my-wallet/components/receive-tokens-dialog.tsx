@@ -1,6 +1,6 @@
 import { Button, Modal } from "@/components";
-import { getChainLogo, getShortAddress } from "@/shared/config/network";
-import { Copy } from "lucide-react";
+import { getChainLogo } from "@/shared/config/network";
+import { CopyIcon } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { Chain } from "viem";
 
@@ -17,7 +17,6 @@ export const ReceiveTokensDialog = ({
   address: evmAddress,
   chain,
 }: ReceiveTokensDialogProps) => {
-  const shortAddress = getShortAddress(evmAddress);
   const chainLogo = getChainLogo(chain);
 
   return (
@@ -35,10 +34,8 @@ export const ReceiveTokensDialog = ({
             variant="secondary"
             className="text-sm w-full"
           >
+            <CopyIcon />
             Copy address
-          </Button>
-          <Button onClick={onClose} variant="primary" className="w-full">
-            Close
           </Button>
         </>
       )}
@@ -50,19 +47,7 @@ export const ReceiveTokensDialog = ({
             <img className="w-14 h-14" src={chainLogo} />
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex flex-col">
-            <span className="text-3xl font-light">{shortAddress}</span>
-            <span className="text-xs font-medium">Address</span>
-          </div>
-          <Copy
-            className="w-8 h-8 cursor-pointer hover:text-gray-500"
-            strokeWidth={2}
-            onClick={() => {
-              navigator.clipboard.writeText(evmAddress);
-            }}
-          />
-        </div>
+        <span className="text-center text-lg">{evmAddress}</span>
       </div>
     </Modal>
   );
