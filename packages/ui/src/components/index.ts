@@ -8,6 +8,7 @@ export { default as LoadingField } from "./core/loading-field";
 export { default as Modal } from "./core/modal";
 
 // Custom Components
+export { default as Breadcrumb } from "./custom/breadcrumb";
 export { default as InfoLabel } from "./custom/info-label";
 export { default as InfoModal } from "./custom/info-modal";
 export { default as Row } from "./custom/row";

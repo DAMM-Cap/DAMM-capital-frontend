@@ -8,7 +8,8 @@ const RowSkeleton: React.FC<{
   columns: number;
   gridColsClassName: string;
   isTableMobile?: boolean;
-}> = ({ className, columns, gridColsClassName, isTableMobile }) => {
+  initialCol2X?: boolean;
+}> = ({ className, columns, gridColsClassName, isTableMobile, initialCol2X }) => {
   return (
     <div
       className={clsx(
@@ -23,18 +24,21 @@ const RowSkeleton: React.FC<{
             {Array.from({ length: columns }).map((_, i) => (
               <div
                 key={i}
-                className={clsx("w-full", { "col-span-2": i === 0, "col-span-1": i > 0 })}
+                className={clsx("w-full", {
+                  "col-span-2": i === 0 && initialCol2X,
+                  "col-span-1": i > 0 || !initialCol2X,
+                })}
               >
                 <div className={clsx("flex flex-col items-center justify-center gap-3 mb-3")}>
                   {i > 0 && <LoadingField className="h-3 w-16 mb-1" />}
                   <div className="flex !flex-row items-center justify-center gap-3">
-                    {i === 0 && (
+                    {i === 0 && initialCol2X && (
                       <>
                         <LoadingField variant="rounded" className="h-8 w-8" />
                         <LoadingField className="!h-5 !w-48" />
                       </>
                     )}
-                    {i > 0 && <LoadingField className="h-4 w-16" />}
+                    {(i > 0 || !initialCol2X) && <LoadingField className="h-4 w-16" />}
                   </div>
                 </div>
               </div>
@@ -49,8 +53,11 @@ const RowSkeleton: React.FC<{
           className={clsx("grid gap-2 items-center h-12 !rounded w-full px-4", gridColsClassName)}
         >
           {Array.from({ length: columns }).map((_, i) => (
-            <div key={i} className={clsx("w-full", i === 0 ? "col-span-4" : "col-span-2")}>
-              {i === 0 ? (
+            <div
+              key={i}
+              className={clsx("w-full", i === 0 && initialCol2X ? "col-span-4" : "col-span-2")}
+            >
+              {i === 0 && initialCol2X ? (
                 <div className="flex items-center gap-3">
                   <LoadingField variant="rounded" />
                   <LoadingField />
@@ -83,7 +90,7 @@ export interface RowProps {
 }
 
 const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading = false }) => {
-  const { isTableMobile, gridColsClassName, tableHeaders } = useTable();
+  const { isTableMobile, gridColsClassName, tableHeaders, initialCol2X, noColor } = useTable();
 
   if (isLoading) {
     return (
@@ -92,6 +99,7 @@ const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading
         columns={rowFields.length}
         gridColsClassName={gridColsClassName}
         isTableMobile={isTableMobile}
+        initialCol2X={initialCol2X}
       />
     );
   }
@@ -99,7 +107,8 @@ const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading
   return (
     <div
       className={clsx(
-        "w-full border border-disabledDark hover:border-primary bg-disabled rounded-2xl p-3 transition-colors duration-200 cursor-pointer",
+        "w-full rounded-2xl p-3 transition-colors duration-200 cursor-pointer",
+        { "border border-disabledDark hover:border-primary bg-disabled": !noColor },
         className,
       )}
       onClick={onClick}
@@ -110,12 +119,20 @@ const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading
           <div className={clsx("grid grid-cols-2 gap-2 w-full")}>
             {rowFields.map((field, index) => (
               <div
-                className={clsx("w-full", { "col-span-2": index === 0, "col-span-1": index > 0 })}
+                className={clsx("w-full", {
+                  "col-span-2": index === 0 && initialCol2X,
+                  "col-span-1": index > 0 || !initialCol2X,
+                })}
                 key={index}
               >
                 <div className={clsx("flex flex-col items-center justify-center gap-3 mb-3")}>
-                  {index > 0 && (
-                    <div className="font-montserrat font-normal text-xs leading-none text-neutral mb-1 text-center">
+                  {(index > 0 || !initialCol2X) && (
+                    <div
+                      className={clsx(
+                        "font-montserrat font-normal leading-none text-neutral mb-1 text-center",
+                        { "text-xs": !noColor, "text-sm": noColor },
+                      )}
+                    >
                       {tableHeaders[index].label}
                     </div>
                   )}
@@ -125,7 +142,7 @@ const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading
                         ? React.cloneElement(
                             field.leftIcon as React.ReactElement<{ size?: number }>,
                             {
-                              size: index === 0 ? 32 : 28,
+                              size: index === 0 && initialCol2X ? 32 : 28,
                             },
                           )
                         : field.leftIcon}
@@ -160,7 +177,10 @@ const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading
         >
           {rowFields.map((field, index) => (
             <div
-              className={clsx("col-span-1 w-full", index === 0 ? "col-span-4" : "col-span-2")}
+              className={clsx(
+                "col-span-1 w-full",
+                index === 0 && initialCol2X ? "col-span-4" : "col-span-2",
+              )}
               key={index}
             >
               <div

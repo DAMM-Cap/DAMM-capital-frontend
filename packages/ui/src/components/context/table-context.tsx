@@ -5,6 +5,8 @@ type TableCtx = {
   tableHeaders: HeaderData[];
   isTableMobile: boolean;
   gridColsClassName: string;
+  initialCol2X: boolean;
+  noColor: boolean;
 };
 export const TableContext = createContext<TableCtx | null>(null);
 

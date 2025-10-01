@@ -1,7 +1,6 @@
 import { Button, DammStableIcon } from "@/components";
 import { useModal } from "@/hooks/use-modal";
 import { useDeposit } from "@/services/lagoon/use-deposit";
-import { LogInIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   AcknowledgeTermsModal,
@@ -15,9 +14,10 @@ import { useFundOperateData } from "./hooks/use-fund-operate-data";
 interface DepositProps {
   vaultId: string;
   handleLoading: (isLoading: boolean) => void;
+  className?: string;
 }
 
-export default function Deposit({ vaultId, handleLoading }: DepositProps) {
+export default function Deposit({ vaultId, handleLoading, className }: DepositProps) {
   const { useDepositData, isLoading: vaultLoading } = useFundOperateData(vaultId);
 
   const [amount, setAmount] = useState("");
@@ -112,7 +112,7 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
   }
 
   return (
-    <div>
+    <div className={className}>
       <Button
         onClick={() => {
           if (max === 0) {
@@ -126,7 +126,6 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
         }}
         className="w-full"
       >
-        <LogInIcon size={16} />
         Deposit
       </Button>
       <DepositModal
