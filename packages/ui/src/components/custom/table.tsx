@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { TableContext } from "../context/table-context";
 import { useIsMobile } from "../hooks/use-is-mobile";
 

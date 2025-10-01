@@ -52,7 +52,7 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
   } = useModal(false);
   const {
     isOpen: openModalWhitelisting,
-    open: setOpenModalWhitelisting,
+    //open: setOpenModalWhitelisting,
     toggle: toggleModalWhitelisting,
   } = useModal(false);
   const {
@@ -118,7 +118,6 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
           if (max === 0) {
             setOpenModalInsufficientBalance();
           } else {
-            setOpenModal();
             setOpenModalTerms();
           }
 
@@ -161,7 +160,11 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
         openModalWhitelisting={openModalWhitelisting}
         setOpenModalWhitelisting={toggleModalWhitelisting}
       />
-      <AcknowledgeTermsModal openModalTerms={openModalTerms} setOpenModalTerms={toggleModalTerms} />
+      <AcknowledgeTermsModal
+        openModalTerms={openModalTerms}
+        setOpenModalTerms={toggleModalTerms}
+        handleAccept={() => setOpenModal()}
+      />
       <InsufficientBalanceModal
         openModalInsufficientBalance={openModalInsufficientBalance}
         setOpenModalInsufficientBalance={toggleModalInsufficientBalance}
