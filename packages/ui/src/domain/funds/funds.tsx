@@ -81,36 +81,40 @@ export default function Funds() {
         ))}
       </Table>
 
-      {/* <Table
+      <Table
         tableHeaders={[
           { label: "Name", className: "text-left" },
-          { label: "Net APY", className: "text-right" },
-          { label: "30 days Net APY", className: "text-right" },
-          { label: "AUM", className: "text-right" },
+          { label: "Net APY", className: "text-center" },
+          { label: "30 days Net APY", className: "text-center" },
+          { label: "AUM", className: "text-center" },
           { label: "Underlying Asset", className: "text-right" },
         ]}
       >
         {vaultsData?.map((fund) => (
           <Row
+            key={fund.staticData.vault_id}
+            onClick={() => {
+              navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
+            }}
             isLoading={isLoadingFund}
             rowFields={[
               {
                 leftIcon: <DammStableIcon size={20} />,
                 value: fund.staticData.vault_name,
                 subtitle: fund.staticData.vault_symbol,
-                className: "text-left font-bold",
+                className: "text-left font-bold text-lg",
               },
               {
                 value: fund.vaultData.apr.toString(),
-                className: "text-right",
+                className: "text-center text-primary",
               },
               {
                 value: fund.vaultData.aprChange.toString(),
-                className: "text-right",
+                className: "text-center",
               },
               {
                 value: fund.vaultData.tvl.toString(),
-                className: "text-right",
+                className: "text-center",
               },
               {
                 leftIcon: (
@@ -126,7 +130,7 @@ export default function Funds() {
             ]}
           />
         ))}
-      </Table> */}
+      </Table>
 
       {!isSignedIn && (
         <Card
