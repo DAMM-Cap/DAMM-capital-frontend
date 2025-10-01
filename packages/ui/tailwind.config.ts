@@ -5,7 +5,7 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   safelist: [
     {
-      pattern: /grid-cols-(2|3|4|5)/,
+      pattern: /grid-cols-(1|2|3|4|5|6|7|8|9|10|11|12)/,
     },
   ],
   theme: {
@@ -15,6 +15,9 @@ export default {
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
+      },
+      fontSize: {
+        "xs-sm": ["0.85rem", { lineHeight: "1rem" }],
       },
       colors: {
         primary: "var(--color-primary)",

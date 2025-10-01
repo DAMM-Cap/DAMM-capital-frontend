@@ -67,7 +67,7 @@ export default function MyWallet() {
                   />
                 ),
                 value: fund.staticData.token_symbol,
-                className: "text-left font-bold",
+                className: "text-left font-bold text-lg",
               },
               {
                 value:

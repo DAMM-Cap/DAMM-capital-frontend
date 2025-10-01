@@ -1,16 +1,14 @@
 import clsx from "clsx";
 import React from "react";
-import { useIsMobile } from "../hooks/use-is-mobile";
+import { useTable } from "../context/table-context";
 import { LoadingField } from "../index";
 
-const RowSkeleton: React.FC<{ className?: string; columns?: number }> = ({
-  className,
-  columns,
-}) => {
-  const isMobile = useIsMobile();
-
-  const cols = Math.min(Math.max(columns ?? 5, 2), 5);
-
+const RowSkeleton: React.FC<{
+  className?: string;
+  columns: number;
+  gridColsClassName: string;
+  isTableMobile?: boolean;
+}> = ({ className, columns, gridColsClassName, isTableMobile }) => {
   return (
     <div
       className={clsx(
@@ -19,24 +17,26 @@ const RowSkeleton: React.FC<{ className?: string; columns?: number }> = ({
       )}
     >
       {/* Mobile Layout */}
-      {false && isMobile && (
+      {isTableMobile && (
         <div className="block">
-          {/* Top line mimicking first cell with icon + text */}
-          <div className="flex items-center justify-center gap-3 mb-3 w-3/4 mx-auto">
-            <LoadingField variant="rounded" />
-            <LoadingField />
-          </div>
-          {/* Grid for remaining cells */}
-          <div className={clsx("grid gap-2 gap-y-3 mt-5", `grid-cols-${cols}`)}>
-            {Array.from({ length: cols }).map((_, i) => (
+          <div className={clsx("grid grid-cols-2 gap-2 w-full")}>
+            {Array.from({ length: columns }).map((_, i) => (
               <div
                 key={i}
-                className={clsx(
-                  "col-span-1",
-                  i === 0 ? "text-left" : i === cols - 1 ? "text-right" : "text-center",
-                )}
+                className={clsx("w-full", { "col-span-2": i === 0, "col-span-1": i > 0 })}
               >
-                <LoadingField className="h-3 w-16" />
+                <div className={clsx("flex flex-col items-center justify-center gap-3 mb-3")}>
+                  {i > 0 && <LoadingField className="h-3 w-16 mb-1" />}
+                  <div className="flex !flex-row items-center justify-center gap-3">
+                    {i === 0 && (
+                      <>
+                        <LoadingField variant="rounded" className="h-8 w-8" />
+                        <LoadingField className="!h-5 !w-48" />
+                      </>
+                    )}
+                    {i > 0 && <LoadingField className="h-4 w-16" />}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -44,26 +44,26 @@ const RowSkeleton: React.FC<{ className?: string; columns?: number }> = ({
       )}
 
       {/* Desktop Layout */}
-      {
-        /* !isMobile && */ <div
-          className={clsx("grid gap-2 items-center h-12 !rounded w-full px-4", `grid-cols-${cols}`)}
+      {!isTableMobile && (
+        <div
+          className={clsx("grid gap-2 items-center h-12 !rounded w-full px-4", gridColsClassName)}
         >
-          {Array.from({ length: cols }).map((_, i) => (
-            <div key={i} className="col-span-1 w-full">
+          {Array.from({ length: columns }).map((_, i) => (
+            <div key={i} className={clsx("w-full", i === 0 ? "col-span-4" : "col-span-2")}>
               {i === 0 ? (
                 <div className="flex items-center gap-3">
                   <LoadingField variant="rounded" />
                   <LoadingField />
                 </div>
               ) : (
-                <div className={clsx("w-full", i === cols - 1 ? "text-right" : "text-center")}>
+                <div className={clsx("w-full", i === columns - 1 ? "text-right" : "text-center")}>
                   <LoadingField />
                 </div>
               )}
             </div>
           ))}
         </div>
-      }
+      )}
     </div>
   );
 };
@@ -83,12 +83,17 @@ export interface RowProps {
 }
 
 const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading = false }) => {
-  const isMobile = useIsMobile();
-
-  const clamped = Math.min(Math.max(rowFields.length, 2), 5);
+  const { isTableMobile, gridColsClassName, tableHeaders } = useTable();
 
   if (isLoading) {
-    return <RowSkeleton className={className} columns={rowFields.length} />;
+    return (
+      <RowSkeleton
+        className={className}
+        columns={rowFields.length}
+        gridColsClassName={gridColsClassName}
+        isTableMobile={isTableMobile}
+      />
+    );
   }
 
   return (
@@ -99,56 +104,68 @@ const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading
       )}
       onClick={onClick}
     >
-      {/* Mobile Layout only if rowFields.length > 2 */}
-      {isMobile && rowFields.length > 2 && (
+      {/* Mobile Layout only if isMobile and rowFields.length > 2 */}
+      {isTableMobile && (
         <div className="block">
-          {rowFields.map((field, index) => (
-            <div className="flex items-center justify-center gap-3 mb-3" key={index}>
-              <div className="flex-shrink-0 flex items-center justify-center">
-                {React.isValidElement(field.leftIcon)
-                  ? React.cloneElement(field.leftIcon as React.ReactElement<{ size?: number }>, {
-                      size: 28,
-                    })
-                  : field.leftIcon}
-              </div>
-              <div className="text-center">
-                <div
-                  className={clsx(
-                    "font-montserrat font-bold text-base leading-none text-textLight",
-                    field.className,
+          <div className={clsx("grid grid-cols-2 gap-2 w-full")}>
+            {rowFields.map((field, index) => (
+              <div
+                className={clsx("w-full", { "col-span-2": index === 0, "col-span-1": index > 0 })}
+                key={index}
+              >
+                <div className={clsx("flex flex-col items-center justify-center gap-3 mb-3")}>
+                  {index > 0 && (
+                    <div className="font-montserrat font-normal text-xs leading-none text-neutral mb-1 text-center">
+                      {tableHeaders[index].label}
+                    </div>
                   )}
-                >
-                  {field.value}
-                </div>
-                {field.subtitle && (
-                  <div
-                    className={clsx(
-                      "font-montserrat font-normal text-tiny leading-none text-textLight mt-1",
-                      field.className,
-                    )}
-                  >
-                    {field.subtitle}
+                  <div className="flex items-center justify-center gap-3 mb-3">
+                    <div className="flex-shrink-0 flex items-center justify-center">
+                      {React.isValidElement(field.leftIcon)
+                        ? React.cloneElement(
+                            field.leftIcon as React.ReactElement<{ size?: number }>,
+                            {
+                              size: index === 0 ? 32 : 28,
+                            },
+                          )
+                        : field.leftIcon}
+                    </div>
+                    <div className="text-center">
+                      <div className={clsx("font-montserrat leading-none", field.className)}>
+                        {field.value}
+                      </div>
+                      {field.subtitle && (
+                        <div
+                          className={clsx(
+                            "font-montserrat font-normal text-xs-sm leading-none text-textLight mt-1 text-center",
+                            field.className,
+                          )}
+                        >
+                          {field.subtitle}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
       {/* Desktop Layout */}
-      {!(isMobile && rowFields.length > 2) && (
+      {!isTableMobile && (
         <div
-          className={clsx(
-            "grid gap-2 items-center h-12 !rounded w-full px-4",
-            `grid-cols-${clamped}`,
-          )}
+          className={clsx("grid gap-2 items-center h-12 !rounded w-full px-4", gridColsClassName)}
         >
           {rowFields.map((field, index) => (
-            <div className="col-span-1 w-full" key={index}>
+            <div
+              className={clsx("col-span-1 w-full", index === 0 ? "col-span-4" : "col-span-2")}
+              key={index}
+            >
               <div
                 className={clsx(
-                  "font-montserrat font-bold text-lg leading-none text-textLight",
+                  "font-montserrat leading-none text-textLight text-sm",
                   field.className,
                 )}
               >
@@ -164,7 +181,7 @@ const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading
                     </div>
                   )}
                   <div className="flex flex-col">
-                    <div className="font-montserrat font-bold text-lg leading-none text-textLight">
+                    <div className={clsx("font-montserrat leading-none", field.className)}>
                       {field.value}
                     </div>
                     {field.subtitle && (

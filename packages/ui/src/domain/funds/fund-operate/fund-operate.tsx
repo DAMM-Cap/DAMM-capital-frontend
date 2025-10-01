@@ -1,4 +1,4 @@
-import { DammStableIcon, Fund, Label, TitleLabel } from "@/components";
+import { DammStableIcon, Label, Row, Table, TitleLabel } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useSearch } from "@tanstack/react-router";
 import { useState } from "react";
@@ -31,25 +31,50 @@ export default function FundOperate() {
         <div className="flex flex-1 items-center justify-center">
           <div className="flex flex-col gap-4 w-full">
             <Label label="Selected Fund" className="domain-title mb-[0.5rem]" />
-            <Fund
-              leftIcon={<DammStableIcon size={20} />}
-              title={vault_name}
-              subtitle={vault_symbol}
-              secondColumnText={apr.toString()}
-              thirdColumnText={aprChange.toString()}
-              fourthColumnText={tvl.toString()}
-              tokenIcon={
-                <img
-                  src={vault_icon}
-                  alt={vault_name}
-                  className="w-5 h-5 object-cover rounded-full"
-                />
-              }
-              tokenName={token_symbol}
-              onClick={() => {}}
-              isLoading={isLoading}
-              className="w-full"
-            />
+            <Table
+              tableHeaders={[
+                { label: "Name", className: "text-left" },
+                { label: "Net APY", className: "text-center" },
+                { label: "30 days Net APY", className: "text-center" },
+                { label: "AUM", className: "text-center" },
+                { label: "Underlying Asset", className: "text-right" },
+              ]}
+            >
+              <Row
+                isLoading={isLoading}
+                rowFields={[
+                  {
+                    leftIcon: <DammStableIcon size={20} />,
+                    value: vault_name,
+                    subtitle: vault_symbol,
+                    className: "text-left font-bold text-lg",
+                  },
+                  {
+                    value: apr.toString(),
+                    className: "text-center text-primary",
+                  },
+                  {
+                    value: aprChange.toString(),
+                    className: "text-center",
+                  },
+                  {
+                    value: tvl.toString(),
+                    className: "text-center",
+                  },
+                  {
+                    leftIcon: (
+                      <img
+                        src={vault_icon}
+                        alt={vault_name}
+                        className="w-5 h-5 object-cover rounded-full"
+                      />
+                    ),
+                    value: token_symbol,
+                    className: "text-right",
+                  },
+                ]}
+              />
+            </Table>
             {isSignedIn && (
               <>
                 <Label label="My position" className="domain-title mt-[1.5rem]" />

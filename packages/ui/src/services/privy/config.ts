@@ -1,7 +1,8 @@
 import { getNetworkConfig } from "@/shared/config/network";
 import { PrivyClientConfig } from "@privy-io/react-auth";
 import { createConfig } from "@privy-io/wagmi";
-import { http } from "wagmi";
+//import { http } from "wagmi";
+import { http } from "viem";
 
 const { chain, rpcUrl } = getNetworkConfig();
 

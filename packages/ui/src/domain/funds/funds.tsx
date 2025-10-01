@@ -1,4 +1,4 @@
-import { Button, Card, DammStableIcon, Label, TableFunds } from "@/components";
+import { Button, Card, DammStableIcon, Label, Row, Table } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
@@ -30,62 +30,40 @@ export default function Funds() {
         />
       </div>
 
-      <TableFunds
-        tableHeaders={["Name", "Net APY", "30 days Net APY", "AUM", "Underlying Asset"]}
-        funds={
-          vaultsData?.map((fund) => ({
-            leftIcon: <DammStableIcon size={20} />,
-            title: fund.staticData.vault_name,
-            subtitle: fund.staticData.vault_symbol,
-            secondColumnText: fund.vaultData.apr.toString(),
-            thirdColumnText: fund.vaultData.aprChange.toString(),
-            fourthColumnText: fund.vaultData.tvl.toString(),
-            tokenIcon: (
-              <img
-                src={fund.staticData.vault_icon}
-                alt={fund.staticData.vault_name}
-                className="w-5 h-5 object-cover rounded-full"
-              />
-            ),
-            tokenName: fund.staticData.token_symbol,
-            onClick: () => {
-              navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
-            },
-            isLoading: isLoadingFund,
-          })) || []
-        }
-      />
-
-      {/* <Table
+      <Table
         tableHeaders={[
           { label: "Name", className: "text-left" },
-          { label: "Net APY", className: "text-right" },
-          { label: "30 days Net APY", className: "text-right" },
-          { label: "AUM", className: "text-right" },
+          { label: "Net APY", className: "text-center" },
+          { label: "30 days Net APY", className: "text-center" },
+          { label: "AUM", className: "text-center" },
           { label: "Underlying Asset", className: "text-right" },
         ]}
       >
         {vaultsData?.map((fund) => (
           <Row
+            key={fund.staticData.vault_id}
+            onClick={() => {
+              navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
+            }}
             isLoading={isLoadingFund}
             rowFields={[
               {
                 leftIcon: <DammStableIcon size={20} />,
                 value: fund.staticData.vault_name,
                 subtitle: fund.staticData.vault_symbol,
-                className: "text-left font-bold",
+                className: "text-left font-bold text-lg",
               },
               {
                 value: fund.vaultData.apr.toString(),
-                className: "text-right",
+                className: "text-center text-primary",
               },
               {
                 value: fund.vaultData.aprChange.toString(),
-                className: "text-right",
+                className: "text-center",
               },
               {
                 value: fund.vaultData.tvl.toString(),
-                className: "text-right",
+                className: "text-center",
               },
               {
                 leftIcon: (
@@ -101,7 +79,7 @@ export default function Funds() {
             ]}
           />
         ))}
-      </Table> */}
+      </Table>
 
       {!isSignedIn && (
         <Card
