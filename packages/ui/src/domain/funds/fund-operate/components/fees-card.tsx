@@ -1,20 +1,10 @@
 import { Card, Label, Row, Table } from "@/components";
 import { useSearch } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
 
-export default function FeesCard({
-  handleLoading,
-}: {
-  handleLoading: (isLoading: boolean) => void;
-}) {
+export default function FeesCard({ isLoading }: { isLoading: boolean }) {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
-  const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    setIsLoading(vaultLoading);
-    handleLoading(isLoading);
-  }, [isLoading]);
 
   try {
     const { token_symbol, managementFee, performanceFee, entranceRate, exitRate } = useFundData();

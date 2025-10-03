@@ -84,7 +84,7 @@ export default function Input({
           </div>
         )}
 
-        {max && onMaxClick && (
+        {!!max && onMaxClick && (
           <div className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2">
             <Button
               onClick={onMaxClick}

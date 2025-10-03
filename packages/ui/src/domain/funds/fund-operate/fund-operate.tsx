@@ -1,4 +1,4 @@
-import { Breadcrumb, Card, Label, TitleLabel } from "@/components";
+import { Breadcrumb, Label } from "@/components";
 import { useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import FeesCard from "./components/fees-card";
@@ -6,73 +6,58 @@ import FundCard from "./components/fund-card";
 import OverviewCard from "./components/overview-card";
 import RiskDisclosureCard from "./components/risk-disclosure-card";
 import ThesisCard from "./components/thesis-card";
-import Deposit from "./deposit";
+
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
-import Withdraw from "./withdraw";
+
+import { useIsMobile } from "@/components/hooks/use-is-mobile";
+import clsx from "clsx";
+import ManagementCard from "./components/management-card";
 
 export default function FundOperate() {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
   const [isLoading, setIsLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   try {
-    const { vault_name, vault_icon, token_symbol, totalValue, vaultShare, walletBalance } =
-      useFundData();
+    const { vault_name } = useFundData();
 
     return (
       !vaultLoading && (
         <>
-          <Breadcrumb vaultName={vault_name} className="-mt-8" />
-          <div className="flex flex-wrap flex-1 justify-center max-w-full gap-4">
-            <FundCard handleLoading={setIsLoading} />
+          <Breadcrumb vaultName={vault_name} className="-mt-6" />
+          <div
+            className={clsx("grid gap-4 max-w-full", {
+              "grid-cols-3": !isMobile,
+              "grid-cols-1": isMobile,
+            })}
+          >
+            <div
+              className={clsx(
+                "flex flex-col justify-start gap-4 overflow-y-auto max-h-[calc(100vh-240px)] scrollbar-visible",
+                {
+                  "col-span-2": !isMobile,
+                  "col-span-3": isMobile,
+                },
+              )}
+            >
+              <FundCard isLoading={isLoading} />
 
-            <div className="min-w-[300px] max-w-[360px] flex-1">
-              <Card variant="fund">
-                <Label label="Manage position" className="domain-title mb-1" />
-                <Label
-                  label="Deposit or withdraw from the fund"
-                  className="!text-sm text-neutral font-montserrat font-normal leading-none mb-4"
-                />
-                <TitleLabel
-                  title={totalValue}
-                  leftIcon={
-                    <img
-                      src={vault_icon}
-                      alt={vault_name}
-                      className="w-5 h-5 object-cover rounded-full"
-                    />
-                  }
-                  secondaryTitle={vaultShare}
-                  label="My position"
-                />
+              {isMobile && <ManagementCard handleLoading={setIsLoading} />}
 
-                <TitleLabel
-                  title={walletBalance.toString() + " " + token_symbol}
-                  leftIcon={
-                    <img
-                      src={vault_icon}
-                      alt={vault_name}
-                      className="w-5 h-5 object-cover rounded-full"
-                    />
-                  }
-                  label="My wallet balance"
-                  /* className="!-mt-2" */
-                />
+              <ThesisCard />
 
-                <div className="flex flex-row gap-4">
-                  <Deposit vaultId={vaultId!} handleLoading={setIsLoading} className="w-full" />
-                  <Withdraw vaultId={vaultId!} handleLoading={setIsLoading} className="w-full" />
-                </div>
-              </Card>
+              <OverviewCard />
+
+              <FeesCard isLoading={isLoading} />
+
+              <RiskDisclosureCard />
             </div>
-
-            <ThesisCard />
-
-            <OverviewCard />
-
-            <FeesCard handleLoading={setIsLoading} />
-
-            <RiskDisclosureCard />
+            {!isMobile && (
+              <div className="flex justify-end col-span-1">
+                <ManagementCard handleLoading={setIsLoading} />
+              </div>
+            )}
           </div>
         </>
       )
