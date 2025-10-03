@@ -13,13 +13,24 @@ interface WithdrawProps {
 
 export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
   const { useWithdrawData, isLoading: vaultLoading } = useFundOperateData(vaultId);
-
-  const max = 1000;
   const [amount, setAmount] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
+
+  const {
+    position,
+    conversionValue,
+    vault_address,
+    availableToRedeemRaw,
+    vault_status,
+    token_symbol,
+    token_address,
+    fee_receiver_address,
+    exitRate,
+    availableAssets: max,
+  } = useWithdrawData();
 
   const {
     isOpen: openModalWithdraw,
@@ -44,23 +55,6 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
       setIsInsufficientBalance(isInsufficientBalance);
     }
   }, [amount]);
-
-  // Don't render if vault is not found or still loading
-  if (vaultLoading) {
-    return null;
-  }
-
-  const {
-    position,
-    conversionValue,
-    vault_address,
-    availableToRedeemRaw,
-    vault_status,
-    token_symbol,
-    token_address,
-    fee_receiver_address,
-    exitRate,
-  } = useWithdrawData();
 
   const handleWithdraw = async () => {
     setIsLoading(true);
@@ -93,6 +87,11 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
 
     setCloseModalWithdraw();
   };
+
+  // Don't render if vault is not found or still loading
+  if (vaultLoading) {
+    return null;
+  }
 
   return (
     <div>

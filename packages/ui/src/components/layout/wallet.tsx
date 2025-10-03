@@ -1,6 +1,7 @@
 import { Button, ConnectedIcon, Modal } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useModal } from "@/hooks/use-modal";
+import { getShortAddress } from "@/shared/config/network";
 import { LogInIcon } from "lucide-react";
 import React from "react";
 
@@ -37,7 +38,7 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
           className="text-sm"
         >
           <ConnectedIcon />
-          {evmAddress?.slice(0, 6)}...{evmAddress?.slice(-4)}
+          {getShortAddress(evmAddress)}
         </Button>
       ) : (
         <Button onClick={login} className="text-sm">
@@ -81,7 +82,7 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
           </>
         )}
       >
-        <div className="text-center mb-4">{evmAddress}</div>
+        <div className="text-center text-lg mb-4">{evmAddress}</div>
       </Modal>
     </>
   );

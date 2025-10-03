@@ -2,12 +2,12 @@ import { Footer, Header } from "@/components";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col ml-16 mr-16 mt-2 min-h-screen bg-background-light dark:bg-textDark text-foreground-light dark:text-foreground">
+    <div className="flex flex-col ml-2 mr-2 mt-2 min-h-screen bg-background-light dark:bg-textDark text-foreground-light dark:text-foreground">
       {/* Header */}
       <Header />
 
       {/* Main Content */}
-      <main className="w-full px-3 py-4 flex-1 pb-20">
+      <main className="w-full px-3 py-4 flex-1 mt-24 pb-20">
         <div className="max-w-6xl mx-auto">
           <div className="relative">
             {/* Background gradient */}

@@ -4,11 +4,13 @@ import { ActivityIcon, BookOpenCheckIcon, GavelIcon, MapPinIcon, ScaleIcon } fro
 interface AcknowledgeTermsModalProps {
   openModalTerms: boolean;
   setOpenModalTerms: (openModalTerms: boolean) => void;
+  handleAccept: () => void;
 }
 
 export default function AcknowledgeTermsModal({
   openModalTerms,
   setOpenModalTerms,
+  handleAccept,
 }: AcknowledgeTermsModalProps) {
   if (!openModalTerms) return null;
   return (
@@ -21,7 +23,14 @@ export default function AcknowledgeTermsModal({
           <Button className="w-1/4" onClick={() => setOpenModalTerms(false)} variant="secondary">
             Reject
           </Button>
-          <Button className="w-3/4" onClick={() => setOpenModalTerms(false)} variant="primary">
+          <Button
+            className="w-3/4"
+            onClick={() => {
+              handleAccept();
+              setOpenModalTerms(false);
+            }}
+            variant="primary"
+          >
             Accept
           </Button>
         </>

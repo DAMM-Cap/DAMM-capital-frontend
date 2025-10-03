@@ -1,10 +1,14 @@
 import { useVaults } from "@/context/vault-context";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
+import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { useEffect, useState } from "react";
 
 export function useFundOperateData(vaultId: string) {
   const { vaults } = useVaults();
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
+  const { data: tokensBalance } = useTokensBalance();
+  const walletBalance = Number(tokensBalance?.vaultBalances[vaultId]?.availableSupply || 0);
+  const availableAssets = Number(tokensBalance?.vaultBalances[vaultId]?.shares || 0);
 
   useEffect(() => {
     if (vaultId && vaults?.vaultsData) {
@@ -15,7 +19,16 @@ export function useFundOperateData(vaultId: string) {
 
   function useDepositData() {
     if (!selectedVault) {
-      throw new Error("Selected vault not found");
+      return {
+        position: 0,
+        conversionValue: 0,
+        vault_address: "",
+        token_address: "",
+        token_decimals: 0,
+        fee_receiver_address: "",
+        entranceRate: 0,
+        walletBalance: 0,
+      };
     }
     return {
       position: selectedVault.positionData.totalValueRaw || 0,
@@ -25,12 +38,25 @@ export function useFundOperateData(vaultId: string) {
       token_decimals: selectedVault.staticData.token_decimals,
       fee_receiver_address: selectedVault.staticData.fee_receiver_address,
       entranceRate: selectedVault.vaultData.entranceRate,
+      walletBalance: walletBalance,
     };
   }
 
   function useWithdrawData() {
     if (!selectedVault) {
-      throw new Error("Selected vault not found");
+      return {
+        position: 0,
+        conversionValue: 0,
+        vault_address: "",
+        token_address: "",
+        token_decimals: 0,
+        fee_receiver_address: "",
+        exitRate: 0,
+        availableToRedeemRaw: 0,
+        vault_status: "",
+        token_symbol: "",
+        availableAssets: 0,
+      };
     }
     return {
       position: selectedVault.positionData.totalValueRaw || 0,
@@ -42,12 +68,28 @@ export function useFundOperateData(vaultId: string) {
       availableToRedeemRaw: selectedVault.positionData.availableToRedeemRaw || 0,
       vault_status: selectedVault.staticData.vault_status,
       token_symbol: selectedVault.staticData.token_symbol,
+      availableAssets,
     };
   }
 
   function useFundData() {
     if (!selectedVault) {
-      throw new Error("Selected vault not found");
+      return {
+        vault_name: "",
+        vault_symbol: "",
+        apr: "0",
+        aprChange: "0",
+        tvl: "0",
+        vault_icon: "",
+        token_symbol: "",
+        totalValue: "0",
+        vaultShare: "0",
+        claimableShares: "0",
+        vault_address: "",
+        token_address: "",
+        token_decimals: "0",
+        fee_receiver_address: "",
+      };
     }
     return {
       vault_name: selectedVault.staticData.vault_name,

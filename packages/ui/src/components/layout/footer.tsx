@@ -1,4 +1,5 @@
 import React from "react";
+import lagoonIcon from "/lagoon.svg";
 
 const Footer: React.FC = () => {
   return (
@@ -7,7 +8,10 @@ const Footer: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center text-xs text-textLight">
             <div>© 2025 DAMM Labs. All rights reserved.</div>
-            <div>Powered by Lagoon</div>
+            <div className="flex text-xs text-textLight">
+              <div>Powered by </div>
+              <img src={lagoonIcon} alt={lagoonIcon} className="h-4 w-auto ml-2" />
+            </div>
           </div>
         </div>
       </div>
