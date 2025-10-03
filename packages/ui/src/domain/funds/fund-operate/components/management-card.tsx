@@ -1,5 +1,6 @@
 import { Card, Label, TitleLabel } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
+import { useSession } from "@/context/session-context";
 import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
 import Deposit from "../deposit";
@@ -14,6 +15,7 @@ export default function ManagementCard({
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
   const isMobile = useIsMobile();
+  const { isSignedIn } = useSession();
 
   try {
     const { vault_name, vault_icon, token_symbol, totalValue, vaultShare, walletBalance } =
@@ -60,8 +62,18 @@ export default function ManagementCard({
             />
 
             <div className="flex flex-row gap-4">
-              <Deposit vaultId={vaultId!} handleLoading={handleLoading} className="w-full" />
-              <Withdraw vaultId={vaultId!} handleLoading={handleLoading} className="w-full" />
+              <Deposit
+                vaultId={vaultId!}
+                handleLoading={handleLoading}
+                className="w-full"
+                disabled={!isSignedIn}
+              />
+              <Withdraw
+                vaultId={vaultId!}
+                handleLoading={handleLoading}
+                className="w-full"
+                disabled={!isSignedIn}
+              />
             </div>
           </Card>
         </div>

@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React from "react";
-import { useTable } from "../context/table-context";
 import { LoadingField } from "../index";
+import { HeaderData } from "./table";
 
 const RowSkeleton: React.FC<{
   className?: string;
@@ -75,7 +75,7 @@ const RowSkeleton: React.FC<{
   );
 };
 
-interface RowField {
+export interface RowField {
   leftIcon?: React.ReactNode;
   value: string;
   subtitle?: string;
@@ -87,17 +87,30 @@ export interface RowProps {
   className?: string;
   onClick?: () => void;
   isLoading?: boolean;
+  isTableMobile?: boolean;
+  gridColsClassName?: string;
+  tableHeaders?: HeaderData[];
+  initialCol2X?: boolean;
+  noColor?: boolean;
 }
 
-const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading = false }) => {
-  const { isTableMobile, gridColsClassName, tableHeaders, initialCol2X, noColor } = useTable();
-
+const Row: React.FC<RowProps> = ({
+  rowFields,
+  className = "",
+  onClick,
+  isLoading = false,
+  isTableMobile,
+  gridColsClassName,
+  tableHeaders,
+  initialCol2X,
+  noColor,
+}) => {
   if (isLoading) {
     return (
       <RowSkeleton
         className={className}
         columns={rowFields.length}
-        gridColsClassName={gridColsClassName}
+        gridColsClassName={gridColsClassName || ""}
         isTableMobile={isTableMobile}
         initialCol2X={initialCol2X}
       />
@@ -133,7 +146,7 @@ const Row: React.FC<RowProps> = ({ rowFields, className = "", onClick, isLoading
                         { "text-xs": !noColor, "text-sm": noColor },
                       )}
                     >
-                      {tableHeaders[index].label}
+                      {tableHeaders![index].label}
                     </div>
                   )}
                   <div className="flex items-center justify-center gap-3 mb-3">

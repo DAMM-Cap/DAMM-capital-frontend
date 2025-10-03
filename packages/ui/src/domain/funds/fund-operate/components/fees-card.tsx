@@ -1,4 +1,4 @@
-import { Card, Label, Row, Table } from "@/components";
+import { Card, Label, Table } from "@/components";
 import { useSearch } from "@tanstack/react-router";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
 
@@ -23,29 +23,30 @@ export default function FeesCard({ isLoading }: { isLoading: boolean }) {
                 { label: "Entry Rate", className: "text-center" },
                 { label: "Exit Rate", className: "text-center" },
               ]}
-            >
-              <Row
-                isLoading={isLoading}
-                rowFields={[
-                  {
-                    value: managementFee.toString() + " " + token_symbol,
-                    className: "text-center font-bold text-lg",
-                  },
-                  {
-                    value: performanceFee.toString() + " " + token_symbol,
-                    className: "text-center font-bold text-lg",
-                  },
-                  {
-                    value: entranceRate.toString() + "%",
-                    className: "text-center font-bold text-lg",
-                  },
-                  {
-                    value: exitRate.toString() + "%",
-                    className: "text-center font-bold text-lg",
-                  },
-                ]}
-              />
-            </Table>
+              isLoading={isLoading}
+              rows={[
+                {
+                  rowFields: [
+                    {
+                      value: managementFee.toString() + " " + token_symbol,
+                      className: "text-center font-bold text-lg",
+                    },
+                    {
+                      value: performanceFee.toString() + " " + token_symbol,
+                      className: "text-center font-bold text-lg",
+                    },
+                    {
+                      value: entranceRate.toString() + "%",
+                      className: "text-center font-bold text-lg",
+                    },
+                    {
+                      value: exitRate.toString() + "%",
+                      className: "text-center font-bold text-lg",
+                    },
+                  ],
+                },
+              ]}
+            />
           </Card>
         </div>
       )

@@ -10,9 +10,10 @@ interface DepositProps {
   vaultId: string;
   handleLoading: (isLoading: boolean) => void;
   className?: string;
+  disabled?: boolean;
 }
 
-export default function Deposit({ vaultId, handleLoading, className }: DepositProps) {
+export default function Deposit({ vaultId, handleLoading, className, disabled }: DepositProps) {
   const { useDepositData, isLoading: vaultLoading } = useFundOperateData(vaultId);
 
   const [amount, setAmount] = useState("");
@@ -115,6 +116,7 @@ export default function Deposit({ vaultId, handleLoading, className }: DepositPr
           //setOpenModalWhitelisting();
         }}
         className="w-full"
+        disabled={disabled}
       >
         Deposit
       </Button>

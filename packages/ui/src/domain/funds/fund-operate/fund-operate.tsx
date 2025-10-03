@@ -27,18 +27,14 @@ export default function FundOperate() {
         <>
           <Breadcrumb vaultName={vault_name} className="-mt-6" />
           <div
-            className={clsx("grid gap-4 max-w-full", {
-              "grid-cols-3": !isMobile,
+            className={clsx("grid gap-8 max-w-full", {
+              "grid-cols-[2fr_1fr]": !isMobile,
               "grid-cols-1": isMobile,
             })}
           >
             <div
               className={clsx(
-                "flex flex-col justify-start gap-4 overflow-y-auto max-h-[calc(100vh-240px)] scrollbar-visible",
-                {
-                  "col-span-2": !isMobile,
-                  "col-span-3": isMobile,
-                },
+                "flex flex-col justify-start gap-4 overflow-y-auto max-h-[calc(100vh-140px)] scrollbar-visible col-span-1",
               )}
             >
               <FundCard isLoading={isLoading} />

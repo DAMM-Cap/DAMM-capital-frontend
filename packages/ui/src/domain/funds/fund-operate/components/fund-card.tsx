@@ -1,4 +1,4 @@
-import { Button, Card, DammStableIcon, Row, Table } from "@/components";
+import { Button, Card, DammStableIcon, Table } from "@/components";
 import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
 import { ExternalLinkIcon } from "lucide-react";
@@ -34,7 +34,7 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                       <img
                         src={klerosCurateIcon}
                         alt={klerosCurateIcon}
-                        className="h-4 w-auto ml-2 mr-2"
+                        className="h-4 w-auto ml-2 mr-2 hover:cursor-pointer"
                         onClick={() => {
                           window.open("https://curate.kleros.io", "_blank");
                         }}
@@ -64,29 +64,30 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                 { label: "AUM", className: "text-center" },
                 { label: "NAV", className: "text-center" },
               ]}
-            >
-              <Row
-                isLoading={isLoading}
-                rowFields={[
-                  {
-                    value: apr.toString(),
-                    className: "text-center text-primary",
-                  },
-                  {
-                    value: aprChange.toString(),
-                    className: "text-center",
-                  },
-                  {
-                    value: tvl.toString(),
-                    className: "text-center",
-                  },
-                  {
-                    value: tvl.toString(),
-                    className: "text-center",
-                  },
-                ]}
-              />
-            </Table>
+              isLoading={isLoading}
+              rows={[
+                {
+                  rowFields: [
+                    {
+                      value: apr.toString(),
+                      className: "text-center text-primary",
+                    },
+                    {
+                      value: aprChange.toString(),
+                      className: "text-center",
+                    },
+                    {
+                      value: tvl.toString(),
+                      className: "text-center",
+                    },
+                    {
+                      value: tvl.toString(),
+                      className: "text-center",
+                    },
+                  ],
+                },
+              ]}
+            />
             <Table
               noColor
               initialCol2X={false}
@@ -96,29 +97,30 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                 { label: "Settlement Frequency", className: "text-center" },
                 { label: "", className: "text-right" },
               ]}
-            >
-              <Row
-                isLoading={isLoading}
-                rowFields={[
-                  {
-                    value: apr.toString(),
-                    className: "text-center",
-                  },
-                  {
-                    value: "Optimism",
-                    className: "text-center",
-                  },
-                  {
-                    value: "Average: 48 hours",
-                    className: "text-center",
-                  },
-                  {
-                    value: "",
-                    className: "text-center",
-                  },
-                ]}
-              />
-            </Table>
+              isLoading={isLoading}
+              rows={[
+                {
+                  rowFields: [
+                    {
+                      value: apr.toString(),
+                      className: "text-center",
+                    },
+                    {
+                      value: "Optimism",
+                      className: "text-center",
+                    },
+                    {
+                      value: "Average: 48 hours",
+                      className: "text-center",
+                    },
+                    {
+                      value: "",
+                      className: "text-center",
+                    },
+                  ],
+                },
+              ]}
+            />
           </Card>
         </div>
       )

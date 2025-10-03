@@ -4,7 +4,7 @@ export default function ThesisCard() {
   return (
     <div className="flex-1 flex-col gap-4">
       <Card className="!max-w-full w-full min-w-0 !h-auto overflow-hidden" variant="fund">
-        <div className="flex flex-wrap gap-4 justify-start">
+        <div className="flex flex-wrap gap-4">
           {/* Column 1 */}
           <div className="flex-1 min-w-[300px]">
             <Label label="Thesis" className="domain-title mb-2" />

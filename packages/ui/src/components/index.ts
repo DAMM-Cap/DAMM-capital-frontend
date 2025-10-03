@@ -11,7 +11,6 @@ export { default as Modal } from "./core/modal";
 export { default as Breadcrumb } from "./custom/breadcrumb";
 export { default as InfoLabel } from "./custom/info-label";
 export { default as InfoModal } from "./custom/info-modal";
-export { default as Row } from "./custom/row";
 export { default as Table } from "./custom/table";
 export { default as TitleLabel } from "./custom/title-label";
 export { default as TokenAmountInput } from "./custom/token-amount-input";

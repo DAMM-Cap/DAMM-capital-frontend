@@ -1,4 +1,4 @@
-import { Button, Label, Row, Table } from "@/components";
+import { Button, Label, Table } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { useModal } from "@/hooks/use-modal";
@@ -46,18 +46,15 @@ export default function MyWallet() {
           </Button>
         </div>
       </div>
-
-      <Table
-        tableHeaders={[
-          { label: "Assets", className: "text-left" },
-          { label: "Amount", className: "text-right" },
-        ]}
-      >
-        {vaultsData?.map((fund) => (
-          <Row
-            key={fund.staticData.vault_id}
-            isLoading={isLoadingFund}
-            rowFields={[
+      {vaultsData && (
+        <Table
+          tableHeaders={[
+            { label: "Assets", className: "text-left" },
+            { label: "Amount", className: "text-right" },
+          ]}
+          isLoading={isLoadingFund}
+          rows={vaultsData!.map((fund) => ({
+            rowFields: [
               {
                 leftIcon: (
                   <img
@@ -75,10 +72,10 @@ export default function MyWallet() {
                     ?.availableSupply || "0",
                 className: "text-right",
               },
-            ]}
-          />
-        ))}
-      </Table>
+            ],
+          }))}
+        />
+      )}
       <ReceiveTokensDialog isOpen={isOpen} onClose={close} address={evmAddress} chain={chain} />
     </div>
   );

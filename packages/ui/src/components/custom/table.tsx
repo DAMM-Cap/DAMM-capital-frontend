@@ -1,8 +1,7 @@
 import clsx from "clsx";
 import React from "react";
-import { TableContext } from "../context/table-context";
 import { useIsMobile } from "../hooks/use-is-mobile";
-
+import Row, { RowProps } from "./row";
 export interface HeaderData {
   label: string;
   className?: string;
@@ -11,17 +10,19 @@ export interface HeaderData {
 interface TableProps {
   tableHeaders: HeaderData[];
   className?: string;
-  children?: React.ReactNode;
   initialCol2X?: boolean;
   noColor?: boolean;
+  rows?: Pick<RowProps, "rowFields" | "className" | "onClick" | "initialCol2X" | "noColor">[];
+  isLoading?: boolean;
 }
 
 const Table: React.FC<TableProps> = ({
   tableHeaders,
   className = "",
-  children,
   initialCol2X = true,
   noColor = false,
+  rows,
+  isLoading,
 }) => {
   const isMobile = useIsMobile();
 
@@ -66,11 +67,22 @@ const Table: React.FC<TableProps> = ({
       )}
 
       {/* Rows */}
-      <TableContext.Provider
-        value={{ tableHeaders, isTableMobile, gridColsClassName, initialCol2X, noColor }}
-      >
-        <div className="space-y-2">{children}</div>
-      </TableContext.Provider>
+      <div className="space-y-2">
+        {rows?.map((row, index) => (
+          <Row
+            key={index}
+            rowFields={row.rowFields}
+            isLoading={isLoading}
+            tableHeaders={tableHeaders}
+            isTableMobile={isTableMobile}
+            gridColsClassName={gridColsClassName}
+            initialCol2X={initialCol2X}
+            noColor={noColor}
+            onClick={row.onClick}
+            className={row.className}
+          />
+        ))}
+      </div>
     </div>
   );
 };
