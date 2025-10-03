@@ -76,7 +76,7 @@ const RowSkeleton: React.FC<{
 };
 
 export interface RowField {
-  leftIcon?: React.ReactNode;
+  leftIcon?: React.ComponentType<{ size?: number }>;
   value: string;
   subtitle?: string;
   className?: string;
@@ -151,14 +151,9 @@ const Row: React.FC<RowProps> = ({
                   )}
                   <div className="flex items-center justify-center gap-3 mb-3">
                     <div className="flex-shrink-0 flex items-center justify-center">
-                      {React.isValidElement(field.leftIcon)
-                        ? React.cloneElement(
-                            field.leftIcon as React.ReactElement<{ size?: number }>,
-                            {
-                              size: index === 0 && initialCol2X ? 32 : 28,
-                            },
-                          )
-                        : field.leftIcon}
+                      {field.leftIcon && (
+                        <field.leftIcon size={index === 0 && initialCol2X ? 32 : 28} />
+                      )}
                     </div>
                     <div className="text-center">
                       <div className={clsx("font-montserrat leading-none", field.className)}>
@@ -205,12 +200,7 @@ const Row: React.FC<RowProps> = ({
                 <div className="inline-flex items-center gap-2 mb-1">
                   {field.leftIcon && (
                     <div className="flex-shrink-0 flex items-center justify-center">
-                      {React.isValidElement(field.leftIcon)
-                        ? React.cloneElement(
-                            field.leftIcon as React.ReactElement<{ size?: number }>,
-                            { size: 32 },
-                          )
-                        : field.leftIcon}
+                      <field.leftIcon size={32} />
                     </div>
                   )}
                   <div className="flex flex-col">

@@ -56,7 +56,7 @@ export default function MyWallet() {
           rows={vaultsData!.map((fund) => ({
             rowFields: [
               {
-                leftIcon: (
+                leftIcon: () => (
                   <img
                     src={fund.staticData.vault_icon}
                     alt={fund.staticData.vault_name}

@@ -34,7 +34,7 @@ export default function FundOperate() {
           >
             <div
               className={clsx(
-                "flex flex-col justify-start gap-4 overflow-y-auto max-h-[calc(100vh-140px)] scrollbar-visible col-span-1",
+                "flex flex-col justify-start gap-4 overflow-y-auto max-h-content-area scrollbar-visible col-span-1",
               )}
             >
               <FundCard isLoading={isLoading} />

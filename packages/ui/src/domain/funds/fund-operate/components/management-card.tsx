@@ -58,7 +58,6 @@ export default function ManagementCard({
                 />
               }
               label="My wallet balance"
-              /* className="!-mt-2" */
             />
 
             <div className="flex flex-row gap-4">

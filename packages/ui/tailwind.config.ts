@@ -19,6 +19,9 @@ export default {
       fontSize: {
         "xs-sm": ["0.85rem", { lineHeight: "1rem" }],
       },
+      maxHeight: {
+        "content-area": "calc(100vh - 240px)",
+      },
       colors: {
         primary: "var(--color-primary)",
         secondary: "var(--color-secondary)",
