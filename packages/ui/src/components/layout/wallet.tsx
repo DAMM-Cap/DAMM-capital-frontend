@@ -4,6 +4,7 @@ import { useModal } from "@/hooks/use-modal";
 import { getShortAddress } from "@/shared/config/network";
 import { LogInIcon } from "lucide-react";
 import React from "react";
+import AcknowledgeTermsModal from "./acknowledge-terms-modal";
 
 interface WalletProps {
   onClick?: () => void;
@@ -17,6 +18,11 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
   } = useModal(false, { onClose: () => onClick?.() });
 
   const { evmAddress, isSignedIn, isConnecting, showMfaModal, logout, login } = useSession();
+  const {
+    isOpen: openModalTerms,
+    open: setOpenModalTerms,
+    toggle: toggleModalTerms,
+  } = useModal(false);
 
   if (isConnecting) {
     return (
@@ -41,11 +47,17 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
           {getShortAddress(evmAddress)}
         </Button>
       ) : (
-        <Button onClick={login} className="text-sm">
+        <Button onClick={setOpenModalTerms} className="text-sm">
           <LogInIcon size={16} />
           Log in
         </Button>
       )}
+
+      <AcknowledgeTermsModal
+        openModalTerms={openModalTerms}
+        setOpenModalTerms={toggleModalTerms}
+        handleAccept={login}
+      />
 
       <Modal
         open={openModal}

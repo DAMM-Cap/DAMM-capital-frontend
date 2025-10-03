@@ -1,13 +1,26 @@
 import { Footer, Header } from "@/components";
+import brandWaterMark from "/19_9-Transparent.png";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col ml-2 mr-2 mt-2 min-h-screen bg-background-light dark:bg-textDark text-foreground-light dark:text-foreground">
-      {/* Header */}
-      <Header />
+      {/* Sticky Header */}
+      <div className="fixed top-0 left-0 right-0 z-10">
+        <Header />
+      </div>
 
       {/* Main Content */}
-      <main className="w-full px-3 py-4 flex-1 mt-24 pb-20">
+      <main
+        className="w-full px-3 py-4 flex-1 mt-24 pb-20"
+        style={{
+          backgroundImage: `url(${brandWaterMark})`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundSize: "contain",
+          backgroundAttachment: "fixed",
+          minHeight: "calc(100vh - 96px)",
+        }}
+      >
         <div className="max-w-6xl mx-auto">
           <div className="relative">
             {/* Background gradient */}

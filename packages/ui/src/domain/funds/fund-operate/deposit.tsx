@@ -2,12 +2,7 @@ import { Button, DammStableIcon } from "@/components";
 import { useModal } from "@/hooks/use-modal";
 import { useDeposit } from "@/services/lagoon/use-deposit";
 import { useEffect, useState } from "react";
-import {
-  AcknowledgeTermsModal,
-  DepositInProgressModal,
-  DepositModal,
-  WhitelistingModal,
-} from "./components";
+import { DepositInProgressModal, DepositModal, WhitelistingModal } from "./components";
 import InsufficientBalanceModal from "./components/insufficient-balance-modal";
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
 
@@ -54,11 +49,6 @@ export default function Deposit({ vaultId, handleLoading, className }: DepositPr
     isOpen: openModalWhitelisting,
     //open: setOpenModalWhitelisting,
     toggle: toggleModalWhitelisting,
-  } = useModal(false);
-  const {
-    isOpen: openModalTerms,
-    open: setOpenModalTerms,
-    toggle: toggleModalTerms,
   } = useModal(false);
   const {
     isOpen: openModalInsufficientBalance,
@@ -118,7 +108,7 @@ export default function Deposit({ vaultId, handleLoading, className }: DepositPr
           if (max === 0) {
             setOpenModalInsufficientBalance();
           } else {
-            setOpenModalTerms();
+            setOpenModal();
           }
 
           // TODO: Implement whitelisting check
@@ -159,11 +149,7 @@ export default function Deposit({ vaultId, handleLoading, className }: DepositPr
         openModalWhitelisting={openModalWhitelisting}
         setOpenModalWhitelisting={toggleModalWhitelisting}
       />
-      <AcknowledgeTermsModal
-        openModalTerms={openModalTerms}
-        setOpenModalTerms={toggleModalTerms}
-        handleAccept={() => setOpenModal()}
-      />
+
       <InsufficientBalanceModal
         openModalInsufficientBalance={openModalInsufficientBalance}
         setOpenModalInsufficientBalance={toggleModalInsufficientBalance}
