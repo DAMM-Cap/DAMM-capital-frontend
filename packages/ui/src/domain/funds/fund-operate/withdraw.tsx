@@ -2,6 +2,7 @@ import { Button, DammStableIcon } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useModal } from "@/hooks/use-modal";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
+import clsx from "clsx";
 import { LogOutIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { WithdrawModal } from "./components";
@@ -101,7 +102,7 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
     <div className={className}>
       {(!disabled && isSignedIn && availableToRedeemRaw && availableToRedeemRaw > 0) ||
       vault_status !== "open" ? (
-        <Button onClick={() => handleRedeem()} className="w-full">
+        <Button onClick={() => handleRedeem()} className={clsx("w-full", className)}>
           <LogOutIcon size={16} />
           Withdraw
           <span className="ml-2">
@@ -114,7 +115,7 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
             setOpenModalWithdraw();
           }}
           variant="secondary"
-          className="w-full"
+          className={clsx("w-full", className)}
           disabled={disabled}
         >
           Withdraw

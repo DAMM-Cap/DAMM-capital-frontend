@@ -1,6 +1,7 @@
 import { Button, DammStableIcon } from "@/components";
 import { useModal } from "@/hooks/use-modal";
 import { useDeposit } from "@/services/lagoon/use-deposit";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { DepositInProgressModal, DepositModal, WhitelistingModal } from "./components";
 import InsufficientBalanceModal from "./components/insufficient-balance-modal";
@@ -115,7 +116,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
           // TODO: Implement whitelisting check
           //setOpenModalWhitelisting();
         }}
-        className="w-full"
+        className={clsx("w-full", className)}
         disabled={disabled}
       >
         Deposit
