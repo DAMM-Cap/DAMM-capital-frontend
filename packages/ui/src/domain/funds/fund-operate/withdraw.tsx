@@ -116,7 +116,7 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
           }}
           variant="secondary"
           className={clsx("w-full", className)}
-          disabled={disabled}
+          disabled={disabled || max === 0}
         >
           Withdraw
         </Button>

@@ -1,9 +1,10 @@
-import { Button, Card, DammStableIcon, Label, Table } from "@/components";
+import { Button, Card, DammStableIcon, Label, LoadingField, Table } from "@/components";
+import { ButtonVariant } from "@/components/core/button";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import Deposit from "@/domain/funds/fund-operate/deposit";
 import Withdraw from "@/domain/funds/fund-operate/withdraw";
 import clsx from "clsx";
-import { useFundOperateData } from "../../funds/fund-operate/hooks/use-fund-operate-data";
+import { usePortfolioData } from "../hooks/use-portfolio-data";
 import klerosCurateIcon from "/kleros-curate.svg";
 
 export default function FundCard({
@@ -15,16 +16,25 @@ export default function FundCard({
   handleIsLoading: (isLoading: boolean) => void;
   vaultId: string;
 }) {
-  const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
+  const { useFundData, isLoading: vaultLoading } = usePortfolioData(vaultId!);
   const vaultIcon = <DammStableIcon size={48} />;
   const isMobile = useIsMobile();
 
   try {
-    const { vault_name, apr, tvl, vault_icon, token_symbol } = useFundData();
+    const {
+      vault_name,
+      apr,
+      positionSize,
+      yieldEarned,
+      vault_icon,
+      token_symbol,
+      operation,
+      operationVariant,
+    } = useFundData();
     return (
       !vaultLoading && (
         <div className="flex-1 flex-col gap-4">
-          <Card variant="fund">
+          <Card variant="fund" className="hover:border-primary">
             <div className="flex flex-wrap justify-between mb-4">
               <div className="inline-flex items-center gap-2 mb-8">
                 <div className="flex-shrink-0 flex items-center justify-center">{vaultIcon}</div>
@@ -83,11 +93,11 @@ export default function FundCard({
                     {
                       rowFields: [
                         {
-                          value: tvl.toString(),
+                          value: positionSize.toString(),
                           className: "text-center text-lg font-bold",
                         },
                         {
-                          value: tvl.toString(),
+                          value: yieldEarned.toString(),
                           className: "text-center text-primary text-lg font-bold",
                         },
                         {
@@ -95,13 +105,15 @@ export default function FundCard({
                           className: "text-center text-lg font-bold",
                         },
                         {
-                          leftIcon: () => (
-                            <img
-                              src={vault_icon}
-                              alt={vault_name}
-                              className="w-5 h-5 object-cover rounded-full"
-                            />
-                          ),
+                          leftIcon: () =>
+                            !vault_icon ? null : (
+                              <img
+                                src={vault_icon}
+                                alt={vault_name}
+                                className="w-5 h-5 object-cover rounded-full"
+                              />
+                            ),
+
                           value: token_symbol,
                           className: "text-center",
                         },
@@ -118,13 +130,16 @@ export default function FundCard({
                 )}
               >
                 <Label label="Operation" className="text-center" />
-                <Button
-                  //variant="outline"
-                  variant="outline-secondary"
-                  className={clsx("!h-8", isMobile ? "w-full" : "!max-w-40")}
-                >
-                  Shares
-                </Button>
+                {isLoading ? (
+                  <LoadingField className="!h-8" />
+                ) : (
+                  <Button
+                    variant={operationVariant as ButtonVariant}
+                    className={clsx("!h-8 text-sm", isMobile ? "w-full" : "!max-w-40")}
+                  >
+                    {operation}
+                  </Button>
+                )}
                 {isMobile && (
                   <div className="flex flex-row gap-4 mt-8">
                     <Deposit

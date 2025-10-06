@@ -1,17 +1,36 @@
-import { Card, Label } from "@/components";
+import { Label } from "@/components";
 import { useSession } from "@/context/session-context";
-import { useVaults } from "@/context/vault-context";
-import { VaultsDataView } from "@/services/api/types/data-presenter";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import FundCard from "./components/fund-card";
+import FundsArea from "./components/funds-area";
+import SingleValueCard from "./components/single-value-card";
+import { usePortfolioData } from "./hooks/use-portfolio-data";
 
 export default function Portfolio() {
   const navigate = useNavigate();
   const { isSignedIn } = useSession();
   const [isLoadingFund, setIsLoadingFund] = useState(false);
-  const { vaults, isLoading } = useVaults();
-  const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
+  const { usePortfolioSingleValuesData, isLoading } = usePortfolioData();
+
+  const { tvl, yieldEarned, deposited } = usePortfolioSingleValuesData();
+
+  const singleValueCards = {
+    tvl: {
+      label: "Total Portfolio Value",
+      value: tvl.toString(),
+      className: "",
+    },
+    yieldEarned: {
+      label: "Total Yield Earned",
+      value: yieldEarned.toString(),
+      className: "!text-primary",
+    },
+    deposited: {
+      label: "Total Deposited",
+      value: deposited.toString(),
+      className: "",
+    },
+  };
 
   useEffect(() => {
     setIsLoadingFund(true);
@@ -36,32 +55,20 @@ export default function Portfolio() {
         />
       </div>
 
-      <div className="flex flex-wrap justify-between items-center gap-x-4">
-        <Card variant="fund" className="flex-1 max-w-full min-w-[320px] !my-2">
-          <Label label="Total Portfolio Value" className="domain-subtitle mb-0 !justify-center" />
-          <Label label="0" className="domain-title !justify-center" />
-        </Card>
+      <div className="overflow-y-auto max-h-content-area scrollbar-visible">
+        <div className="flex flex-wrap justify-between items-center gap-x-4">
+          {Object.values(singleValueCards).map((card, index) => (
+            <SingleValueCard
+              label={card.label}
+              value={card.value}
+              isLoading={isLoadingFund}
+              className={card.className}
+              key={index.toString()}
+            />
+          ))}
+        </div>
 
-        <Card variant="fund" className="flex-1 max-w-full min-w-[320px] !my-2">
-          <Label label="Total Yield Earned" className="domain-subtitle mb-0 !justify-center" />
-          <Label label="0" className="domain-title !justify-center !text-primary" />
-        </Card>
-
-        <Card variant="fund" className="flex-1 max-w-full min-w-[320px] !my-2">
-          <Label label="Total Deposited" className="domain-subtitle mb-0 !justify-center" />
-          <Label label="0" className="domain-title !justify-center" />
-        </Card>
-      </div>
-
-      <div className="justify-between items-center mb-10 gap-4 max-w-full">
-        {vaultsData?.map((fund) => (
-          <FundCard
-            isLoading={isLoading || isLoadingFund}
-            handleIsLoading={setIsLoadingFund}
-            vaultId={fund.staticData.vault_id}
-            key={fund.staticData.vault_id}
-          />
-        ))}
+        <FundsArea isLoading={isLoadingFund} handleIsLoading={setIsLoadingFund} />
       </div>
     </div>
   );

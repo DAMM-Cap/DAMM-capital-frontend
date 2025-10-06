@@ -1,7 +1,8 @@
 import clsx from "clsx";
 
+export type ButtonVariant = "primary" | "secondary" | "tertiary" | "outline" | "outline-secondary";
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "tertiary" | "outline" | "outline-secondary";
+  variant?: ButtonVariant;
   isLoading?: boolean;
   className?: string;
 }
