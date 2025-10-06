@@ -1,96 +1,61 @@
-import { DammStableIcon, Label, Row, Table, TitleLabel } from "@/components";
-import { useSession } from "@/context/session-context";
+import { Breadcrumb, Label } from "@/components";
 import { useSearch } from "@tanstack/react-router";
 import { useState } from "react";
-import Deposit from "./deposit";
+import FeesCard from "./components/fees-card";
+import FundCard from "./components/fund-card";
+import OverviewCard from "./components/overview-card";
+import RiskDisclosureCard from "./components/risk-disclosure-card";
+import ThesisCard from "./components/thesis-card";
+
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
-import Withdraw from "./withdraw";
+
+import { useIsMobile } from "@/components/hooks/use-is-mobile";
+import clsx from "clsx";
+import ManagementCard from "./components/management-card";
 
 export default function FundOperate() {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
-  const { isSignedIn } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   try {
-    const {
-      vault_name,
-      vault_symbol,
-      apr,
-      aprChange,
-      vault_icon,
-      token_symbol,
-      totalValue,
-      vaultShare,
-      claimableShares,
-      tvl,
-    } = useFundData();
+    const { vault_name } = useFundData();
 
     return (
       !vaultLoading && (
-        <div className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col gap-4 w-full">
-            <Label label="Selected Fund" className="domain-title mb-[0.5rem]" />
-            <Table
-              tableHeaders={[
-                { label: "Name", className: "text-left" },
-                { label: "Net APY", className: "text-center" },
-                { label: "30 days Net APY", className: "text-center" },
-                { label: "AUM", className: "text-center" },
-                { label: "Underlying Asset", className: "text-right" },
-              ]}
+        <>
+          <Breadcrumb vaultName={vault_name} className="-mt-6" />
+          <div
+            className={clsx("grid gap-8 max-w-full", {
+              "grid-cols-[2fr_1fr]": !isMobile,
+              "grid-cols-1": isMobile,
+            })}
+          >
+            <div
+              className={clsx(
+                "flex flex-col justify-start gap-4 overflow-y-auto max-h-content-area scrollbar-visible col-span-1",
+              )}
             >
-              <Row
-                isLoading={isLoading}
-                rowFields={[
-                  {
-                    leftIcon: <DammStableIcon size={20} />,
-                    value: vault_name,
-                    subtitle: vault_symbol,
-                    className: "text-left font-bold text-lg",
-                  },
-                  {
-                    value: apr.toString(),
-                    className: "text-center text-primary",
-                  },
-                  {
-                    value: aprChange.toString(),
-                    className: "text-center",
-                  },
-                  {
-                    value: tvl.toString(),
-                    className: "text-center",
-                  },
-                  {
-                    leftIcon: (
-                      <img
-                        src={vault_icon}
-                        alt={vault_name}
-                        className="w-5 h-5 object-cover rounded-full"
-                      />
-                    ),
-                    value: token_symbol,
-                    className: "text-right",
-                  },
-                ]}
-              />
-            </Table>
-            {isSignedIn && (
-              <>
-                <Label label="My position" className="domain-title mt-[1.5rem]" />
-                <TitleLabel
-                  title={totalValue}
-                  secondaryTitle={vaultShare}
-                  label={claimableShares}
-                />
+              <FundCard isLoading={isLoading} />
 
-                <Deposit vaultId={vaultId!} handleLoading={setIsLoading} />
+              {isMobile && <ManagementCard handleLoading={setIsLoading} />}
 
-                <Withdraw vaultId={vaultId!} handleLoading={setIsLoading} />
-              </>
+              <ThesisCard />
+
+              <OverviewCard />
+
+              <FeesCard isLoading={isLoading} />
+
+              <RiskDisclosureCard />
+            </div>
+            {!isMobile && (
+              <div className="flex justify-end col-span-1">
+                <ManagementCard handleLoading={setIsLoading} />
+              </div>
             )}
           </div>
-        </div>
+        </>
       )
     );
   } catch (error) {

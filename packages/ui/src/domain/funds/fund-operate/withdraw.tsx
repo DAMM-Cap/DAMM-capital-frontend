@@ -1,4 +1,5 @@
 import { Button, DammStableIcon } from "@/components";
+import { useSession } from "@/context/session-context";
 import { useModal } from "@/hooks/use-modal";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import { LogOutIcon } from "lucide-react";
@@ -9,11 +10,14 @@ import { useFundOperateData } from "./hooks/use-fund-operate-data";
 interface WithdrawProps {
   vaultId: string;
   handleLoading: (isLoading: boolean) => void;
+  className?: string;
+  disabled?: boolean;
 }
 
-export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
+export default function Withdraw({ vaultId, handleLoading, className, disabled }: WithdrawProps) {
   const { useWithdrawData, isLoading: vaultLoading } = useFundOperateData(vaultId);
   const [amount, setAmount] = useState("");
+  const { isSignedIn } = useSession();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
@@ -94,11 +98,13 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
   }
 
   return (
-    <div>
-      {(availableToRedeemRaw && availableToRedeemRaw > 0) || vault_status !== "open" ? (
+    <div className={className}>
+      {(!disabled && isSignedIn && availableToRedeemRaw && availableToRedeemRaw > 0) ||
+      vault_status !== "open" ? (
         <Button onClick={() => handleRedeem()} className="w-full">
           <LogOutIcon size={16} />
-          <span>
+          Withdraw
+          <span className="ml-2">
             {availableToRedeemRaw} {token_symbol}
           </span>
         </Button>
@@ -109,8 +115,8 @@ export default function Withdraw({ vaultId, handleLoading }: WithdrawProps) {
           }}
           variant="secondary"
           className="w-full"
+          disabled={disabled}
         >
-          <LogOutIcon size={16} />
           Withdraw
         </Button>
       )}

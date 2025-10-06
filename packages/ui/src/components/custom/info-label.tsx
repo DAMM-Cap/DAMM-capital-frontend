@@ -1,16 +1,24 @@
 import { Label } from "@/components";
+import clsx from "clsx";
 import React from "react";
 
 interface InfoLabelProps {
   children: React.ReactNode;
+  className?: string;
+  noScroll?: boolean;
 }
 
-const InfoLabel: React.FC<InfoLabelProps> = ({ children }) => {
+const InfoLabel: React.FC<InfoLabelProps> = ({ children, className, noScroll = true }) => {
   // If children is a string, split and render with line breaking
   if (typeof children === "string") {
     const contentLines = children.split(". ");
     return (
-      <div className="space-y-4 overflow-y-auto max-h-[60vh] pt-1 pb-3">
+      <div
+        className={clsx(
+          "space-y-4 overflow-y-auto max-h-[60vh] pt-1 pb-3",
+          noScroll ? "overflow-visible max-h-none" : "overflow-y-auto max-h-64",
+        )}
+      >
         {contentLines.map((content, index) => (
           <Label
             key={index}
@@ -86,6 +94,10 @@ const InfoLabel: React.FC<InfoLabelProps> = ({ children }) => {
 
   const processedContent = reconstructAndSplit(React.Children.toArray(children));
 
-  return <div className="space-y-4 overflow-y-auto max-h-[60vh] pt-1 pb-3">{processedContent}</div>;
+  return (
+    <div className={clsx("space-y-4 overflow-y-auto max-h-[60vh] pt-1 pb-3", className)}>
+      {processedContent}
+    </div>
+  );
 };
 export default InfoLabel;

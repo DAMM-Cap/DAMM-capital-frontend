@@ -1,8 +1,7 @@
 import clsx from "clsx";
 import React from "react";
-import { TableContext } from "../context/table-context";
 import { useIsMobile } from "../hooks/use-is-mobile";
-
+import Row, { RowProps } from "./row";
 export interface HeaderData {
   label: string;
   className?: string;
@@ -10,31 +9,50 @@ export interface HeaderData {
 
 interface TableProps {
   tableHeaders: HeaderData[];
-
   className?: string;
-  children?: React.ReactNode;
+  initialCol2X?: boolean;
+  noColor?: boolean;
+  rows?: Pick<RowProps, "rowFields" | "className" | "onClick" | "initialCol2X" | "noColor">[];
+  isLoading?: boolean;
 }
 
-const Table: React.FC<TableProps> = ({ tableHeaders, className = "", children }) => {
+const Table: React.FC<TableProps> = ({
+  tableHeaders,
+  className = "",
+  initialCol2X = true,
+  noColor = false,
+  rows,
+  isLoading,
+}) => {
   const isMobile = useIsMobile();
 
   const isTableMobile = isMobile && tableHeaders.length > 2;
-  const gridColsNumber = (tableHeaders.length + 1) * 2;
+  const gridColsNumber = initialCol2X ? (tableHeaders.length + 1) * 2 : tableHeaders.length * 2;
   const gridColsClassName = `grid-cols-${gridColsNumber}`;
 
   return (
     <div className={clsx("w-full mx-auto", className)}>
       {/* Desktop Header */}
       {!isTableMobile && (
-        <div className={clsx("grid gap-2 items-center mb-4 px-4", gridColsClassName)}>
+        <div
+          className={clsx(
+            "grid gap-2 items-center px-4",
+            { "mb-4": !noColor, "-mb-2": noColor },
+            gridColsClassName,
+          )}
+        >
           {tableHeaders.map((item, index) => (
-            <div key={index} className={clsx("w-full", index === 0 ? "col-span-4" : "col-span-2")}>
+            <div
+              key={index}
+              className={clsx("w-full", index === 0 && initialCol2X ? "col-span-4" : "col-span-2")}
+            >
               <div
                 className={clsx(
-                  "font-montserrat font-normal text-xs leading-none text-neutral",
+                  "font-montserrat font-normal  leading-none text-neutral",
+                  { "text-xs": !noColor, "text-sm": noColor },
                   // Use explicit className if provided, otherwise use default alignment
                   item.className ||
-                    (index === 0
+                    (index === 0 && initialCol2X
                       ? "text-left"
                       : index === tableHeaders.length - 1
                         ? "text-right"
@@ -49,9 +67,22 @@ const Table: React.FC<TableProps> = ({ tableHeaders, className = "", children })
       )}
 
       {/* Rows */}
-      <TableContext.Provider value={{ tableHeaders, isTableMobile, gridColsClassName }}>
-        <div className="space-y-2">{children}</div>
-      </TableContext.Provider>
+      <div className="space-y-2">
+        {rows?.map((row, index) => (
+          <Row
+            key={index}
+            rowFields={row.rowFields}
+            isLoading={isLoading}
+            tableHeaders={tableHeaders}
+            isTableMobile={isTableMobile}
+            gridColsClassName={gridColsClassName}
+            initialCol2X={initialCol2X}
+            noColor={noColor}
+            onClick={row.onClick}
+            className={row.className}
+          />
+        ))}
+      </div>
     </div>
   );
 };

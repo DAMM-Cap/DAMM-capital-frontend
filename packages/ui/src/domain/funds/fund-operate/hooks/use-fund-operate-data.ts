@@ -89,6 +89,11 @@ export function useFundOperateData(vaultId: string) {
         token_address: "",
         token_decimals: "0",
         fee_receiver_address: "",
+        managementFee: 0,
+        performanceFee: 0,
+        entranceRate: 0,
+        exitRate: 0,
+        walletBalance: 0,
       };
     }
     return {
@@ -106,6 +111,11 @@ export function useFundOperateData(vaultId: string) {
       token_address: selectedVault.staticData.token_address,
       token_decimals: selectedVault.staticData.token_decimals,
       fee_receiver_address: selectedVault.staticData.fee_receiver_address,
+      managementFee: selectedVault.vaultData.managementFee,
+      performanceFee: selectedVault.vaultData.performanceFee,
+      entranceRate: selectedVault.vaultData.entranceRate,
+      exitRate: selectedVault.vaultData.exitRate,
+      walletBalance: walletBalance,
     };
   }
 

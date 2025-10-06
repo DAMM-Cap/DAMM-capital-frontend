@@ -1,23 +1,19 @@
 import { Button, DammStableIcon } from "@/components";
 import { useModal } from "@/hooks/use-modal";
 import { useDeposit } from "@/services/lagoon/use-deposit";
-import { LogInIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import {
-  AcknowledgeTermsModal,
-  DepositInProgressModal,
-  DepositModal,
-  WhitelistingModal,
-} from "./components";
+import { DepositInProgressModal, DepositModal, WhitelistingModal } from "./components";
 import InsufficientBalanceModal from "./components/insufficient-balance-modal";
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
 
 interface DepositProps {
   vaultId: string;
   handleLoading: (isLoading: boolean) => void;
+  className?: string;
+  disabled?: boolean;
 }
 
-export default function Deposit({ vaultId, handleLoading }: DepositProps) {
+export default function Deposit({ vaultId, handleLoading, className, disabled }: DepositProps) {
   const { useDepositData, isLoading: vaultLoading } = useFundOperateData(vaultId);
 
   const [amount, setAmount] = useState("");
@@ -54,11 +50,6 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
     isOpen: openModalWhitelisting,
     //open: setOpenModalWhitelisting,
     toggle: toggleModalWhitelisting,
-  } = useModal(false);
-  const {
-    isOpen: openModalTerms,
-    open: setOpenModalTerms,
-    toggle: toggleModalTerms,
   } = useModal(false);
   const {
     isOpen: openModalInsufficientBalance,
@@ -112,21 +103,21 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
   }
 
   return (
-    <div>
+    <div className={className}>
       <Button
         onClick={() => {
           if (max === 0) {
             setOpenModalInsufficientBalance();
           } else {
-            setOpenModalTerms();
+            setOpenModal();
           }
 
           // TODO: Implement whitelisting check
           //setOpenModalWhitelisting();
         }}
         className="w-full"
+        disabled={disabled}
       >
-        <LogInIcon size={16} />
         Deposit
       </Button>
       <DepositModal
@@ -160,11 +151,7 @@ export default function Deposit({ vaultId, handleLoading }: DepositProps) {
         openModalWhitelisting={openModalWhitelisting}
         setOpenModalWhitelisting={toggleModalWhitelisting}
       />
-      <AcknowledgeTermsModal
-        openModalTerms={openModalTerms}
-        setOpenModalTerms={toggleModalTerms}
-        handleAccept={() => setOpenModal()}
-      />
+
       <InsufficientBalanceModal
         openModalInsufficientBalance={openModalInsufficientBalance}
         setOpenModalInsufficientBalance={toggleModalInsufficientBalance}

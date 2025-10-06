@@ -16,12 +16,16 @@ const Card: React.FC<CardProps> = ({ leftIcon, children, className = "", variant
 
   return (
     <div className={clsx("card", variantClasses, className)}>
-      <div className="flex items-center gap-3">
-        {leftIcon && <div className="flex-shrink-0">{leftIcon}</div>}
-        <div className="font-montserrat font-normal text-xs leading-none text-neutral">
-          {children}
+      {leftIcon ? (
+        <div className="flex items-center gap-3">
+          <div className="flex-shrink-0">{leftIcon}</div>
+          <div className="font-montserrat font-normal text-xs leading-none text-neutral">
+            {children}
+          </div>
         </div>
-      </div>
+      ) : (
+        children
+      )}
     </div>
   );
 };
