@@ -32,6 +32,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const handleLogin = () => {
     setIsConnecting(true);
     connectOrCreateWallet();
+    setTimeout(() => {
+      setIsConnecting(false);
+    }, 5000);
   };
 
   useEffect(() => {
