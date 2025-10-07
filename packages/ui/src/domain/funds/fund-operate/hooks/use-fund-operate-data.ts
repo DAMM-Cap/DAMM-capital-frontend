@@ -1,5 +1,7 @@
+import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
+import { useOperationState } from "@/services/lagoon/use-operation-state";
 import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { useEffect, useState } from "react";
 
@@ -9,6 +11,9 @@ export function useFundOperateData(vaultId: string) {
   const { data: tokensBalance } = useTokensBalance();
   const walletBalance = Number(tokensBalance?.vaultBalances[vaultId]?.availableSupply || 0);
   const availableAssets = Number(tokensBalance?.vaultBalances[vaultId]?.shares || 0);
+  const { isWhitelisted } = useOperationState();
+  const [isUserWhitelisted, setIsUserWhitelisted] = useState(false);
+  const { isSignedIn } = useSession();
 
   useEffect(() => {
     if (vaultId && vaults?.vaultsData) {
@@ -16,6 +21,16 @@ export function useFundOperateData(vaultId: string) {
       setSelectedVault(foundVault);
     }
   }, [vaultId, vaults]);
+
+  useEffect(() => {
+    const handleIsWhitelisted = async (vaultAddress: string) => {
+      const whitelisted = await isWhitelisted(vaultAddress);
+      setIsUserWhitelisted(whitelisted);
+    };
+    if (selectedVault && isSignedIn) {
+      handleIsWhitelisted(selectedVault.staticData.vault_address);
+    }
+  }, [isSignedIn, selectedVault]);
 
   function useDepositData() {
     if (!selectedVault) {
@@ -28,8 +43,10 @@ export function useFundOperateData(vaultId: string) {
         fee_receiver_address: "",
         entranceRate: 0,
         walletBalance: 0,
+        isUserWhitelisted: false,
       };
     }
+
     return {
       position: selectedVault.positionData.totalValueRaw || 0,
       conversionValue: selectedVault.vaultData.sharePrice || 0,
@@ -39,6 +56,7 @@ export function useFundOperateData(vaultId: string) {
       fee_receiver_address: selectedVault.staticData.fee_receiver_address,
       entranceRate: selectedVault.vaultData.entranceRate,
       walletBalance: walletBalance,
+      isUserWhitelisted,
     };
   }
 

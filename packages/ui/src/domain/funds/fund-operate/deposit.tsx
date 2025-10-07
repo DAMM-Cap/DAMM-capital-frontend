@@ -35,6 +35,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
     fee_receiver_address,
     entranceRate,
     walletBalance: max,
+    isUserWhitelisted,
   } = useDepositData();
 
   const {
@@ -49,7 +50,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
   } = useModal(false);
   const {
     isOpen: openModalWhitelisting,
-    //open: setOpenModalWhitelisting,
+    open: setOpenModalWhitelisting,
     toggle: toggleModalWhitelisting,
   } = useModal(false);
   const {
@@ -110,11 +111,12 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
           if (max === 0) {
             setOpenModalInsufficientBalance();
           } else {
-            setOpenModal();
+            if (!isUserWhitelisted) {
+              setOpenModalWhitelisting();
+            } else {
+              setOpenModal();
+            }
           }
-
-          // TODO: Implement whitelisting check
-          //setOpenModalWhitelisting();
         }}
         className={clsx("w-full", className)}
         disabled={disabled}

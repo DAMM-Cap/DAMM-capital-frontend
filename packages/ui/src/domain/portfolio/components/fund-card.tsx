@@ -31,6 +31,7 @@ export default function FundCard({
       operation,
       operationVariant,
     } = useFundData();
+
     return (
       !vaultLoading && (
         <div className="flex-1 flex-col gap-4">
@@ -133,10 +134,7 @@ export default function FundCard({
                 {isLoading ? (
                   <LoadingField className="!h-8" />
                 ) : (
-                  <Button
-                    variant={operationVariant as ButtonVariant}
-                    className={clsx("!h-8 text-sm", isMobile ? "w-full" : "!max-w-40")}
-                  >
+                  <Button variant={operationVariant as ButtonVariant} className={"!h-8 text-sm"}>
                     {operation}
                   </Button>
                 )}
