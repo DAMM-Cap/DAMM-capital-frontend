@@ -1,21 +1,12 @@
-import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
-import { useOperationState } from "@/services/lagoon/use-operation-state";
-import { useQuery } from "@tanstack/react-query";
+import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
 import { useEffect, useState } from "react";
 
 export function usePortfolioData(vaultId?: string) {
   const { vaults, isLoading } = useVaults();
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-  const { isSignedIn } = useSession();
-  const {
-    isPendingDepositRequest,
-    isPendingRedeemRequest,
-    isClaimableDepositRequest,
-    isClaimableRedeemRequest,
-  } = useOperationState();
-  // Operation state polled via TanStack Query
+  // Operation state polled via shared hook
 
   useEffect(() => {
     if (vaultId && vaults?.vaultsData) {
@@ -24,40 +15,7 @@ export function usePortfolioData(vaultId?: string) {
     }
   }, [vaultId, vaults]);
 
-  const {
-    data: opState = {
-      isPendingDeposit: false,
-      isPendingRedeem: false,
-      isClaimableDeposit: false,
-      isClaimableRedeem: false,
-    },
-  } = useQuery({
-    queryKey: ["operationState", selectedVault?.staticData.vault_address, isSignedIn],
-    queryFn: async () => {
-      if (!selectedVault) {
-        return {
-          isPendingDeposit: false,
-          isPendingRedeem: false,
-          isClaimableDeposit: false,
-          isClaimableRedeem: false,
-        };
-      }
-      const [pendingDep, pendingRed, claimDep, claimRed] = await Promise.all([
-        isPendingDepositRequest(selectedVault.staticData.vault_address),
-        isPendingRedeemRequest(selectedVault.staticData.vault_address),
-        isClaimableDepositRequest(selectedVault.staticData.vault_address),
-        isClaimableRedeemRequest(selectedVault.staticData.vault_address),
-      ]);
-      return {
-        isPendingDeposit: pendingDep,
-        isPendingRedeem: pendingRed,
-        isClaimableDeposit: claimDep,
-        isClaimableRedeem: claimRed,
-      };
-    },
-    enabled: Boolean(selectedVault && isSignedIn),
-    refetchInterval: 5000,
-  });
+  const opState = useOperationStateQuery(selectedVault?.staticData.vault_address);
 
   function useFundData() {
     if (!selectedVault) {

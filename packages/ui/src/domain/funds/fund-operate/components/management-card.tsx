@@ -3,6 +3,8 @@ import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSession } from "@/context/session-context";
 import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
+import SecondaryActionCard from "./secondary-action-card";
+
 import Deposit from "../deposit";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import Withdraw from "../withdraw";
@@ -74,6 +76,7 @@ export default function ManagementCard({
                 disabled={!isSignedIn}
               />
             </div>
+            {isSignedIn && <SecondaryActionCard vaultId={vaultId!} handleLoading={handleLoading} />}
           </Card>
         </div>
       )

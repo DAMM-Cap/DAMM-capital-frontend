@@ -3,6 +3,7 @@ import { ButtonVariant } from "@/components/core/button";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import Deposit from "@/domain/funds/fund-operate/deposit";
 import Withdraw from "@/domain/funds/fund-operate/withdraw";
+import { useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
 import { usePortfolioData } from "../hooks/use-portfolio-data";
 import klerosCurateIcon from "/kleros-curate.svg";
@@ -19,6 +20,7 @@ export default function FundCard({
   const { useFundData, isLoading: vaultLoading } = usePortfolioData(vaultId!);
   const vaultIcon = <DammStableIcon size={48} />;
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   try {
     const {
@@ -33,8 +35,14 @@ export default function FundCard({
     } = useFundData();
 
     return (
-      !vaultLoading && (
-        <div className="flex-1 flex-col gap-4">
+      !vaultLoading &&
+      Number(positionSize) > 0 && (
+        <div
+          className="flex-1 flex-col gap-4 hover:cursor-pointer"
+          onClick={() => {
+            navigate({ to: `/fund-operate?vaultId=${vaultId}` });
+          }}
+        >
           <Card variant="fund" className="hover:border-primary">
             <div className="flex flex-wrap justify-between mb-4">
               <div className="inline-flex items-center gap-2 mb-8">
@@ -63,20 +71,21 @@ export default function FundCard({
                   </div>
                 </div>
               </div>
-              {!isMobile && (
-                <div className="flex flex-row gap-4">
-                  <Deposit
-                    vaultId={vaultId!}
-                    handleLoading={() => {}}
-                    className="!h-10 !min-w-40 !max-w-40"
-                  />
-                  <Withdraw
-                    vaultId={vaultId!}
-                    handleLoading={() => {}}
-                    className="!h-10 !min-w-40 !max-w-40"
-                  />
-                </div>
-              )}
+              {false &&
+                !isMobile && ( // TODO: Fund actions momentarily disabled
+                  <div className="flex flex-row gap-4">
+                    <Deposit
+                      vaultId={vaultId!}
+                      handleLoading={() => {}}
+                      className="!h-10 !min-w-40 !max-w-40"
+                    />
+                    <Withdraw
+                      vaultId={vaultId!}
+                      handleLoading={() => {}}
+                      className="!h-10 !min-w-40 !max-w-40"
+                    />
+                  </div>
+                )}
             </div>
             <div className="flex flex-wrap justify-between items-start gap-4">
               <div className={clsx(isMobile ? "w-full" : "flex-1 min-w-[320px] max-w-full")}>
@@ -138,20 +147,21 @@ export default function FundCard({
                     {operation}
                   </Button>
                 )}
-                {isMobile && (
-                  <div className="flex flex-row gap-4 mt-8">
-                    <Deposit
-                      vaultId={vaultId!}
-                      handleLoading={handleIsLoading}
-                      className="w-full !h-10"
-                    />
-                    <Withdraw
-                      vaultId={vaultId!}
-                      handleLoading={handleIsLoading}
-                      className="w-full !h-10"
-                    />
-                  </div>
-                )}
+                {false &&
+                  isMobile && ( // TODO: Fund actions momentarily disabled
+                    <div className="flex flex-row gap-4 mt-8">
+                      <Deposit
+                        vaultId={vaultId!}
+                        handleLoading={handleIsLoading}
+                        className="w-full !h-10"
+                      />
+                      <Withdraw
+                        vaultId={vaultId!}
+                        handleLoading={handleIsLoading}
+                        className="w-full !h-10"
+                      />
+                    </div>
+                  )}
               </div>
             </div>
           </Card>

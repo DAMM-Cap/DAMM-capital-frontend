@@ -1,9 +1,7 @@
 import { Button, DammStableIcon } from "@/components";
-import { useSession } from "@/context/session-context";
 import { useModal } from "@/hooks/use-modal";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import clsx from "clsx";
-import { LogOutIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { WithdrawModal } from "./components";
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
@@ -18,24 +16,12 @@ interface WithdrawProps {
 export default function Withdraw({ vaultId, handleLoading, className, disabled }: WithdrawProps) {
   const { useWithdrawData, isLoading: vaultLoading } = useFundOperateData(vaultId);
   const [amount, setAmount] = useState("");
-  const { isSignedIn } = useSession();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
 
-  const {
-    position,
-    conversionValue,
-    vault_address,
-    availableToRedeemRaw,
-    vault_status,
-    token_symbol,
-    token_address,
-    fee_receiver_address,
-    exitRate,
-    availableAssets: max,
-  } = useWithdrawData();
+  const { position, conversionValue, vault_address, availableAssets: max } = useWithdrawData();
 
   const {
     isOpen: openModalWithdraw,
@@ -43,7 +29,7 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
     close: setCloseModalWithdraw,
   } = useModal(false, { onClose: () => setIsLoading(false) });
 
-  const { submitRedeem, submitRequestWithdraw } = useWithdraw();
+  const { submitRequestWithdraw } = useWithdraw();
 
   useEffect(() => {
     handleLoading(isLoading);
@@ -73,26 +59,6 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
     setCloseModalWithdraw();
   };
 
-  const handleRedeem = async () => {
-    setIsLoading(true);
-
-    // Execute transaction
-    const amount = String(availableToRedeemRaw);
-    // Execute transaction
-    const tx = await submitRedeem(
-      vault_address,
-      token_address,
-      fee_receiver_address,
-      exitRate,
-      amount,
-    );
-
-    // Wait for confirmation
-    await tx.wait();
-
-    setCloseModalWithdraw();
-  };
-
   // Don't render if vault is not found or still loading
   if (vaultLoading) {
     return null;
@@ -100,27 +66,16 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
 
   return (
     <div className={className}>
-      {(!disabled && isSignedIn && availableToRedeemRaw && availableToRedeemRaw > 0) ||
-      vault_status !== "open" ? (
-        <Button onClick={() => handleRedeem()} className={clsx("w-full", className)}>
-          <LogOutIcon size={16} />
-          Withdraw
-          <span className="ml-2">
-            {availableToRedeemRaw} {token_symbol}
-          </span>
-        </Button>
-      ) : (
-        <Button
-          onClick={() => {
-            setOpenModalWithdraw();
-          }}
-          variant="secondary"
-          className={clsx("w-full", className)}
-          disabled={disabled || max === 0}
-        >
-          Withdraw
-        </Button>
-      )}
+      <Button
+        onClick={() => {
+          setOpenModalWithdraw();
+        }}
+        variant="secondary"
+        className={clsx("w-full", className)}
+        disabled={disabled || max === 0}
+      >
+        Withdraw
+      </Button>
 
       <WithdrawModal
         open={openModalWithdraw}
