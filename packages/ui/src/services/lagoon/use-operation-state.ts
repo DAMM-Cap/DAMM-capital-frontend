@@ -1,6 +1,5 @@
 import { useSession } from "@/context/session-context";
 import { useQuery } from "@tanstack/react-query";
-import { BigNumber } from "ethers";
 import { formatUnits } from "viem";
 import { publicClient } from "../viem/viem";
 import VaultABI from "./abis/Vault.json";
@@ -8,7 +7,7 @@ import VaultABI from "./abis/Vault.json";
 function useOperationState() {
   const { isSignedIn, evmAddress: usersAccount } = useSession();
 
-  const isPendingDepositRequest = async (vaultAddress: string) => {
+  const getPendingDepositRequest = async (vaultAddress: string, tokenDecimals: number) => {
     if (!isSignedIn) throw new Error("Failed connection");
     if (!usersAccount) throw new Error("Failed account");
 
@@ -18,10 +17,12 @@ function useOperationState() {
       functionName: "pendingDepositRequest",
       args: [0, usersAccount],
     })) as bigint;
-    return depositRequest > 0;
+
+    const depositRequestFormatted = formatUnits(depositRequest, tokenDecimals);
+    return depositRequestFormatted;
   };
 
-  const isPendingRedeemRequest = async (vaultAddress: string) => {
+  const getPendingRedeemRequest = async (vaultAddress: string, tokenDecimals: number) => {
     if (!isSignedIn) throw new Error("Failed connection");
     if (!usersAccount) throw new Error("Failed account");
 
@@ -31,10 +32,12 @@ function useOperationState() {
       functionName: "pendingRedeemRequest",
       args: [0, usersAccount],
     })) as bigint;
-    return redeemRequest > 0;
+
+    const redeemRequestFormatted = formatUnits(redeemRequest, tokenDecimals);
+    return redeemRequestFormatted;
   };
 
-  const isClaimableDepositRequest = async (vaultAddress: string) => {
+  const getClaimableDepositRequest = async (vaultAddress: string, tokenDecimals: number) => {
     if (!isSignedIn) throw new Error("Failed connection");
     if (!usersAccount) throw new Error("Failed account");
 
@@ -44,10 +47,12 @@ function useOperationState() {
       functionName: "claimableDepositRequest",
       args: [0, usersAccount],
     })) as bigint;
-    return depositRequest > 0;
+
+    const depositRequestFormatted = formatUnits(depositRequest, tokenDecimals);
+    return depositRequestFormatted;
   };
 
-  const getClaimableRedeemRequest = async (vaultAddress: string) => {
+  const getClaimableRedeemRequest = async (vaultAddress: string, tokenDecimals: number) => {
     if (!isSignedIn) throw new Error("Failed connection");
     if (!usersAccount) throw new Error("Failed account");
 
@@ -58,8 +63,7 @@ function useOperationState() {
       args: [0, usersAccount],
     })) as bigint;
 
-    const redeemRequestFormatted = formatUnits(redeemRequest, 18);
-    console.log("redeemRequestFormatted", redeemRequestFormatted);
+    const redeemRequestFormatted = formatUnits(redeemRequest, tokenDecimals);
     return redeemRequestFormatted;
   };
 
@@ -77,60 +81,58 @@ function useOperationState() {
   };
 
   return {
-    isPendingDepositRequest,
-    isPendingRedeemRequest,
-    isClaimableDepositRequest,
+    getPendingDepositRequest,
+    getPendingRedeemRequest,
+    getClaimableDepositRequest,
     getClaimableRedeemRequest,
     isWhitelisted,
   };
 }
 
-export function useOperationStateQuery(vaultAddress?: string) {
+export function useOperationStateQuery(vaultAddress?: string, tokenDecimals?: number) {
   const { isSignedIn } = useSession();
   const {
-    isPendingDepositRequest,
-    isPendingRedeemRequest,
-    isClaimableDepositRequest,
+    getPendingDepositRequest,
+    getPendingRedeemRequest,
+    getClaimableDepositRequest,
     getClaimableRedeemRequest,
     isWhitelisted,
   } = useOperationState();
 
   const {
     data: opState = {
-      isPendingDeposit: false,
-      isPendingRedeem: false,
-      isClaimableDeposit: false,
-      isClaimableRedeem: false,
-      isWhitelisted: false,
+      pendingDepositRequest: 0,
+      pendingRedeemRequest: 0,
+      claimableDepositRequest: 0,
       claimableRedeemRequest: 0,
+      isWhitelisted: false,
     },
   } = useQuery({
-    queryKey: ["operationState", vaultAddress, isSignedIn],
+    queryKey: ["operationState", vaultAddress, tokenDecimals, isSignedIn],
     queryFn: async () => {
       if (!vaultAddress) {
         return {
-          isPendingDeposit: false,
-          isPendingRedeem: false,
-          isClaimableDeposit: false,
-          isClaimableRedeem: false,
-          isWhitelisted: false,
+          pendingDepositRequest: 0,
+          pendingRedeemRequest: 0,
+          claimableDepositRequest: 0,
           claimableRedeemRequest: 0,
+          isWhitelisted: false,
         };
       }
-      const [pendingDep, pendingRed, claimDep, claimRed, whitelisted] = await Promise.all([
-        isPendingDepositRequest(vaultAddress),
-        isPendingRedeemRequest(vaultAddress),
-        isClaimableDepositRequest(vaultAddress),
-        getClaimableRedeemRequest(vaultAddress),
-        isWhitelisted(vaultAddress),
-      ]);
+      const [pendingDep, pendingRed, claimDep, claimRed, whitelisted] = (await Promise.all([
+        getPendingDepositRequest(vaultAddress, tokenDecimals!),
+        getPendingRedeemRequest(vaultAddress, tokenDecimals!),
+        getClaimableDepositRequest(vaultAddress, tokenDecimals!),
+        getClaimableRedeemRequest(vaultAddress, tokenDecimals!),
+        isWhitelisted(vaultAddress) as Promise<boolean>,
+      ])) as [string, string, string, string, boolean];
+
       return {
-        isPendingDeposit: pendingDep,
-        isPendingRedeem: pendingRed,
-        isClaimableDeposit: claimDep,
-        isClaimableRedeem: Number(claimRed) > 0,
-        claimableRedeemRequest: claimRed,
-        isWhitelisted: whitelisted,
+        pendingDepositRequest: Number(pendingDep),
+        pendingRedeemRequest: Number(pendingRed),
+        claimableDepositRequest: Number(claimDep),
+        claimableRedeemRequest: Number(claimRed),
+        isWhitelisted: whitelisted as boolean,
       };
     },
     enabled: Boolean(vaultAddress && isSignedIn),

@@ -20,9 +20,14 @@ export function useFundOperateData(vaultId: string) {
 
   const {
     isWhitelisted: isUserWhitelisted,
-    isClaimableRedeem,
     claimableRedeemRequest,
-  } = useOperationStateQuery(selectedVault?.staticData.vault_address);
+    claimableDepositRequest,
+    pendingDepositRequest,
+    pendingRedeemRequest,
+  } = useOperationStateQuery(
+    selectedVault?.staticData.vault_address,
+    selectedVault?.staticData.token_decimals,
+  );
 
   function useDepositData() {
     if (!selectedVault) {
@@ -32,10 +37,15 @@ export function useFundOperateData(vaultId: string) {
         vault_address: "",
         token_address: "",
         token_decimals: 0,
+        vault_decimals: 0,
         fee_receiver_address: "",
         entranceRate: 0,
         walletBalance: 0,
         isUserWhitelisted: false,
+        claimableDepositRequest: 0,
+        isClaimableDeposit: false,
+        isPendingDepositRequest: false,
+        pendingDepositRequest: 0,
       };
     }
 
@@ -45,10 +55,15 @@ export function useFundOperateData(vaultId: string) {
       vault_address: selectedVault.staticData.vault_address,
       token_address: selectedVault.staticData.token_address,
       token_decimals: selectedVault.staticData.token_decimals,
+      vault_decimals: selectedVault.staticData.vault_decimals,
       fee_receiver_address: selectedVault.staticData.fee_receiver_address,
       entranceRate: selectedVault.vaultData.entranceRate,
       walletBalance: walletBalance,
       isUserWhitelisted,
+      claimableDepositRequest,
+      isClaimableDeposit: claimableDepositRequest > 0,
+      pendingDepositRequest,
+      isPendingDepositRequest: pendingDepositRequest > 0,
     };
   }
 
@@ -58,6 +73,7 @@ export function useFundOperateData(vaultId: string) {
         position: 0,
         conversionValue: 0,
         vault_address: "",
+        vault_symbol: "",
         token_address: "",
         token_decimals: 0,
         fee_receiver_address: "",
@@ -68,12 +84,15 @@ export function useFundOperateData(vaultId: string) {
         availableAssets: 0,
         isClaimableRedeem: false,
         claimableRedeemRequest: 0,
+        isPendingRedeemRequest: false,
+        pendingRedeemRequest: 0,
       };
     }
     return {
       position: selectedVault.positionData.totalValueRaw || 0,
       conversionValue: selectedVault.vaultData.sharePrice || 0,
       vault_address: selectedVault.staticData.vault_address,
+      vault_symbol: selectedVault.staticData.vault_symbol,
       token_address: selectedVault.staticData.token_address,
       fee_receiver_address: selectedVault.staticData.fee_receiver_address,
       exitRate: selectedVault.vaultData.exitRate,
@@ -81,8 +100,10 @@ export function useFundOperateData(vaultId: string) {
       vault_status: selectedVault.staticData.vault_status,
       token_symbol: selectedVault.staticData.token_symbol,
       availableAssets,
-      isClaimableRedeem,
+      isClaimableRedeem: claimableRedeemRequest > 0,
       claimableRedeemRequest,
+      isPendingRedeemRequest: pendingRedeemRequest > 0,
+      pendingRedeemRequest,
     };
   }
 

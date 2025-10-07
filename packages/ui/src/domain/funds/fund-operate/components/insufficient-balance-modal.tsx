@@ -1,5 +1,5 @@
 import { Button, InfoModal } from "@/components";
-
+import { useNavigate } from "@tanstack/react-router";
 interface InsufficientBalanceModalProps {
   openModalInsufficientBalance: boolean;
   setOpenModalInsufficientBalance: (openModalInsufficientBalance: boolean) => void;
@@ -10,6 +10,7 @@ export default function InsufficientBalanceModal({
   setOpenModalInsufficientBalance,
 }: InsufficientBalanceModalProps) {
   if (!openModalInsufficientBalance) return null;
+  const navigate = useNavigate();
   return (
     <InfoModal
       open={openModalInsufficientBalance}
@@ -26,7 +27,10 @@ export default function InsufficientBalanceModal({
           </Button>
           <Button
             className="w-3/4"
-            onClick={() => setOpenModalInsufficientBalance(false)}
+            onClick={() => {
+              setOpenModalInsufficientBalance(false);
+              navigate({ to: "/my-wallet" });
+            }}
             variant="primary"
           >
             Add Funds

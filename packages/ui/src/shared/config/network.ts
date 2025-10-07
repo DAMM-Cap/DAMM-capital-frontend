@@ -1,9 +1,8 @@
 import envParsed from "@/envParsed";
 import { base, baseSepolia, sepolia } from "viem/chains";
 
+import { ethereumChainLogo, optimismChainLogo } from "@/components/token-icons";
 import type { Chain } from "viem";
-import ethereumChainLogo from "/ethereum-chain-logo.png";
-import optimismChainLogo from "/optimism-chain-logo.svg";
 
 export type NetworkConfig = {
   chain: Chain;
@@ -49,7 +48,7 @@ const baseNetworkConfig: NetworkConfig = {
 
 export const getChainLogo = (chain: Chain) => {
   if (chain.id === 10) return optimismChainLogo;
-  if (chain.id === 1) return ethereumChainLogo;
+  if (chain.id === 11155111) return ethereumChainLogo;
   return optimismChainLogo;
 };
 

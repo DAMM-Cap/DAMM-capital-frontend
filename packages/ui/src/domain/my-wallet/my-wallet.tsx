@@ -11,7 +11,7 @@ import { ReceiveTokensDialog } from "./components/receive-tokens-dialog";
 
 export default function MyWallet() {
   const { evmAddress, isSignedIn, isConnecting, isSmartAccount } = useSession();
-  const chain = getNetworkConfig().chain;
+  const network = getNetworkConfig();
   const { isOpen, close, open } = useModal(false);
 
   const [isLoadingFund, setIsLoadingFund] = useState(false);
@@ -76,7 +76,7 @@ export default function MyWallet() {
           }))}
         />
       )}
-      <ReceiveTokensDialog isOpen={isOpen} onClose={close} address={evmAddress} chain={chain} />
+      <ReceiveTokensDialog isOpen={isOpen} onClose={close} address={evmAddress} network={network} />
     </div>
   );
 }

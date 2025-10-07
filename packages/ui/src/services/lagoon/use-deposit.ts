@@ -108,8 +108,35 @@ export function useDeposit() {
     }
   };
 
+  const submitDeposit = async (vaultAddress: string, vaultDecimals: number, amount: string) => {
+    if (!isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
+
+    const txs: EvmBatchCall = [];
+
+    const amountInWei = parseUnits(amount, vaultDecimals);
+
+    const depositCall = {
+      to: vaultAddress as `0x${string}`,
+      value: 0n,
+      abi: VaultABI,
+      functionName: "deposit",
+      args: [amountInWei, usersAccount, usersAccount],
+    };
+    txs.push(depositCall);
+
+    try {
+      const txResponse = await executePrivyTransactions(txs);
+      return txResponse as unknown as TransactionResponse;
+    } catch (error) {
+      console.error("Error executing transaction:", error);
+      throw new Error("Cannot execute deposit");
+    }
+  };
+
   return {
     submitRequestDeposit,
     cancelDepositRequest,
+    submitDeposit,
   };
 }

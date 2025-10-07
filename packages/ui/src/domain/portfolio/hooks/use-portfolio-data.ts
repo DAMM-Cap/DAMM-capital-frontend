@@ -15,7 +15,10 @@ export function usePortfolioData(vaultId?: string) {
     }
   }, [vaultId, vaults]);
 
-  const opState = useOperationStateQuery(selectedVault?.staticData.vault_address);
+  const opState = useOperationStateQuery(
+    selectedVault?.staticData.vault_address,
+    selectedVault?.staticData.token_decimals,
+  );
 
   function useFundData() {
     if (!selectedVault) {
@@ -33,19 +36,19 @@ export function usePortfolioData(vaultId?: string) {
 
     let operation = "Confirmed";
     let operationVariant = "outline-secondary";
-    if (opState.isPendingDeposit) {
+    if (opState.pendingDepositRequest > 0) {
       operation = "Deposit Pending";
       operationVariant = "outline-secondary";
     }
-    if (opState.isPendingRedeem) {
+    if (opState.pendingRedeemRequest > 0) {
       operation = "Withdraw Pending";
       operationVariant = "outline-secondary";
     }
-    if (opState.isClaimableDeposit) {
+    if (opState.claimableDepositRequest > 0) {
       operation = "Shares Claimable";
       operationVariant = "outline";
     }
-    if (opState.isClaimableRedeem) {
+    if (opState.claimableRedeemRequest > 0) {
       operation = "Assets Claimable";
       operationVariant = "outline";
     }
