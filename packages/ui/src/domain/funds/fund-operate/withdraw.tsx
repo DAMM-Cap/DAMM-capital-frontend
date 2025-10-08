@@ -1,4 +1,5 @@
-import { Button, DammStableIcon } from "@/components";
+import { Button } from "@/components";
+import { getTokenLogo } from "@/components/token-icons";
 import { useModal } from "@/hooks/use-modal";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import clsx from "clsx";
@@ -21,7 +22,14 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
 
-  const { position, conversionValue, vault_address, availableAssets: max } = useWithdrawData();
+  const {
+    position,
+    conversionValue,
+    vault_address,
+    availableAssets: max,
+    token_symbol,
+    vault_symbol,
+  } = useWithdrawData();
 
   const {
     isOpen: openModalWithdraw,
@@ -64,6 +72,14 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
     return null;
   }
 
+  const tokenIcon = (
+    <img
+      src={getTokenLogo(token_symbol)}
+      alt={token_symbol}
+      className="w-5 h-5 object-cover rounded-full"
+    />
+  );
+
   return (
     <div className={className}>
       <Button
@@ -90,8 +106,9 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
         isLoading={isLoading}
         isInsufficientShares={isInsufficientBalance}
         invalidAmount={invalidAmount}
-        tokenSymbol="DUSDC"
-        tokenIcon={<DammStableIcon size={20} />}
+        tokenSymbol={token_symbol}
+        vaultSymbol={vault_symbol}
+        tokenIcon={tokenIcon}
         conversionValue={conversionValue}
       />
     </div>

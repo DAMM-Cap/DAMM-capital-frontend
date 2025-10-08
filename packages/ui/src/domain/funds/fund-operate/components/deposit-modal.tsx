@@ -19,6 +19,7 @@ interface DepositModalProps {
   invalidReferral: boolean;
   validReferral: boolean;
   tokenSymbol: string;
+  vaultSymbol: string;
   tokenIcon: React.ReactNode;
   conversionValue: number;
 }
@@ -41,6 +42,7 @@ const DepositModal: React.FC<DepositModalProps> = ({
   invalidReferral,
   validReferral,
   tokenSymbol,
+  vaultSymbol,
   tokenIcon: TokenIcon,
   conversionValue,
 }) => {
@@ -71,8 +73,8 @@ const DepositModal: React.FC<DepositModalProps> = ({
         tokenLabel={tokenSymbol}
         tokenIcon={TokenIcon}
         tokenSecondaryLabel={`$${max}`}
-        conversionLeftText="1 USDC"
-        conversionRightText={`${conversionValue} ${tokenSymbol}`}
+        conversionLeftText={`1 ${tokenSymbol}`}
+        conversionRightText={`${conversionValue} ${vaultSymbol}`}
         amount={amount}
         onAmountChange={onAmountChange}
         onMaxClick={onMaxClick}

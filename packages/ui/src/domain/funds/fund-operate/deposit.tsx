@@ -1,4 +1,5 @@
-import { Button, DammStableIcon } from "@/components";
+import { Button } from "@/components";
+import { getTokenLogo } from "@/components/token-icons";
 import { useModal } from "@/hooks/use-modal";
 import { useDeposit } from "@/services/lagoon/use-deposit";
 import clsx from "clsx";
@@ -32,6 +33,8 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
     vault_address,
     token_address,
     token_decimals,
+    token_symbol,
+    vault_symbol,
     fee_receiver_address,
     entranceRate,
     walletBalance: max,
@@ -104,6 +107,14 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
     return null;
   }
 
+  const tokenIcon = (
+    <img
+      src={getTokenLogo(token_symbol)}
+      alt={token_symbol}
+      className="w-5 h-5 object-cover rounded-full"
+    />
+  );
+
   return (
     <div className={className}>
       <Button
@@ -141,8 +152,9 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
         isLoading={isLoading}
         isInsufficientBalance={isInsufficientBalance}
         invalidAmount={invalidAmount}
-        tokenSymbol="DUSDC"
-        tokenIcon={<DammStableIcon size={20} />}
+        tokenSymbol={token_symbol}
+        vaultSymbol={vault_symbol}
+        tokenIcon={tokenIcon}
       />
 
       <DepositInProgressModal
