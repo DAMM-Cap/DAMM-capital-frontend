@@ -70,7 +70,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
 
   useEffect(() => {
     const hasReferral = referral.length > 0;
-    const isValid = hasReferral && referral.startsWith("0x") && referral.length >= 4;
+    const isValid = hasReferral && referral.length >= 4;
     setValidReferral(isValid);
     setInvalidReferral(hasReferral && !isValid);
   }, [referral]);
@@ -88,6 +88,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
     // Execute transaction
     const tx = await submitRequestDeposit(
       vault_address,
+      referral,
       token_address,
       token_decimals,
       fee_receiver_address,
