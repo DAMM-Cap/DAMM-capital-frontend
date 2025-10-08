@@ -15,6 +15,7 @@ interface WithdrawModalProps {
   isInsufficientShares: boolean;
   invalidAmount: boolean;
   tokenSymbol: string;
+  vaultSymbol: string;
   tokenIcon: React.ReactNode;
   conversionValue: number;
 }
@@ -33,6 +34,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
   isInsufficientShares,
   invalidAmount,
   tokenSymbol,
+  vaultSymbol,
   tokenIcon: TokenIcon,
   conversionValue,
 }) => {
@@ -63,8 +65,8 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
         tokenLabel={tokenSymbol}
         tokenIcon={TokenIcon}
         tokenSecondaryLabel={`$${max}`}
-        conversionLeftText="1 USDC"
-        conversionRightText={`${conversionValue} ${tokenSymbol}`}
+        conversionLeftText={`1 ${tokenSymbol}`}
+        conversionRightText={`${conversionValue} ${vaultSymbol}`}
         amount={amount}
         onAmountChange={onAmountChange}
         onMaxClick={onMaxClick}

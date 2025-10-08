@@ -1,6 +1,8 @@
-import { Button, DammStableIcon } from "@/components";
+import { Button } from "@/components";
+import { getTokenLogo } from "@/components/token-icons";
 import { useModal } from "@/hooks/use-modal";
 import { useDeposit } from "@/services/lagoon/use-deposit";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { DepositInProgressModal, DepositModal, WhitelistingModal } from "./components";
 import InsufficientBalanceModal from "./components/insufficient-balance-modal";
@@ -31,9 +33,12 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
     vault_address,
     token_address,
     token_decimals,
+    token_symbol,
+    vault_symbol,
     fee_receiver_address,
     entranceRate,
     walletBalance: max,
+    isUserWhitelisted,
   } = useDepositData();
 
   const {
@@ -48,7 +53,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
   } = useModal(false);
   const {
     isOpen: openModalWhitelisting,
-    //open: setOpenModalWhitelisting,
+    open: setOpenModalWhitelisting,
     toggle: toggleModalWhitelisting,
   } = useModal(false);
   const {
@@ -65,7 +70,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
 
   useEffect(() => {
     const hasReferral = referral.length > 0;
-    const isValid = hasReferral && referral.startsWith("0x") && referral.length >= 4;
+    const isValid = hasReferral && referral.length >= 4;
     setValidReferral(isValid);
     setInvalidReferral(hasReferral && !isValid);
   }, [referral]);
@@ -83,6 +88,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
     // Execute transaction
     const tx = await submitRequestDeposit(
       vault_address,
+      referral,
       token_address,
       token_decimals,
       fee_receiver_address,
@@ -102,6 +108,14 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
     return null;
   }
 
+  const tokenIcon = (
+    <img
+      src={getTokenLogo(token_symbol)}
+      alt={token_symbol}
+      className="w-5 h-5 object-cover rounded-full"
+    />
+  );
+
   return (
     <div className={className}>
       <Button
@@ -109,13 +123,14 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
           if (max === 0) {
             setOpenModalInsufficientBalance();
           } else {
-            setOpenModal();
+            if (!isUserWhitelisted) {
+              setOpenModalWhitelisting();
+            } else {
+              setOpenModal();
+            }
           }
-
-          // TODO: Implement whitelisting check
-          //setOpenModalWhitelisting();
         }}
-        className="w-full"
+        className={clsx("w-full", className)}
         disabled={disabled}
       >
         Deposit
@@ -138,8 +153,9 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
         isLoading={isLoading}
         isInsufficientBalance={isInsufficientBalance}
         invalidAmount={invalidAmount}
-        tokenSymbol="DUSDC"
-        tokenIcon={<DammStableIcon size={20} />}
+        tokenSymbol={token_symbol}
+        vaultSymbol={vault_symbol}
+        tokenIcon={tokenIcon}
       />
 
       <DepositInProgressModal

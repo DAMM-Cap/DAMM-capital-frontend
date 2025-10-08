@@ -1,7 +1,8 @@
 import clsx from "clsx";
 
+export type ButtonVariant = "primary" | "secondary" | "tertiary" | "outline" | "outline-secondary";
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "tertiary";
+  variant?: ButtonVariant;
   isLoading?: boolean;
   className?: string;
 }
@@ -30,6 +31,16 @@ export default function Button({
       "bg-accent border-accent text-textDark \
       hover:bg-neutral hover:border-neutral hover:text-textDark hover:opacity-95 \
       active:bg-accent active:border-accent active:text-textDark active:opacity-80 \
+      cursor-pointer",
+    outline:
+      "bg-transparent border-primary text-primary \
+      hover:bg-neutral hover:border-neutral hover:text-textDark \
+      active:bg-primary active:border-primary active:text-textDark active:opacity-90 \
+      cursor-pointer",
+    "outline-secondary":
+      "bg-transparent border-neutral text-accent \
+      hover:bg-neutral hover:border-neutral hover:text-textDark \
+      active:bg-secondary active:border-secondary active:text-textDark active:opacity-90 \
       cursor-pointer",
   };
 

@@ -1,4 +1,5 @@
 import { Button, InfoModal } from "@/components";
+import { useNavigate } from "@tanstack/react-router";
 
 interface DepositInProgressModalProps {
   openModalInProgress: boolean;
@@ -9,6 +10,7 @@ export default function DepositInProgressModal({
   openModalInProgress,
   setOpenModalInProgress,
 }: DepositInProgressModalProps) {
+  const navigate = useNavigate();
   if (!openModalInProgress) return null;
   return (
     <InfoModal
@@ -24,7 +26,14 @@ export default function DepositInProgressModal({
           >
             Close
           </Button>
-          <Button className="w-3/4" onClick={() => setOpenModalInProgress(false)} variant="primary">
+          <Button
+            className="w-3/4"
+            onClick={() => {
+              setOpenModalInProgress(false);
+              navigate({ to: "/portfolio" });
+            }}
+            variant="primary"
+          >
             Go to my Portfolio
           </Button>
         </>

@@ -5,6 +5,7 @@ import { TransactionResponse } from "@ethersproject/providers";
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { Abi } from "viem";
+import { referralToAddress } from "../viem/utils";
 import IERC20ABI from "./abis/IERC20.json";
 import VaultABI from "./abis/Vault.json";
 
@@ -43,6 +44,7 @@ export function useDeposit() {
 
   const submitRequestDeposit = async (
     vaultAddress: string,
+    referral: string,
     underlyingTokenAddress: string,
     tokenDecimals: number,
     feeReceiverAddress: string,
@@ -90,12 +92,19 @@ export function useDeposit() {
     if (transferFeeTx) txs.push(transferFeeTx);
 
     // Request deposit with referral (4 parameters)
+    let encodedReferral = usersAccount;
+    if (referral.length >= 4) {
+      encodedReferral = referralToAddress(referral, {
+        caseInsensitive: false,
+        namespace: "DAMM-Capital",
+      });
+    }
     const requestDepositCall = {
       to: vaultAddress as `0x${string}`,
       value: 0n,
       abi: RequestDepositABI,
       functionName: "requestDeposit",
-      args: [depositAmount, usersAccount, usersAccount, usersAccount],
+      args: [depositAmount, usersAccount, usersAccount, encodedReferral],
     };
     txs.push(requestDepositCall);
 
@@ -108,8 +117,35 @@ export function useDeposit() {
     }
   };
 
+  const submitDeposit = async (vaultAddress: string, vaultDecimals: number, amount: string) => {
+    if (!isSignedIn) throw new Error("Failed connection");
+    if (!usersAccount) throw new Error("Failed account");
+
+    const txs: EvmBatchCall = [];
+
+    const amountInWei = parseUnits(amount, vaultDecimals);
+
+    const depositCall = {
+      to: vaultAddress as `0x${string}`,
+      value: 0n,
+      abi: VaultABI,
+      functionName: "deposit",
+      args: [amountInWei, usersAccount, usersAccount],
+    };
+    txs.push(depositCall);
+
+    try {
+      const txResponse = await executePrivyTransactions(txs);
+      return txResponse as unknown as TransactionResponse;
+    } catch (error) {
+      console.error("Error executing transaction:", error);
+      throw new Error("Cannot execute deposit");
+    }
+  };
+
   return {
     submitRequestDeposit,
     cancelDepositRequest,
+    submitDeposit,
   };
 }
