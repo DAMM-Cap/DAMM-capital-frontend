@@ -5,8 +5,8 @@ import React from "react";
 interface TokenAmountInputProps {
   tokenLabel: string;
   tokenIcon: React.ReactNode;
-  conversionLeftText: string;
-  conversionRightText: string;
+  conversionLeftText?: string;
+  conversionRightText?: string;
   tokenSecondaryLabel: string;
   noEdit: boolean;
   amount: string;
@@ -22,8 +22,8 @@ const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
   tokenIcon,
   noEdit,
   amount,
-  conversionLeftText,
-  conversionRightText,
+  conversionLeftText = "",
+  conversionRightText = "",
   tokenSecondaryLabel,
   onAmountChange,
   onMaxClick,
@@ -31,6 +31,15 @@ const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
   validation,
   validationMessage,
 }) => {
+  const complexLabel =
+    conversionLeftText && conversionRightText
+      ? {
+          leftText: conversionLeftText,
+          icon: <ConversionIcon size={14} />,
+          rightText: conversionRightText,
+          align: "right" as const,
+        }
+      : undefined;
   return (
     <div className="flex flex-row w-full gap-3">
       <Input
@@ -50,12 +59,7 @@ const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
         max={max}
         onMaxClick={onMaxClick}
         noEdit={noEdit}
-        complexLabel={{
-          leftText: conversionLeftText,
-          icon: <ConversionIcon size={14} />,
-          rightText: conversionRightText,
-          align: "right",
-        }}
+        complexLabel={complexLabel}
         className="w-2/3 sm:w-3/4"
         validation={validation}
         validationMessage={validationMessage}
