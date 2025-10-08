@@ -51,7 +51,7 @@ export default function SecondaryActionCard({
   } = useDepositData();
 
   const { submitRedeem } = useWithdraw();
-  const { submitDeposit } = useDeposit();
+  const { submitDeposit, cancelDepositRequest } = useDeposit();
 
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -86,6 +86,16 @@ export default function SecondaryActionCard({
     }
   };
 
+  const handleCancelDeposit = async () => {
+    setIsLoading(true);
+    try {
+      const tx = await cancelDepositRequest(vault_address);
+      await tx.wait();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const extraDisableOnClaimableDeposit = envParsed().BOT_CLAIMS_ON_BEHALF_ACTIVE !== "false";
 
   const vm = useSecondaryActionViewModel({
@@ -105,6 +115,7 @@ export default function SecondaryActionCard({
     // actions
     handleClaim,
     handleRedeem,
+    handleCancelDeposit,
     // false to allow claiming shares manually when disabling keeper bot in production
     extraDisableOnClaimableDeposit,
   });

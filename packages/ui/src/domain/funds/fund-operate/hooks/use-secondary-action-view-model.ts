@@ -47,6 +47,7 @@ type Params = {
   // actions
   handleClaim: () => Promise<void>;
   handleRedeem: () => Promise<void>;
+  handleCancelDeposit: () => Promise<void>;
 
   /** default true = keep disabled when deposit is automatically claimed by keeper bot */
   // TODO: false to allow claiming shares manually when disabling keeper bot in production
@@ -66,6 +67,7 @@ export function useSecondaryActionViewModel({
   vault_symbol,
   handleClaim,
   handleRedeem,
+  handleCancelDeposit,
   extraDisableOnClaimableDeposit,
 }: Params): SecondaryActionVM {
   return useMemo<SecondaryActionVM>(() => {
@@ -147,14 +149,14 @@ export function useSecondaryActionViewModel({
       visible: true,
       label: "Deposit Requested",
       amountLabel: `${String(pendingDepositRequest)} ${vault_symbol}`,
-      buttonLabel: "Claim",
-      disabled: true,
+      buttonLabel: "Cancel Deposit",
+      disabled: false,
       statusIcon: "clock",
       from: "token",
       to: "stable",
       tokenSymbolFrom: token_symbol,
       tokenSymbolTo: vault_symbol,
-      onClick: handleClaim,
+      onClick: handleCancelDeposit,
     };
   }, [
     isClaimableDeposit,
@@ -169,6 +171,7 @@ export function useSecondaryActionViewModel({
     vault_symbol,
     handleClaim,
     handleRedeem,
+    handleCancelDeposit,
     extraDisableOnClaimableDeposit,
   ]);
 }
