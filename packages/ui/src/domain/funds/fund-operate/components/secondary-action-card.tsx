@@ -6,12 +6,22 @@ import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import { ArrowRightIcon, CircleCheckIcon, ClockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
-import { useSecondaryActionViewModel } from "../hooks/use-secondary-action-view-model";
+import {
+  IconKind,
+  useSecondaryActionViewModel,
+  VisualKind,
+} from "../hooks/use-secondary-action-view-model";
 
-function TokenIcon(symbol: string, tokenSymbol: string) {
-  if (symbol === "stable") return DammStableIcon;
+function StatusIcon({ type, size }: { type: IconKind; size: number }) {
+  if (type === "check") return <CircleCheckIcon size={size} />;
+  if (type === "clock") return <ClockIcon size={size} />;
+  return null;
+}
 
-  return () => (
+function TokenIcon({ type, tokenSymbol }: { type: VisualKind; tokenSymbol: string }) {
+  if (type === "stable") return <DammStableIcon size={20} />;
+
+  return (
     <img
       src={getTokenLogo(tokenSymbol)}
       alt={tokenSymbol}
@@ -122,24 +132,23 @@ export default function SecondaryActionCard({
 
   if (!vm.visible) return null;
 
-  const StatusIcon =
-    vm.statusIcon === "check" ? CircleCheckIcon : vm.statusIcon === "clock" ? ClockIcon : null;
-  const FromVisual = TokenIcon(vm.from, token_symbol);
-  const ToVisual = TokenIcon(vm.to, token_symbol);
-
   return (
     <div className="flex flex-row justify-center gap-4 w-full mt-4">
       <Card className="w-full">
         <Label label={vm.label} className="!font-bold !text-lg !text-textLight mb-1" />
         <div className="flex flex-row justify-between gap-2">
           <div className="flex flex-row gap-2 items-center">
-            <div className="-mt-2">{FromVisual && <FromVisual />}</div>
+            <div className="-mt-2">
+              <TokenIcon type={vm.from} tokenSymbol={token_symbol} />
+            </div>
             <Label label={vm.tokenSymbolFrom} className="!text-normal !text-textLight mb-1" />
             <ArrowRightIcon size={12} className="-mt-2" />
-            <div className="-mt-2">{ToVisual && <ToVisual />}</div>
+            <div className="-mt-2">
+              <TokenIcon type={vm.to} tokenSymbol={token_symbol} />
+            </div>
             <Label label={vm.tokenSymbolTo} className="!text-normal !text-textLight mb-1" />
           </div>
-          {StatusIcon && <StatusIcon size={28} />}
+          <StatusIcon type={vm.statusIcon} size={28} />
         </div>
         <Label label={vm.amountLabel} className="mb-4" />
         <Button variant="primary" className="w-full" onClick={vm.onClick} disabled={vm.disabled}>
