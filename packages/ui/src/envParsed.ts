@@ -11,6 +11,7 @@ const env = {
   USE_SEPOLIA: import.meta.env.VITE_USE_SEPOLIA,
   BASE_NODE_URL: import.meta.env.VITE_BASE_NODE_URL,
   SEPOLIA_NODE_URL: import.meta.env.VITE_SEPOLIA_NODE_URL,
+  BOT_CLAIMS_ON_BEHALF_ACTIVE: import.meta.env.VITE_BOT_CLAIMS_ON_BEHALF_ACTIVE,
 };
 
 const envSchema = z
@@ -23,6 +24,7 @@ const envSchema = z
     USE_SEPOLIA: z.string().optional().default(""),
     BASE_NODE_URL: z.string().optional().default(""),
     SEPOLIA_NODE_URL: z.string().optional().default(""),
+    BOT_CLAIMS_ON_BEHALF_ACTIVE: z.string().optional().default(""),
   })
   .required();
 

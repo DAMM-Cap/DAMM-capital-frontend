@@ -1,11 +1,24 @@
 import { Button, Card, DammStableIcon, Label } from "@/components";
 import { getTokenLogo } from "@/components/token-icons";
+import envParsed from "@/envParsed";
 import { useDeposit } from "@/services/lagoon/use-deposit";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import { ArrowRightIcon, CircleCheckIcon, ClockIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import { useSecondaryActionViewModel } from "../hooks/use-secondary-action-view-model";
+
+function TokenIcon(symbol: string, tokenSymbol: string) {
+  if (symbol === "stable") return DammStableIcon;
+
+  return () => (
+    <img
+      src={getTokenLogo(tokenSymbol)}
+      alt={tokenSymbol}
+      className="w-5 h-5 object-cover rounded-full"
+    />
+  );
+}
 
 export default function SecondaryActionCard({
   vaultId,
@@ -45,7 +58,7 @@ export default function SecondaryActionCard({
     handleLoading(isLoading);
   }, [isLoading, handleLoading]);
 
-  const handleClaim = useCallback(async () => {
+  const handleClaim = async () => {
     setIsLoading(true);
     try {
       const amount = String(claimableDepositRequest);
@@ -54,9 +67,9 @@ export default function SecondaryActionCard({
     } finally {
       setIsLoading(false);
     }
-  }, [claimableDepositRequest, submitDeposit, vault_address, vault_decimals]);
+  };
 
-  const handleRedeem = useCallback(async () => {
+  const handleRedeem = async () => {
     setIsLoading(true);
     try {
       const amount = String(claimableRedeemRequest);
@@ -71,14 +84,9 @@ export default function SecondaryActionCard({
     } finally {
       setIsLoading(false);
     }
-  }, [
-    claimableRedeemRequest,
-    submitRedeem,
-    vault_address,
-    token_address,
-    fee_receiver_address,
-    exitRate,
-  ]);
+  };
+
+  const extraDisableOnClaimableDeposit = envParsed().BOT_CLAIMS_ON_BEHALF_ACTIVE !== "false";
 
   const vm = useSecondaryActionViewModel({
     // deposit
@@ -97,34 +105,16 @@ export default function SecondaryActionCard({
     // actions
     handleClaim,
     handleRedeem,
-    // TODO: false to allow claiming shares manually when disabling keeper bot in production
-    extraDisableOnClaimableDeposit: true,
+    // false to allow claiming shares manually when disabling keeper bot in production
+    extraDisableOnClaimableDeposit,
   });
 
   if (!vm.visible) return null;
 
   const StatusIcon =
     vm.statusIcon === "check" ? CircleCheckIcon : vm.statusIcon === "clock" ? ClockIcon : null;
-  const FromVisual =
-    vm.from === "stable"
-      ? DammStableIcon
-      : () => (
-          <img
-            src={getTokenLogo(token_symbol)}
-            alt={token_symbol}
-            className="w-5 h-5 object-cover rounded-full"
-          />
-        );
-  const ToVisual =
-    vm.to === "stable"
-      ? DammStableIcon
-      : () => (
-          <img
-            src={getTokenLogo(token_symbol)}
-            alt={token_symbol}
-            className="w-5 h-5 object-cover rounded-full"
-          />
-        );
+  const FromVisual = TokenIcon(vm.from, token_symbol);
+  const ToVisual = TokenIcon(vm.to, token_symbol);
 
   return (
     <div className="flex flex-row justify-center gap-4 w-full mt-4">
