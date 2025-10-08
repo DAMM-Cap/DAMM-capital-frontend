@@ -133,7 +133,7 @@ export default function MyWallet() {
           tokenBalance: {
             value: selectedToken?.amount || "",
           },
-          tokenMetaData: {
+          metadata: {
             tokenAddress: selectedToken?.tokenAddress || "",
             tokenDecimals: selectedToken?.tokenDecimals || 0,
           },

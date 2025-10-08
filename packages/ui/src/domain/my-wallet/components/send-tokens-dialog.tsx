@@ -15,7 +15,7 @@ interface SendTokensDialogProps {
   token: {
     tokenData: RowFieldsType;
     tokenBalance: RowFieldsType;
-    tokenMetaData: {
+    metadata: {
       tokenAddress: string;
       tokenDecimals: number;
     };
@@ -42,8 +42,8 @@ export default function SendTokensDialog({ isOpen, setIsOpen, token }: SendToken
 
     // Execute transaction
     const tx = await sendTokens(
-      token.tokenMetaData.tokenAddress,
-      token.tokenMetaData.tokenDecimals,
+      token.metadata.tokenAddress,
+      token.metadata.tokenDecimals,
       address,
       amount,
     );
@@ -108,23 +108,12 @@ export default function SendTokensDialog({ isOpen, setIsOpen, token }: SendToken
         )}
       >
         <div className="flex flex-col w-full items-left gap-2">
-          <Label label={`Network: ${chainName}.`} className="!text-normal !text-textLight" />
           <Label
-            label={`Important: Only send assets on ${chainName}. Deposits from other networks won't be credited.`}
+            label={`Only send to recipients that support assets on ${chainName}. Deposits for other networks may not arrive and can be permanently lost.`}
             className="!text-normal !text-textLight"
           />
 
-          <div className="flex flex-col w-full items-left gap-2 mt-8 mb-4">
-            <Input
-              label="Address"
-              type="text"
-              value={address}
-              validation={invalidAddress ? "invalid" : undefined}
-              validationMessage="Invalid address"
-              onChange={handleAddressChange}
-              disabled={isLoading}
-              className="!text-normal !text-textLight"
-            />
+          <div className="flex flex-col w-full items-left gap-4 mt-8 mb-4">
             <TokenAmountInput
               tokenLabel={tokenLabel}
               tokenIcon={tokenIconElement}
@@ -136,6 +125,16 @@ export default function SendTokensDialog({ isOpen, setIsOpen, token }: SendToken
               max={max}
               validation={invalidAmount ? "invalid" : undefined}
               validationMessage="Invalid amount"
+            />
+            <Input
+              label="Address"
+              type="text"
+              value={address}
+              validation={invalidAddress ? "invalid" : undefined}
+              validationMessage="Invalid address"
+              onChange={handleAddressChange}
+              disabled={isLoading}
+              className="!text-normal !text-textLight"
             />
           </div>
         </div>
