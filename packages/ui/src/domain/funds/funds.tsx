@@ -1,6 +1,8 @@
 import { Button, Card, DammStableIcon, Label, Table } from "@/components";
+import AcknowledgeTermsModal from "@/components/layout/acknowledge-terms-modal";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
+import { useModal } from "@/hooks/use-modal";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
@@ -8,10 +10,15 @@ import { useEffect, useState } from "react";
 
 export default function Funds() {
   const navigate = useNavigate();
-  const { isSignedIn } = useSession();
+  const { isSignedIn, login } = useSession();
   const [isLoadingFund, setIsLoadingFund] = useState(false);
   const { vaults, isLoading } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
+  const {
+    isOpen: openModalTerms,
+    open: setOpenModalTerms,
+    toggle: toggleModalTerms,
+  } = useModal(false);
 
   useEffect(() => {
     setIsLoadingFund(true);
@@ -89,13 +96,18 @@ export default function Funds() {
             <Label label="Connect your wallet to deposit into any of our funds." className="pb-4" />
           </div>
           <div className="w-full flex justify-center">
-            <Button onClick={() => {}} className="!text-xs">
+            <Button onClick={setOpenModalTerms} className="!text-xs">
               <LogInIcon size={16} />
               Connect Wallet to Get Started
             </Button>
           </div>
         </Card>
       )}
+      <AcknowledgeTermsModal
+        openModalTerms={openModalTerms}
+        setOpenModalTerms={toggleModalTerms}
+        handleAccept={login}
+      />
     </div>
   );
 }

@@ -37,11 +37,11 @@ export default function AcknowledgeTermsModal({
       )}
     >
       By accessing or using DAMM Capital’s products and services, I agree to the{" "}
-      <a className="underline" href="">
+      <a className="underline" href="https://dammcap.finance/Terms-And-Conditions">
         Terms And Conditions
       </a>{" "}
       and{" "}
-      <a className="underline" href="">
+      <a className="underline" href="https://dammcap.finance/cookies-and-privacy">
         Cookies and privacy
       </a>
       . I further confirm that:{" "}
