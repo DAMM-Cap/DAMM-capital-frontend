@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { XIcon as CloseIcon } from "lucide-react";
 import React from "react";
+import { createPortal } from "react-dom";
 
 export default function Modal({
   title,
@@ -25,9 +26,9 @@ export default function Modal({
 }) {
   if (!open) return null;
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center z-[100] p-0 sm:p-4"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center z-[9999] p-0 sm:p-4"
       onClick={blockClose ? undefined : onClose}
     >
       <div
@@ -63,4 +64,7 @@ export default function Modal({
       </div>
     </div>
   );
+
+  // Render modal in a portal to ensure it appears above all other content
+  return createPortal(modalContent, document.body);
 }
