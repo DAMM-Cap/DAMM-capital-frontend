@@ -78,11 +78,13 @@ export default function FundCard({
                       vaultId={vaultId!}
                       handleLoading={() => {}}
                       className="!h-10 !min-w-40 !max-w-40"
+                      isLoading={isLoading}
                     />
                     <Withdraw
                       vaultId={vaultId!}
                       handleLoading={() => {}}
                       className="!h-10 !min-w-40 !max-w-40"
+                      isLoading={isLoading}
                     />
                   </div>
                 )}
@@ -154,11 +156,13 @@ export default function FundCard({
                         vaultId={vaultId!}
                         handleLoading={handleIsLoading}
                         className="w-full !h-10"
+                        isLoading={isLoading}
                       />
                       <Withdraw
                         vaultId={vaultId!}
                         handleLoading={handleIsLoading}
                         className="w-full !h-10"
+                        isLoading={isLoading}
                       />
                     </div>
                   )}
