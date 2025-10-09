@@ -10,6 +10,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   secondaryLabel?: string;
   secondaryLabelAlign?: "left" | "right";
+  block?: boolean;
 }
 
 export default function Select({
@@ -20,6 +21,7 @@ export default function Select({
   secondaryLabel,
   secondaryLabelAlign = "left",
   onChange,
+  block,
   ...props
 }: SelectProps) {
   return (
@@ -45,6 +47,7 @@ export default function Select({
           )}
           {...props}
           onChange={onChange}
+          disabled={block}
         >
           {children}
         </select>

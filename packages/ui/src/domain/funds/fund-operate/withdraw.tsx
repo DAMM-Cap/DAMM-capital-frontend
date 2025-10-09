@@ -12,13 +12,18 @@ interface WithdrawProps {
   handleLoading: (isLoading: boolean) => void;
   className?: string;
   disabled?: boolean;
+  isLoading: boolean;
 }
 
-export default function Withdraw({ vaultId, handleLoading, className, disabled }: WithdrawProps) {
+export default function Withdraw({
+  vaultId,
+  handleLoading,
+  className,
+  disabled,
+  isLoading,
+}: WithdrawProps) {
   const { useWithdrawData, isLoading: vaultLoading } = useFundOperateData(vaultId);
   const [amount, setAmount] = useState("");
-
-  const [isLoading, setIsLoading] = useState(false);
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
 
@@ -35,13 +40,18 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
     isOpen: openModalWithdraw,
     open: setOpenModalWithdraw,
     close: setCloseModalWithdraw,
-  } = useModal(false, { onClose: () => setIsLoading(false) });
+  } = useModal(false, { onClose: () => handleLoading(false) });
 
   const { submitRequestWithdraw } = useWithdraw();
 
-  useEffect(() => {
-    handleLoading(isLoading);
-  }, [isLoading]);
+  const validateForm = () => {
+    const numericAmount = Number(amount);
+    if (isNaN(numericAmount) || amount.length === 0) {
+      setInvalidAmount(true);
+      return false;
+    }
+    return true;
+  };
 
   useEffect(() => {
     const numericAmount = Number(amount);
@@ -56,7 +66,8 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
   }, [amount]);
 
   const handleWithdraw = async () => {
-    setIsLoading(true);
+    if (!validateForm()) return;
+    handleLoading(true);
 
     // Execute transaction
     const tx = await submitRequestWithdraw(vault_address, amount);
@@ -89,6 +100,7 @@ export default function Withdraw({ vaultId, handleLoading, className, disabled }
         variant="secondary"
         className={clsx("w-full", className)}
         disabled={disabled || max === 0}
+        isLoading={isLoading}
       >
         Withdraw
       </Button>

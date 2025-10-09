@@ -11,6 +11,7 @@ export default function Modal({
   children,
   className,
   actions,
+  blockClose,
 }: {
   title: string;
   icon?: React.ReactNode;
@@ -20,13 +21,14 @@ export default function Modal({
   children: React.ReactNode;
   className?: string;
   actions?: () => React.ReactNode;
+  blockClose?: boolean;
 }) {
   if (!open) return null;
 
   return (
     <div
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center z-[100] p-0 sm:p-4"
-      onClick={onClose}
+      onClick={blockClose ? undefined : onClose}
     >
       <div
         className={clsx(
@@ -45,7 +47,7 @@ export default function Modal({
             {statusIcon && <div className="ml-2 sm:ml-4 flex-shrink-0">{statusIcon}</div>}
           </div>
           <button
-            onClick={onClose}
+            onClick={blockClose ? undefined : onClose}
             type="button"
             className="p-1 bg-transparent border-0 outline-none hover:outline-none focus:outline-none active:outline-none group flex-shrink-0 ml-2"
           >

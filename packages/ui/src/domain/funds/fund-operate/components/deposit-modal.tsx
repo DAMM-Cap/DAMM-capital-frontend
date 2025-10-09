@@ -51,6 +51,7 @@ const DepositModal: React.FC<DepositModalProps> = ({
       title="Deposit"
       open={open}
       onClose={onClose}
+      blockClose={isLoading}
       actions={() => (
         <Button
           onClick={onDeposit}

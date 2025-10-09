@@ -43,7 +43,22 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
   const [invalidAddress, setInvalidAddress] = useState(false);
   const { sendTokens } = useSendTokens();
 
+  const validateForm = () => {
+    const numericAmount = Number(amount);
+    if (isNaN(numericAmount) || amount.length === 0) {
+      setInvalidAmount(true);
+      return false;
+    }
+    if (address.length === 0) {
+      setInvalidAddress(true);
+      return false;
+    }
+    return true;
+  };
+
   const handleSendTokens = async () => {
+    if (!validateForm()) return;
+
     setIsLoading(true);
 
     // Execute transaction
@@ -106,6 +121,7 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
         title="Send Tokens"
         open={isOpen}
         onClose={() => setIsOpen(false)}
+        blockClose={isLoading}
         actions={() => (
           <Button
             className="w-full"
@@ -141,6 +157,10 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
               selector={{
                 onOptionSelected: (e) => {
                   setSelectedRow(tokens[e.target.value]);
+                  setAmount("");
+                  setInvalidAmount(false);
+                  setAddress("");
+                  setInvalidAddress(false);
                 },
                 options: Object.keys(tokens).map((token) => ({
                   label: tokens[token].symbol,
@@ -155,7 +175,7 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
               validation={invalidAddress ? "invalid" : undefined}
               validationMessage="Invalid address"
               onChange={handleAddressChange}
-              disabled={isLoading}
+              noEdit={isLoading}
               className="!text-normal !text-textLight"
             />
           </div>

@@ -69,6 +69,7 @@ const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
           onChange={selector.onOptionSelected}
           className="w-1/3"
           leftIcon={tokenIcon}
+          block={noEdit}
         >
           {selector.options.map((option) => (
             <option key={option.value} value={option.value}>
