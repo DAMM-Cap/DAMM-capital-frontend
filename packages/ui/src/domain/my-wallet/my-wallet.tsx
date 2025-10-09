@@ -8,16 +8,7 @@ import { getNetworkConfig } from "@/shared/config/network";
 import { LogInIcon, SendIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ReceiveTokensDialog } from "./components/receive-tokens-dialog";
-import SendTokensDialog from "./components/send-tokens-dialog";
-
-interface TokenType {
-  iconSrc: string;
-  iconAlt: string;
-  symbol: string;
-  amount: string;
-  tokenAddress: string;
-  tokenDecimals: number;
-}
+import SendTokensDialog, { Tokens } from "./components/send-tokens-dialog";
 
 export default function MyWallet() {
   const { evmAddress, isSignedIn, isConnecting, isSmartAccount } = useSession();
@@ -31,13 +22,41 @@ export default function MyWallet() {
     isOpen: isOpenSendTokens,
     close: closeSendTokens,
     open: openSendTokens,
-  } = useModal(false, { onClose: () => setSelectedToken(undefined) });
+  } = useModal(false);
 
   const [isLoadingFund, setIsLoadingFund] = useState(false);
   const { vaults, isLoading } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
   const { data: tokensBalance } = useTokensBalance();
-  const [selectedToken, setSelectedToken] = useState<TokenType | undefined>(undefined);
+  const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
+
+  useEffect(() => {
+    if (vaultsData) {
+      const tokens: Tokens = {};
+      vaultsData.map(
+        (fund) =>
+          (tokens[fund.staticData.vault_id.toString()] = {
+            icon: () => (
+              <img
+                src={fund.staticData.vault_icon}
+                alt={fund.staticData.vault_name}
+                className="w-5 h-5 object-cover rounded-full"
+              />
+            ),
+            name: fund.staticData.vault_name,
+            symbol: fund.staticData.token_symbol,
+            balance:
+              tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]?.availableSupply ||
+              "0",
+            metadata: {
+              address: fund.staticData.token_address,
+              decimals: fund.staticData.token_decimals,
+            },
+          }),
+      );
+      setTokens(tokens);
+    }
+  }, [vaultsData, tokensBalance]);
 
   useEffect(() => {
     setIsLoadingFund(true);
@@ -61,7 +80,7 @@ export default function MyWallet() {
           </Button>
           <Button
             onClick={openSendTokens}
-            disabled={!isSignedIn || isConnecting || !isSmartAccount || !selectedToken}
+            disabled={!isSignedIn || isConnecting || !isSmartAccount}
             variant="secondary"
           >
             <SendIcon />
@@ -69,41 +88,22 @@ export default function MyWallet() {
           </Button>
         </div>
       </div>
-      {vaultsData && (
+      {vaultsData && tokens && (
         <Table
           tableHeaders={[
             { label: "Assets", className: "text-left" },
             { label: "Amount", className: "text-right" },
           ]}
           isLoading={isLoadingFund}
-          rows={vaultsData!.map((fund) => ({
-            onClick: () =>
-              setSelectedToken({
-                iconSrc: fund.staticData.vault_icon,
-                iconAlt: fund.staticData.vault_name,
-                symbol: fund.staticData.token_symbol,
-                amount:
-                  tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]
-                    ?.availableSupply || "0",
-                tokenAddress: fund.staticData.token_address,
-                tokenDecimals: fund.staticData.token_decimals,
-              }),
+          rows={vaultsData.map((fund) => ({
             rowFields: [
               {
-                leftIcon: () => (
-                  <img
-                    src={fund.staticData.vault_icon}
-                    alt={fund.staticData.vault_name}
-                    className="w-5 h-5 object-cover rounded-full"
-                  />
-                ),
-                value: fund.staticData.token_symbol,
+                leftIcon: tokens[fund.staticData.vault_id.toString()].icon,
+                value: tokens[fund.staticData.vault_id.toString()].symbol,
                 className: "text-left font-bold text-lg",
               },
               {
-                value:
-                  tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]
-                    ?.availableSupply || "0",
+                value: tokens[fund.staticData.vault_id].balance,
                 className: "text-right",
               },
             ],
@@ -116,29 +116,9 @@ export default function MyWallet() {
         address={evmAddress}
         network={network}
       />
-      <SendTokensDialog
-        isOpen={isOpenSendTokens}
-        setIsOpen={closeSendTokens}
-        token={{
-          tokenData: {
-            leftIcon: () => (
-              <img
-                src={selectedToken?.iconSrc}
-                alt={selectedToken?.iconAlt}
-                className="w-5 h-5 object-cover rounded-full"
-              />
-            ),
-            value: selectedToken?.symbol || "",
-          },
-          tokenBalance: {
-            value: selectedToken?.amount || "",
-          },
-          metadata: {
-            tokenAddress: selectedToken?.tokenAddress || "",
-            tokenDecimals: selectedToken?.tokenDecimals || 0,
-          },
-        }}
-      />
+      {tokens && (
+        <SendTokensDialog isOpen={isOpenSendTokens} setIsOpen={closeSendTokens} tokens={tokens} />
+      )}
     </div>
   );
 }

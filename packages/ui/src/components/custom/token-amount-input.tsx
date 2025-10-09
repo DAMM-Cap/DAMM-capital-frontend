@@ -1,4 +1,4 @@
-import { Input } from "@/components";
+import { Input, Select } from "@/components";
 import { ArrowRightLeftIcon as ConversionIcon } from "lucide-react";
 import React from "react";
 
@@ -15,6 +15,13 @@ interface TokenAmountInputProps {
   max?: number;
   validation?: "invalid" | "success" | null;
   validationMessage?: string;
+  selector?: {
+    onOptionSelected: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    options: {
+      label: string;
+      value: string;
+    }[];
+  };
 }
 
 const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
@@ -30,6 +37,7 @@ const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
   max = 1000,
   validation,
   validationMessage,
+  selector,
 }) => {
   const complexLabel =
     conversionLeftText && conversionRightText
@@ -42,16 +50,33 @@ const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
       : undefined;
   return (
     <div className="flex flex-row w-full gap-3">
-      <Input
-        label="Amount"
-        secondaryLabel={tokenSecondaryLabel}
-        type="text"
-        value={tokenLabel}
-        onChange={() => {}}
-        noEdit
-        className="w-1/3 sm:w-1/4"
-        leftIcon={tokenIcon}
-      />
+      {!selector && (
+        <Input
+          label="Amount"
+          secondaryLabel={tokenSecondaryLabel}
+          type="text"
+          value={tokenLabel}
+          onChange={() => {}}
+          noEdit
+          className="w-1/3 sm:w-1/4"
+          leftIcon={tokenIcon}
+        />
+      )}
+      {selector && (
+        <Select
+          label="Amount"
+          secondaryLabel={tokenSecondaryLabel}
+          onChange={selector.onOptionSelected}
+          className="w-1/3"
+          leftIcon={tokenIcon}
+        >
+          {selector.options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      )}
       <Input
         label=" "
         value={amount}

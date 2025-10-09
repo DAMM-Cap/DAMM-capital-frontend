@@ -90,6 +90,23 @@ input:disabled {
   @apply bg-textDark border-disabled text-inputTxtDisabled;
 }
 
+/* Base Select Styles */
+select {
+  @apply w-full h-10 sm:h-12 rounded-lg font-montserrat font-medium text-sm sm:text-base leading-none transition-all duration-200 px-3 sm:px-4 border bg-disabled border-secondary text-neutral;
+}
+
+select:hover {
+  @apply bg-secondary border-secondary text-neutral;
+}
+
+select:focus {
+  @apply bg-disabled border-primary text-neutral outline-none ring-0;
+}
+
+select:disabled {
+  @apply bg-textDark border-disabled text-inputTxtDisabled;
+}
+
 /* Base Button Styles */
 button {
   @apply px-3 sm:px-4 py-2 rounded-3xl border-2 transition-all duration-200 flex items-center justify-center gap-2 sm:gap-3 font-montserrat font-medium text-sm sm:text-base leading-none text-center;

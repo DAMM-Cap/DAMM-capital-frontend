@@ -1,3 +1,4 @@
+import { LoadingField } from "@/components";
 import clsx from "clsx";
 import React from "react";
 
@@ -8,6 +9,7 @@ interface TitleLabelProps {
   secondaryTitle?: string;
   className?: string;
   titleClassName?: string;
+  isLoading?: boolean;
 }
 
 const TitleLabel: React.FC<TitleLabelProps> = ({
@@ -17,6 +19,7 @@ const TitleLabel: React.FC<TitleLabelProps> = ({
   secondaryTitle,
   className = "",
   titleClassName = "",
+  isLoading = false,
 }) => {
   return (
     <div
@@ -27,22 +30,29 @@ const TitleLabel: React.FC<TitleLabelProps> = ({
           {label}
         </label>
       )}
-      <div className="flex items-center gap-2 sm:gap-3">
-        {leftIcon && leftIcon}
-        <h4
-          className={clsx(
-            "font-montserrat font-bold text-lg sm:text-xl leading-none text-textLight",
-            titleClassName,
+      {isLoading ? (
+        <div className="flex items-center gap-2 sm:gap-3">
+          {leftIcon && <LoadingField variant="rounded" />}
+          <LoadingField className="!h-6" />
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 sm:gap-3">
+          {leftIcon && leftIcon}
+          <h4
+            className={clsx(
+              "font-montserrat font-bold text-lg sm:text-xl leading-none text-textLight",
+              titleClassName,
+            )}
+          >
+            {title}
+          </h4>
+          {secondaryTitle && (
+            <span className="font-montserrat font-large text-sm sm:text-base leading-none text-textLight">
+              ({secondaryTitle})
+            </span>
           )}
-        >
-          {title}
-        </h4>
-        {secondaryTitle && (
-          <span className="font-montserrat font-large text-sm sm:text-base leading-none text-textLight">
-            ({secondaryTitle})
-          </span>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
