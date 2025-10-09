@@ -56,7 +56,7 @@ export default function MyWallet() {
       );
       setTokens(tokens);
     }
-  }, [vaultsData]);
+  }, [vaultsData, tokensBalance]);
 
   useEffect(() => {
     setIsLoadingFund(true);

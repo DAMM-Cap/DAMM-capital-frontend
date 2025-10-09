@@ -10,8 +10,10 @@ import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import Withdraw from "../withdraw";
 
 export default function ManagementCard({
+  isLoading,
   handleLoading,
 }: {
+  isLoading: boolean;
   handleLoading: (isLoading: boolean) => void;
 }) {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
@@ -20,8 +22,15 @@ export default function ManagementCard({
   const { isSignedIn } = useSession();
 
   try {
-    const { vault_name, vault_icon, token_symbol, totalValue, vaultShare, walletBalance } =
-      useFundData();
+    const {
+      vault_name,
+      vault_icon,
+      token_symbol,
+      //totalValue, // This is the availableAssets comming from the backend
+      vaultShare,
+      walletBalance,
+      availableAssets, // This is the totalValue returned from the blockchain
+    } = useFundData();
 
     return (
       !vaultLoading && (
@@ -38,7 +47,7 @@ export default function ManagementCard({
               className="!text-sm text-neutral font-montserrat font-normal leading-none mb-4"
             />
             <TitleLabel
-              title={totalValue}
+              title={availableAssets.toString() + " " + token_symbol}
               leftIcon={
                 <img
                   src={vault_icon}
@@ -48,6 +57,7 @@ export default function ManagementCard({
               }
               secondaryTitle={vaultShare}
               label="My position"
+              isLoading={isLoading}
             />
 
             <TitleLabel
@@ -60,6 +70,7 @@ export default function ManagementCard({
                 />
               }
               label="My wallet balance"
+              isLoading={isLoading}
             />
 
             <div className="flex flex-row gap-4">
@@ -76,7 +87,13 @@ export default function ManagementCard({
                 disabled={!isSignedIn}
               />
             </div>
-            {isSignedIn && <SecondaryActionCard vaultId={vaultId!} handleLoading={handleLoading} />}
+            {isSignedIn && (
+              <SecondaryActionCard
+                vaultId={vaultId!}
+                handleLoading={handleLoading}
+                isLoading={isLoading}
+              />
+            )}
           </Card>
         </div>
       )

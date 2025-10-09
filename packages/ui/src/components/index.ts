@@ -7,6 +7,7 @@ export { default as Label } from "./core/label";
 export { default as LoadingField } from "./core/loading-field";
 export { default as Modal } from "./core/modal";
 export { default as Select } from "./core/select";
+export { default as Skeleton } from "./core/skeleton";
 
 // Custom Components
 export { default as Breadcrumb } from "./custom/breadcrumb";

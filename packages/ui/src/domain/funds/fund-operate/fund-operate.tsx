@@ -39,19 +39,19 @@ export default function FundOperate() {
             >
               <FundCard isLoading={isLoading} />
 
-              {isMobile && <ManagementCard handleLoading={setIsLoading} />}
+              {isMobile && <ManagementCard handleLoading={setIsLoading} isLoading={isLoading} />}
 
-              <ThesisCard />
+              <ThesisCard isLoading={isLoading} />
 
-              <OverviewCard />
+              <OverviewCard isLoading={isLoading} />
 
               <FeesCard isLoading={isLoading} />
 
-              <RiskDisclosureCard />
+              <RiskDisclosureCard isLoading={isLoading} />
             </div>
             {!isMobile && (
               <div className="flex justify-end col-span-1">
-                <ManagementCard handleLoading={setIsLoading} />
+                <ManagementCard handleLoading={setIsLoading} isLoading={isLoading} />
               </div>
             )}
           </div>

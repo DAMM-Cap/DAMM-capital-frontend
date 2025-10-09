@@ -31,7 +31,6 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
 
   const defaultSelection = tokens[Object.keys(tokens)[0]];
   const [selectedRow, setSelectedRow] = useState<TokenType>(defaultSelection);
-  console.log(selectedRow);
   const [tokenLabel, setTokenLabel] = useState(selectedRow.symbol);
   const [tokenIconElement, setTokenIconElement] = useState<
     React.ComponentType<{ size?: number }> | undefined

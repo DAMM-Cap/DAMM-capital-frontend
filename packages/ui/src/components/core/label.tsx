@@ -1,3 +1,4 @@
+import { LoadingField } from "@/components";
 import clsx from "clsx";
 import React from "react";
 
@@ -6,6 +7,7 @@ interface LabelProps {
   secondaryLabel?: string;
   secondaryLabelAlign?: "left" | "right";
   className?: string;
+  isLoading?: boolean;
 }
 
 const Label: React.FC<LabelProps> = ({
@@ -13,8 +15,13 @@ const Label: React.FC<LabelProps> = ({
   secondaryLabel,
   secondaryLabelAlign = "left",
   className = "",
+  isLoading = false,
 }) => {
-  return (
+  return isLoading ? (
+    <div className={clsx("flex items-center justify-between", className)}>
+      <LoadingField className="!h-4" />
+    </div>
+  ) : (
     <div className={clsx("flex items-center justify-between", className)}>
       <label
         className={clsx("font-montserrat font-normal text-xs leading-none text-neutral", className)}

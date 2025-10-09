@@ -4,7 +4,6 @@ import envParsed from "@/envParsed";
 import { useDeposit } from "@/services/lagoon/use-deposit";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import { ArrowRightIcon, CircleCheckIcon, ClockIcon } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import {
   IconKind,
@@ -32,9 +31,11 @@ function TokenIcon({ type, tokenSymbol }: { type: VisualKind; tokenSymbol: strin
 
 export default function SecondaryActionCard({
   vaultId,
+  isLoading,
   handleLoading,
 }: {
   vaultId: string;
+  isLoading: boolean;
   handleLoading: (isLoading: boolean) => void;
 }) {
   const { useWithdrawData, useDepositData } = useFundOperateData(vaultId!);
@@ -63,24 +64,19 @@ export default function SecondaryActionCard({
   const { submitRedeem } = useWithdraw();
   const { submitDeposit, cancelDepositRequest } = useDeposit();
 
-  const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    handleLoading(isLoading);
-  }, [isLoading, handleLoading]);
-
   const handleClaim = async () => {
-    setIsLoading(true);
+    handleLoading(true);
     try {
       const amount = String(claimableDepositRequest);
       const tx = await submitDeposit(vault_address, vault_decimals, amount);
       await tx.wait();
     } finally {
-      setIsLoading(false);
+      handleLoading(false);
     }
   };
 
   const handleRedeem = async () => {
-    setIsLoading(true);
+    handleLoading(true);
     try {
       const amount = String(claimableRedeemRequest);
       const tx = await submitRedeem(
@@ -92,17 +88,17 @@ export default function SecondaryActionCard({
       );
       await tx.wait();
     } finally {
-      setIsLoading(false);
+      handleLoading(false);
     }
   };
 
   const handleCancelDeposit = async () => {
-    setIsLoading(true);
+    handleLoading(true);
     try {
       const tx = await cancelDepositRequest(vault_address);
       await tx.wait();
     } finally {
-      setIsLoading(false);
+      handleLoading(false);
     }
   };
 
@@ -150,8 +146,14 @@ export default function SecondaryActionCard({
           </div>
           <StatusIcon type={vm.statusIcon} size={28} />
         </div>
-        <Label label={vm.amountLabel} className="mb-4" />
-        <Button variant="primary" className="w-full" onClick={vm.onClick} disabled={vm.disabled}>
+        <Label label={vm.amountLabel} isLoading={isLoading} className="mb-4" />
+        <Button
+          variant="primary"
+          className="w-full"
+          onClick={vm.onClick}
+          disabled={vm.disabled}
+          isLoading={isLoading}
+        >
           {vm.buttonLabel}
         </Button>
       </Card>
