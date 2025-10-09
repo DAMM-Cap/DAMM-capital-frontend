@@ -1,10 +1,11 @@
-import { Button, ConnectedIcon, Modal } from "@/components";
+import { Button, ConnectedIcon } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useModal } from "@/hooks/use-modal";
 import { getShortAddress } from "@/shared/config/network";
 import { LogInIcon } from "lucide-react";
 import React from "react";
 import AcknowledgeTermsModal from "./acknowledge-terms-modal";
+import WalletConfigModal from "./wallet-config-modal";
 
 interface WalletProps {
   onClick?: () => void;
@@ -17,7 +18,7 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
     close: setCloseModal,
   } = useModal(false, { onClose: () => onClick?.() });
 
-  const { evmAddress, isSignedIn, isConnecting, showMfaModal, logout, login } = useSession();
+  const { evmAddress, isSignedIn, isConnecting, login } = useSession();
   const {
     isOpen: openModalTerms,
     open: setOpenModalTerms,
@@ -59,43 +60,7 @@ const Wallet: React.FC<WalletProps> = ({ onClick }) => {
         handleAccept={login}
       />
 
-      <Modal
-        open={openModal}
-        onClose={() => {
-          setCloseModal();
-        }}
-        title="Your Smart Account"
-        actions={() => (
-          <>
-            <Button
-              onClick={() => {
-                navigator.clipboard.writeText(evmAddress!);
-                setCloseModal();
-              }}
-              variant="secondary"
-              className="text-sm w-full"
-            >
-              Copy address
-            </Button>
-            <Button onClick={showMfaModal} variant="secondary" className="text-sm w-full">
-              Configure MFA
-            </Button>
-            <Button
-              onClick={() => {
-                logout();
-                setCloseModal();
-              }}
-              variant="primary"
-              className="text-sm w-full"
-              disabled={!isSignedIn}
-            >
-              Sign out
-            </Button>
-          </>
-        )}
-      >
-        <div className="text-center text-lg mb-4">{evmAddress}</div>
-      </Modal>
+      <WalletConfigModal openModal={openModal} setCloseModal={setCloseModal} />
     </>
   );
 };

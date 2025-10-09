@@ -1,6 +1,6 @@
 import { Breadcrumb, Label } from "@/components";
 import { useSearch } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FeesCard from "./components/fees-card";
 import FundCard from "./components/fund-card";
 import OverviewCard from "./components/overview-card";
@@ -18,6 +18,13 @@ export default function FundOperate() {
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
   const [isLoading, setIsLoading] = useState(false);
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, [isLoading]);
 
   try {
     const { vault_name } = useFundData();

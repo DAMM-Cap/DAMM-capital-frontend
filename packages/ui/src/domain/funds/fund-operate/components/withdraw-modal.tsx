@@ -43,6 +43,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
       title="Withdraw"
       open={open}
       onClose={onClose}
+      blockClose={isLoading}
       actions={() => (
         <Button
           onClick={onWithdraw}

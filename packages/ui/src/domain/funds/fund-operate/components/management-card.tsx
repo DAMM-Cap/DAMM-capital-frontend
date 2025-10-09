@@ -79,12 +79,14 @@ export default function ManagementCard({
                 handleLoading={handleLoading}
                 className="w-full"
                 disabled={!isSignedIn}
+                isLoading={isLoading}
               />
               <Withdraw
                 vaultId={vaultId!}
                 handleLoading={handleLoading}
                 className="w-full"
                 disabled={!isSignedIn}
+                isLoading={isLoading}
               />
             </div>
             {isSignedIn && (

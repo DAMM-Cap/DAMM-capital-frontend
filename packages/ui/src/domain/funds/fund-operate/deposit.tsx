@@ -13,15 +13,20 @@ interface DepositProps {
   handleLoading: (isLoading: boolean) => void;
   className?: string;
   disabled?: boolean;
+  isLoading: boolean;
 }
 
-export default function Deposit({ vaultId, handleLoading, className, disabled }: DepositProps) {
+export default function Deposit({
+  vaultId,
+  handleLoading,
+  className,
+  disabled,
+  isLoading,
+}: DepositProps) {
   const { useDepositData, isLoading: vaultLoading } = useFundOperateData(vaultId);
 
   const [amount, setAmount] = useState("");
   const [referral, setReferral] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
   const [invalidReferral, setInvalidReferral] = useState(false);
@@ -45,7 +50,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
     isOpen: openModal,
     open: setOpenModal,
     close: setCloseModal,
-  } = useModal(false, { onClose: () => setIsLoading(false) });
+  } = useModal(false, { onClose: () => handleLoading(false) });
   const {
     isOpen: openModalInProgress,
     open: setOpenModalInProgress,
@@ -64,9 +69,14 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
 
   const { submitRequestDeposit } = useDeposit();
 
-  useEffect(() => {
-    handleLoading(isLoading);
-  }, [isLoading]);
+  const validateForm = () => {
+    const numericAmount = Number(amount);
+    if (isNaN(numericAmount) || amount.length === 0) {
+      setInvalidAmount(true);
+      return false;
+    }
+    return true;
+  };
 
   useEffect(() => {
     const hasReferral = referral.length > 0;
@@ -83,7 +93,8 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
   }, [amount]);
 
   const handleDeposit = async () => {
-    setIsLoading(true);
+    if (!validateForm()) return;
+    handleLoading(true);
 
     // Execute transaction
     const tx = await submitRequestDeposit(
@@ -132,6 +143,7 @@ export default function Deposit({ vaultId, handleLoading, className, disabled }:
         }}
         className={clsx("w-full", className)}
         disabled={disabled}
+        isLoading={isLoading}
       >
         Deposit
       </Button>

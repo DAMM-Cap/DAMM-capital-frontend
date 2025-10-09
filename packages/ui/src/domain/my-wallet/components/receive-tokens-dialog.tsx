@@ -34,7 +34,7 @@ export const ReceiveTokensDialog = ({
             variant="secondary"
             className="text-sm w-full"
           >
-            <CopyIcon />
+            <CopyIcon size={16} />
             Copy address
           </Button>
         </>
