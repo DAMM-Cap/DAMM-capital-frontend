@@ -46,6 +46,8 @@ const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
           icon: <ConversionIcon size={14} />,
           rightText: conversionRightText,
           align: "right" as const,
+          tooltip:
+            "Estimated share amount based on preview settlement. The amount of shares is not guaranteed.",
         }
       : undefined;
   return (

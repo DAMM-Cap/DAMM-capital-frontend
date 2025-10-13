@@ -59,10 +59,10 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
               noColor
               initialCol2X={false}
               tableHeaders={[
-                { label: "Net APY", className: "text-center" },
-                { label: "30 days Net APY", className: "text-center" },
-                { label: "AUM", className: "text-center" },
-                { label: "NAV", className: "text-center" },
+                { label: "Net APY", className: "text-left" },
+                //{ label: "30 days Net APY", className: "text-left" },
+                { label: "AUM", className: "text-left" },
+                { label: "NAV", className: "text-left" },
               ]}
               isLoading={isLoading}
               rows={[
@@ -70,19 +70,19 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                   rowFields: [
                     {
                       value: apr.toString(),
-                      className: "text-center text-primary",
+                      className: "text-left text-primary",
                     },
-                    {
+                    /* {
                       value: aprChange.toString(),
-                      className: "text-center",
+                      className: "text-left",
+                    }, */
+                    {
+                      value: tvl.toString(),
+                      className: "text-left",
                     },
                     {
                       value: tvl.toString(),
-                      className: "text-center",
-                    },
-                    {
-                      value: tvl.toString(),
-                      className: "text-center",
+                      className: "text-left",
                     },
                   ],
                 },
@@ -92,10 +92,9 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
               noColor
               initialCol2X={false}
               tableHeaders={[
-                { label: "Sharp Ratio", className: "text-center" },
-                { label: "Chain", className: "text-center" },
-                { label: "Settlement Frequency", className: "text-center" },
-                { label: "", className: "text-right" },
+                { label: "Sharp Ratio", className: "text-left" },
+                { label: "Chain", className: "text-left" },
+                { label: "Settlement Frequency", className: "text-left" },
               ]}
               isLoading={isLoading}
               rows={[
@@ -103,19 +102,15 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                   rowFields: [
                     {
                       value: apr.toString(),
-                      className: "text-center",
+                      className: "text-left",
                     },
                     {
                       value: "Optimism",
-                      className: "text-center",
+                      className: "text-left",
                     },
                     {
                       value: "Average: 48 hours",
-                      className: "text-center",
-                    },
-                    {
-                      value: "",
-                      className: "text-center",
+                      className: "text-left",
                     },
                   ],
                 },

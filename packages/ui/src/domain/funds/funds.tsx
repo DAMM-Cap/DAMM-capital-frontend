@@ -40,10 +40,11 @@ export default function Funds() {
       <Table
         tableHeaders={[
           { label: "Name", className: "text-left" },
-          { label: "Net APY", className: "text-center" },
-          { label: "30 days Net APY", className: "text-center" },
-          { label: "AUM", className: "text-center" },
-          { label: "Underlying Asset", className: "text-right" },
+          { label: "Net APY", className: "text-left" },
+          //{ label: "30 days Net APY", className: "text-left" },
+          { label: "Sharp Ratio", className: "text-left" },
+          { label: "AUM", className: "text-left" },
+          { label: "Underlying Asset", className: "text-left" },
         ]}
         isLoading={isLoadingFund}
         rows={vaultsData?.map((fund) => ({
@@ -59,15 +60,15 @@ export default function Funds() {
             },
             {
               value: fund.vaultData.apr.toString(),
-              className: "text-center text-primary",
+              className: "text-left text-primary",
             },
             {
               value: fund.vaultData.aprChange.toString(),
-              className: "text-center",
+              className: "text-left",
             },
             {
               value: fund.vaultData.tvl.toString(),
-              className: "text-center",
+              className: "text-left",
             },
             {
               leftIcon: () => (
@@ -78,7 +79,7 @@ export default function Funds() {
                 />
               ),
               value: fund.staticData.token_symbol,
-              className: "text-right",
+              className: "text-left",
             },
           ],
         }))}
