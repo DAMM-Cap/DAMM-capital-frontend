@@ -1,6 +1,7 @@
 import { useVaults } from "@/context/vault-context";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
+import { formatToFourDecimals } from "@/shared/utils";
 import { useEffect, useState } from "react";
 
 export function usePortfolioData(vaultId?: string) {
@@ -56,9 +57,10 @@ export function usePortfolioData(vaultId?: string) {
       vault_name: selectedVault.staticData.vault_name,
       apr: selectedVault.vaultData.apr,
       positionSize: selectedVault.vaultData.positionRaw,
-      yieldEarned:
+      yieldEarned: formatToFourDecimals(
         selectedVault.vaultData.positionRaw * selectedVault.vaultData.sharePrice -
-        selectedVault.vaultData.positionRaw,
+          selectedVault.vaultData.positionRaw,
+      ),
       vault_icon: selectedVault.staticData.vault_icon,
       token_symbol: selectedVault.staticData.token_symbol,
       operation: operation,
@@ -83,9 +85,9 @@ export function usePortfolioData(vaultId?: string) {
         { tvl: 0, yieldEarned: 0, deposited: 0 },
       ) ?? { tvl: 0, yieldEarned: 0, deposited: 0 };
     return {
-      tvl,
-      yieldEarned,
-      deposited,
+      tvl: tvl,
+      yieldEarned: formatToFourDecimals(yieldEarned),
+      deposited: deposited,
     };
   }
 
