@@ -5,6 +5,7 @@ import { useSendTransaction } from "@privy-io/react-auth";
 import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
 import { encodeFunctionData } from "viem";
 import { waitForTransactionReceipt } from "viem/actions";
+import { useEip7702 } from "../eip7702/utils";
 import { getWalletClient } from "../viem/viem";
 
 export type EvmCall = {
@@ -22,6 +23,7 @@ export function usePrivyTxs() {
 
   const { client } = useSmartWallets();
   const { sendTransaction } = useSendTransaction();
+  const { handlePrivy7702ExecuteBatch } = useEip7702();
 
   const executeWalletTransactionSequence = async (calls: EvmBatchCall) => {
     if (!networkConfig.chain.id || !isSignedIn) throw new Error("Failed connection");
@@ -78,6 +80,7 @@ export function usePrivyTxs() {
 
     if (isSmartAccount) return executeSmartAccountTransactionBatch(calls);
     else return executeWalletTransactionSequence(calls);
+    //else return handlePrivy7702ExecuteBatch(calls);
   };
 
   return {
