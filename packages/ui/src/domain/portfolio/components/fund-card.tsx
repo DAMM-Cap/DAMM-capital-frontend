@@ -32,11 +32,12 @@ export default function FundCard({
       token_symbol,
       operation,
       operationVariant,
+      operationActive,
     } = useFundData();
 
     return (
       !vaultLoading &&
-      Number(positionSize) > 0 && (
+      (Number(positionSize) > 0 || operationActive) && (
         <div
           className="flex-1 flex-col gap-4 hover:cursor-pointer"
           onClick={() => {
@@ -95,10 +96,10 @@ export default function FundCard({
                   noColor
                   initialCol2X={false}
                   tableHeaders={[
-                    { label: "Position Size", className: "text-center" },
-                    { label: "Yield Earned", className: "text-center" },
-                    { label: "Net APY", className: "text-center" },
-                    { label: "Underlying Asset", className: "text-center" },
+                    { label: "Position Size", className: "text-left" },
+                    { label: "Yield Earned", className: "text-left" },
+                    { label: "Net APY", className: "text-left" },
+                    { label: "Underlying Asset", className: "text-left" },
                   ]}
                   isLoading={isLoading}
                   rows={[
@@ -106,15 +107,15 @@ export default function FundCard({
                       rowFields: [
                         {
                           value: positionSize.toString(),
-                          className: "text-center text-lg font-bold",
+                          className: "text-left text-lg font-bold",
                         },
                         {
                           value: yieldEarned.toString(),
-                          className: "text-center text-primary text-lg font-bold",
+                          className: "text-left text-primary text-lg font-bold",
                         },
                         {
                           value: apr.toString(),
-                          className: "text-center text-lg font-bold",
+                          className: "text-left text-lg font-bold",
                         },
                         {
                           leftIcon: () =>
@@ -127,7 +128,7 @@ export default function FundCard({
                             ),
 
                           value: token_symbol,
-                          className: "text-center",
+                          className: "text-left",
                         },
                       ],
                     },

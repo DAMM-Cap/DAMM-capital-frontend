@@ -1,4 +1,4 @@
-import { Button, CircledExclamationIcon } from "@/components";
+import { Button, CircledExclamationIcon, Tooltip } from "@/components";
 import clsx from "clsx";
 import { AlertCircleIcon as AlertIcon, CheckIcon } from "lucide-react";
 import React from "react";
@@ -18,6 +18,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     icon: React.ReactNode;
     rightText: string;
     align?: "left" | "right";
+    tooltip?: string;
   };
   leftIcon?: React.ReactNode;
 }
@@ -143,9 +144,18 @@ export default function Input({
           >
             <span className="text-neutral">{complexLabel.leftText}</span>
             <span className="text-neutral">{complexLabel.icon}</span>
-            <span className="text-primary flex items-center gap-1">
-              {complexLabel.rightText} <CircledExclamationIcon size={10} />
-            </span>
+            <Tooltip
+              content={complexLabel.tooltip || ""}
+              variant="default"
+              trigger="hover"
+              position="left"
+              className="min-w-[240px]"
+              delay={400}
+            >
+              <span className="text-primary flex items-center gap-1">
+                {complexLabel.rightText} <CircledExclamationIcon size={10} />
+              </span>
+            </Tooltip>
           </div>
         )}
       </div>

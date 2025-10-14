@@ -27,6 +27,7 @@ export interface VaultDataView {
   performanceFee: number;
   managementFee: number;
   sharePrice: number;
+  aum: number;
 }
 
 export interface PositionDataView {
@@ -63,7 +64,15 @@ export interface VaultsDataView {
   positionData: PositionDataView;
 }
 
+export interface VaultMetricsView {
+  vaultId: string;
+  netApy: number;
+  netApy30d: number;
+  sharpe: number;
+}
+
 export interface DataPresenter {
   vaultsData: VaultsDataView[];
+  vaultMetrics: VaultMetricsView[];
   //activityData: TransactionView[];
 }

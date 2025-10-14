@@ -3,7 +3,7 @@ import AcknowledgeTermsModal from "@/components/layout/acknowledge-terms-modal";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { useModal } from "@/hooks/use-modal";
-import { VaultsDataView } from "@/services/api/types/data-presenter";
+import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -14,6 +14,7 @@ export default function Funds() {
   const [isLoadingFund, setIsLoadingFund] = useState(false);
   const { vaults, isLoading } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
+  const vaultMetrics: VaultMetricsView[] | undefined = vaults?.vaultMetrics;
   const {
     isOpen: openModalTerms,
     open: setOpenModalTerms,
@@ -40,48 +41,51 @@ export default function Funds() {
       <Table
         tableHeaders={[
           { label: "Name", className: "text-left" },
-          { label: "Net APY", className: "text-center" },
-          { label: "30 days Net APY", className: "text-center" },
-          { label: "AUM", className: "text-center" },
-          { label: "Underlying Asset", className: "text-right" },
+          { label: "Net APY", className: "text-left" },
+          { label: "30 days Net APY", className: "text-left" },
+          { label: "AUM", className: "text-left" },
+          { label: "Underlying Asset", className: "text-left" },
         ]}
         isLoading={isLoadingFund}
-        rows={vaultsData?.map((fund) => ({
-          onClick: () => {
-            navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
-          },
-          rowFields: [
-            {
-              leftIcon: () => <DammStableIcon size={32} />,
-              value: fund.staticData.vault_name,
-              subtitle: fund.staticData.vault_symbol,
-              className: "text-left font-bold text-lg",
+        rows={vaultsData?.map((fund) => {
+          const metrics = vaultMetrics?.find((v) => v.vaultId === fund.staticData.vault_id);
+          return {
+            onClick: () => {
+              navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
             },
-            {
-              value: fund.vaultData.apr.toString(),
-              className: "text-center text-primary",
-            },
-            {
-              value: fund.vaultData.aprChange.toString(),
-              className: "text-center",
-            },
-            {
-              value: fund.vaultData.tvl.toString(),
-              className: "text-center",
-            },
-            {
-              leftIcon: () => (
-                <img
-                  src={fund.staticData.vault_icon}
-                  alt={fund.staticData.vault_name}
-                  className="w-5 h-5 object-cover rounded-full"
-                />
-              ),
-              value: fund.staticData.token_symbol,
-              className: "text-right",
-            },
-          ],
-        }))}
+            rowFields: [
+              {
+                leftIcon: () => <DammStableIcon size={32} />,
+                value: fund.staticData.vault_name,
+                subtitle: fund.staticData.vault_symbol,
+                className: "text-left font-bold text-lg",
+              },
+              {
+                value: metrics?.netApy.toString() || "0",
+                className: "text-left text-primary",
+              },
+              {
+                value: metrics?.netApy30d.toString() || "0",
+                className: "text-left",
+              },
+              {
+                value: fund.vaultData.aum.toString(),
+                className: "text-left",
+              },
+              {
+                leftIcon: () => (
+                  <img
+                    src={fund.staticData.vault_icon}
+                    alt={fund.staticData.vault_name}
+                    className="w-5 h-5 object-cover rounded-full"
+                  />
+                ),
+                value: fund.staticData.token_symbol,
+                className: "text-left",
+              },
+            ],
+          };
+        })}
       />
 
       {!isSignedIn && (

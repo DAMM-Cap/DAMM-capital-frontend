@@ -1,5 +1,5 @@
 import { useVaults } from "@/context/vault-context";
-import { VaultsDataView } from "@/services/api/types/data-presenter";
+import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
 import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { useEffect, useState } from "react";
@@ -10,11 +10,17 @@ export function useFundOperateData(vaultId: string) {
   const { data: tokensBalance } = useTokensBalance();
   const walletBalance = Number(tokensBalance?.vaultBalances[vaultId]?.availableSupply || 0);
   const availableAssets = Number(tokensBalance?.vaultBalances[vaultId]?.shares || 0);
+  const [selectedVaultMetrics, setSelectedVaultMetrics] = useState<VaultMetricsView | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
-    if (vaultId && vaults?.vaultsData) {
+    if (vaultId && vaults?.vaultsData && vaults?.vaultMetrics) {
       const foundVault = vaults.vaultsData.find((v) => v.staticData.vault_id === vaultId);
       setSelectedVault(foundVault);
+
+      const foundVaultMetrics = vaults.vaultMetrics.find((v) => v.vaultId === vaultId);
+      setSelectedVaultMetrics(foundVaultMetrics);
     }
   }, [vaultId, vaults]);
 
@@ -112,7 +118,7 @@ export function useFundOperateData(vaultId: string) {
   }
 
   function useFundData() {
-    if (!selectedVault) {
+    if (!selectedVault || !selectedVaultMetrics) {
       return {
         vault_name: "",
         vault_symbol: "",
@@ -134,8 +140,13 @@ export function useFundOperateData(vaultId: string) {
         entranceRate: 0,
         exitRate: 0,
         walletBalance: 0,
+        sharpe: 0,
+        netApy: 0,
+        netApy30d: 0,
+        aum: 0,
       };
     }
+
     return {
       vault_name: selectedVault.staticData.vault_name,
       vault_symbol: selectedVault.staticData.vault_symbol,
@@ -157,6 +168,10 @@ export function useFundOperateData(vaultId: string) {
       entranceRate: selectedVault.vaultData.entranceRate,
       exitRate: selectedVault.vaultData.exitRate,
       walletBalance: walletBalance,
+      sharpe: selectedVaultMetrics.sharpe,
+      netApy: selectedVaultMetrics.netApy,
+      netApy30d: selectedVaultMetrics.netApy30d,
+      aum: selectedVault.vaultData.aum,
     };
   }
 

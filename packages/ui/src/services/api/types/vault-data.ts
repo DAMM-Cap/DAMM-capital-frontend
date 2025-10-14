@@ -46,6 +46,7 @@ export interface VaultData {
   performanceFee: number;
   managementFee: number;
   sharePrice: number;
+  aum: number;
 }
 
 export interface PositionData {
@@ -62,6 +63,7 @@ export interface PositionData {
 
 export interface VaultDataResponse {
   vaultsData: IntegratedDataResponse[];
+  vaultMetrics: VaultMetricsResponse[];
   //vaultData: VaultData;
   //positionData: PositionData;
 }
@@ -83,4 +85,11 @@ export interface IntegratedDataResponse {
   staticData: StaticData;
   vaultData: VaultData;
   positionData: PositionData;
+}
+
+export interface VaultMetricsResponse {
+  vaultId: string;
+  netApy: number;
+  netApy30d: number;
+  sharpe: number;
 }

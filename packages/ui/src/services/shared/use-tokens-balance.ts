@@ -2,6 +2,7 @@ import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { publicClient } from "@/services/viem/viem";
 import { getNetworkConfig } from "@/shared/config/network";
+import { formatToFourDecimals } from "@/shared/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Abi, Address, formatUnits, isAddress, MulticallParameters } from "viem";
 import IERC20ABI from "../lagoon/abis/IERC20.json";
@@ -65,8 +66,12 @@ export function useTokensBalance() {
           const shares = results[i * 2 + 1] as bigint;
 
           result.vaultBalances[v.staticData.vault_id.toString()] = {
-            availableSupply: formatUnits(availableSupply, v.staticData.token_decimals),
-            shares: formatUnits(shares, v.staticData.vault_decimals),
+            availableSupply: formatToFourDecimals(
+              Number(formatUnits(availableSupply, v.staticData.token_decimals)),
+            ).toString(),
+            shares: formatToFourDecimals(
+              Number(formatUnits(shares, v.staticData.vault_decimals)),
+            ).toString(),
           };
         });
 

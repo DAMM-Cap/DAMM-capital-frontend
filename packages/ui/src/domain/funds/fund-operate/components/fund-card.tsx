@@ -1,4 +1,5 @@
 import { Button, Card, DammStableIcon, Table } from "@/components";
+import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
 import { ExternalLinkIcon } from "lucide-react";
@@ -10,9 +11,10 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
   const vaultIcon = <DammStableIcon size={48} />;
+  const isMobile = useIsMobile();
 
   try {
-    const { vault_name, apr, aprChange, tvl } = useFundData();
+    const { vault_name, tvl, sharpe, netApy, netApy30d, aum } = useFundData();
     return (
       !vaultLoading && (
         <div className="flex-1 flex-col gap-4">
@@ -59,30 +61,30 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
               noColor
               initialCol2X={false}
               tableHeaders={[
-                { label: "Net APY", className: "text-center" },
-                { label: "30 days Net APY", className: "text-center" },
-                { label: "AUM", className: "text-center" },
-                { label: "NAV", className: "text-center" },
+                { label: "Net APY", tooltip: "Since inception", className: "text-left" },
+                { label: "30 days Net APY", className: "text-left" },
+                { label: "AUM", className: "text-left" },
+                { label: "NAV", className: "text-left" },
               ]}
               isLoading={isLoading}
               rows={[
                 {
                   rowFields: [
                     {
-                      value: apr.toString(),
-                      className: "text-center text-primary",
+                      value: netApy.toString(),
+                      className: "text-left text-primary",
                     },
                     {
-                      value: aprChange.toString(),
-                      className: "text-center",
+                      value: netApy30d.toString(),
+                      className: "text-left",
+                    },
+                    {
+                      value: aum.toString(),
+                      className: "text-left",
                     },
                     {
                       value: tvl.toString(),
-                      className: "text-center",
-                    },
-                    {
-                      value: tvl.toString(),
-                      className: "text-center",
+                      className: "text-left",
                     },
                   ],
                 },
@@ -92,30 +94,26 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
               noColor
               initialCol2X={false}
               tableHeaders={[
-                { label: "Sharp Ratio", className: "text-center" },
-                { label: "Chain", className: "text-center" },
-                { label: "Settlement Frequency", className: "text-center" },
-                { label: "", className: "text-right" },
+                { label: "Sharpe Ratio", className: "text-left" },
+                { label: "Chain", className: "text-left" },
+                { label: "Settlement Frequency", className: "text-left" },
               ]}
+              className={clsx("", { "-mt-2": isMobile, "mt-6": !isMobile })}
               isLoading={isLoading}
               rows={[
                 {
                   rowFields: [
                     {
-                      value: apr.toString(),
-                      className: "text-center",
+                      value: sharpe.toString(),
+                      className: "text-left",
                     },
                     {
                       value: "Optimism",
-                      className: "text-center",
+                      className: "text-left",
                     },
                     {
                       value: "Average: 48 hours",
-                      className: "text-center",
-                    },
-                    {
-                      value: "",
-                      className: "text-center",
+                      className: "text-left",
                     },
                   ],
                 },

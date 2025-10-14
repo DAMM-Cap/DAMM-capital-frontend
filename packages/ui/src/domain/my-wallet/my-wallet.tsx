@@ -70,23 +70,22 @@ export default function MyWallet() {
       <div className="flex flex-row justify-between mb-10">
         <Label label="Wallet Overview" className="domain-title" />
 
-        <div className="flex flex-row gap-4">
-          <Button
-            onClick={openReceiveTokens}
-            disabled={!isSignedIn || isConnecting || !isSmartAccount}
-          >
-            <LogInIcon className="rotate-90" />
-            Receive
-          </Button>
-          <Button
-            onClick={openSendTokens}
-            disabled={!isSignedIn || isConnecting || !isSmartAccount}
-            variant="secondary"
-          >
-            <SendIcon />
-            Send
-          </Button>
-        </div>
+        {isSmartAccount && (
+          <div className="flex flex-row gap-4">
+            <Button onClick={openReceiveTokens} disabled={!isSignedIn || isConnecting}>
+              <LogInIcon className="rotate-90" />
+              Receive
+            </Button>
+            <Button
+              onClick={openSendTokens}
+              disabled={!isSignedIn || isConnecting}
+              variant="secondary"
+            >
+              <SendIcon />
+              Send
+            </Button>
+          </div>
+        )}
       </div>
       {vaultsData && tokens && (
         <Table

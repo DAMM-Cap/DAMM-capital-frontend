@@ -14,6 +14,7 @@ export const mockedVaultData: VaultData = {
   performanceFee: 0.001,
   managementFee: 0.001,
   sharePrice: 0.001,
+  aum: 0,
 };
 
 export const mockedPositionData: PositionData = {
@@ -30,6 +31,7 @@ export const mockedPositionData: PositionData = {
 
 export function getNullMockedVaultData(): VaultDataResponse {
   return {
+    vaultMetrics: [],
     vaultsData: [
       {
         staticData: {
@@ -58,6 +60,7 @@ export function getNullMockedVaultData(): VaultDataResponse {
           performanceFee: 0,
           managementFee: 0,
           sharePrice: 0,
+          aum: 0,
         },
         positionData: {
           totalValue: 0,
