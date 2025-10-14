@@ -4,6 +4,14 @@ import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
 import { formatToFourDecimals } from "@/shared/utils";
 import { useEffect, useState } from "react";
 
+export enum OperationStatus {
+  CONFIRMED = "Confirmed",
+  DEPOSIT_PENDING = "Deposit Pending",
+  WITHDRAW_PENDING = "Withdraw Pending",
+  SHARES_CLAIMABLE = "Shares Claimable",
+  ASSETS_CLAIMABLE = "Assets Claimable",
+}
+
 export function usePortfolioData(vaultId?: string) {
   const { vaults, isLoading } = useVaults();
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
@@ -32,25 +40,26 @@ export function usePortfolioData(vaultId?: string) {
         yieldEarned: "0",
         operation: "",
         operationVariant: "outline-secondary",
+        operationActive: false,
       };
     }
 
-    let operation = "Confirmed";
+    let operation = OperationStatus.CONFIRMED;
     let operationVariant = "outline-secondary";
     if (opState.pendingDepositRequest > 0) {
-      operation = "Deposit Pending";
+      operation = OperationStatus.DEPOSIT_PENDING;
       operationVariant = "outline-secondary";
     }
     if (opState.pendingRedeemRequest > 0) {
-      operation = "Withdraw Pending";
+      operation = OperationStatus.WITHDRAW_PENDING;
       operationVariant = "outline-secondary";
     }
     if (opState.claimableDepositRequest > 0) {
-      operation = "Shares Claimable";
+      operation = OperationStatus.SHARES_CLAIMABLE;
       operationVariant = "outline";
     }
     if (opState.claimableRedeemRequest > 0) {
-      operation = "Assets Claimable";
+      operation = OperationStatus.ASSETS_CLAIMABLE;
       operationVariant = "outline";
     }
     return {
@@ -65,6 +74,7 @@ export function usePortfolioData(vaultId?: string) {
       token_symbol: selectedVault.staticData.token_symbol,
       operation: operation,
       operationVariant: operationVariant,
+      operationActive: operation !== OperationStatus.CONFIRMED,
     };
   }
 

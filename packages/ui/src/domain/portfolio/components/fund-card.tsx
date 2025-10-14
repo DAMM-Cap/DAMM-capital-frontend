@@ -32,11 +32,12 @@ export default function FundCard({
       token_symbol,
       operation,
       operationVariant,
+      operationActive,
     } = useFundData();
 
     return (
       !vaultLoading &&
-      Number(positionSize) > 0 && (
+      (Number(positionSize) > 0 || operationActive) && (
         <div
           className="flex-1 flex-col gap-4 hover:cursor-pointer"
           onClick={() => {
