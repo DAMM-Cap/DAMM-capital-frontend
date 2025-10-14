@@ -11,6 +11,7 @@ import { useFundOperateData } from "./hooks/use-fund-operate-data";
 
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import clsx from "clsx";
+import Example from "./components/charts/recharts-example";
 import ManagementCard from "./components/management-card";
 
 export default function FundOperate() {
@@ -51,6 +52,8 @@ export default function FundOperate() {
               <ThesisCard isLoading={isLoading} />
 
               <OverviewCard isLoading={isLoading} />
+
+              <Example />
 
               <FeesCard isLoading={isLoading} />
 
