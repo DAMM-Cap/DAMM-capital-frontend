@@ -165,6 +165,7 @@ export function convertIntegratedPosition(
         performanceFee: formatToFourDecimals(p.performance_fee),
         managementFee: formatToFourDecimals(p.management_fee),
         sharePrice: formatToFourDecimals(Number(p.share_price)),
+        aum: formatToFourDecimals((p.latest_tvl / 10 ** p.token_decimals) * p.share_price),
       },
       positionData: {
         totalValue: formatToFourDecimals(formattedUserTotalSharesValue),

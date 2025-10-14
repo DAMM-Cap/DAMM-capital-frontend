@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React from "react";
-import { LoadingField } from "../index";
+import { CircledExclamationIcon, LoadingField, Tooltip } from "../index";
 import { HeaderData } from "./table";
 
 const RowSkeleton: React.FC<{
@@ -146,7 +146,13 @@ const Row: React.FC<RowProps> = ({
                         { "text-xs": !noColor, "text-sm": noColor },
                       )}
                     >
-                      {tableHeaders![index].label}
+                      {tableHeaders![index].tooltip && (
+                        <Tooltip content={tableHeaders![index].tooltip}>
+                          {tableHeaders![index].label}{" "}
+                          <CircledExclamationIcon className="ml-2 -mt-0.5" size={16} />
+                        </Tooltip>
+                      )}
+                      {!tableHeaders![index].tooltip && tableHeaders![index].label}
                     </div>
                   )}
                   <div className="flex items-center justify-center gap-3 mb-3">

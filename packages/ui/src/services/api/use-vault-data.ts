@@ -9,6 +9,7 @@ import { IntegratedDataResponse, VaultDataResponse } from "@/services/api/types/
 import { getNetworkConfig } from "@/shared/config/network";
 import { useQuery } from "@tanstack/react-query";
 import { isAddress } from "viem";
+import { computeVaultMetricsByVaultId } from "./lib/vault-metrics";
 
 export function useVaultData(wallet: string) {
   const network = getNetworkConfig().chain;
@@ -43,7 +44,18 @@ export function useVaultData(wallet: string) {
 
         const data: VaultDataResponse = {
           vaultsData: integratedPositionData,
+          vaultMetrics: [],
         };
+
+        const snapshotsResponse = await fetch(
+          `${API_GATEWAY}/lagoon/snapshots/test?offset=0&limit=100&chain_id=${network.id}`,
+        );
+        if (!snapshotsResponse.ok) throw new Error("Failed to fetch vault data");
+
+        const snapshotsData = await snapshotsResponse.json();
+        const vaultMetrics = computeVaultMetricsByVaultId(snapshotsData);
+
+        data.vaultMetrics = vaultMetrics;
 
         return data;
       } catch (error) {

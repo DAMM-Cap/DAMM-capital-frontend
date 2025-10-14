@@ -24,6 +24,7 @@ export function DataWrangler({ data }: { data: VaultDataResponse }): DataPresent
         vault.staticData.vault_symbol,
       ),
     })),
+    vaultMetrics: data.vaultMetrics,
     //activityData: transformActivityData(data.activityData),
   };
 }
@@ -61,6 +62,7 @@ export function transformVaultData(vaultData: VaultData, tokenSymbol: string): V
     performanceFee: vaultData.performanceFee,
     managementFee: vaultData.managementFee,
     sharePrice: vaultData.sharePrice,
+    aum: vaultData.aum,
   };
 }
 

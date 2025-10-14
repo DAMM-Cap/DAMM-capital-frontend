@@ -1,9 +1,11 @@
+import { CircledExclamationIcon, Tooltip } from "@/components";
 import clsx from "clsx";
 import React from "react";
 import { useIsMobile } from "../hooks/use-is-mobile";
 import Row, { RowProps } from "./row";
 export interface HeaderData {
   label: string;
+  tooltip?: string;
   className?: string;
 }
 
@@ -59,7 +61,12 @@ const Table: React.FC<TableProps> = ({
                         : "text-center"),
                 )}
               >
-                {item.label}
+                {item.tooltip && (
+                  <Tooltip content={item.tooltip}>
+                    {item.label} <CircledExclamationIcon className="ml-2 -mt-0.5" size={16} />
+                  </Tooltip>
+                )}
+                {!item.tooltip && item.label}
               </div>
             </div>
           ))}
