@@ -8,16 +8,26 @@ import VaultAreaChart from "./charts/vault-area-chart";
 interface MetricsViewProps {
   vaultId: string;
   valueKey: string;
+  valueLabel: string;
   label: string;
+  valueUnit: string;
+  isLoading: boolean;
 }
 
-export default function MetricsView({ vaultId, valueKey, label }: MetricsViewProps) {
+export default function MetricsView({
+  vaultId,
+  valueKey,
+  valueLabel,
+  label,
+  valueUnit,
+  isLoading,
+}: MetricsViewProps) {
   const network = getNetworkConfig();
 
   const [range, setRange] = useState<ChartRangeTypes>("1y");
   const [formattedChartData, setFormattedChartData] = useState<ChartDataType>({});
 
-  const { data: chartData, isLoading: isLoadingChart } = useSnapshots({
+  const { data: chartData, isLoading: isLoadingSnapshots } = useSnapshots({
     chainId: network.chain.id,
     ranges: range,
     offset: 0,
@@ -25,7 +35,7 @@ export default function MetricsView({ vaultId, valueKey, label }: MetricsViewPro
   });
 
   useEffect(() => {
-    if (!isLoadingChart && chartData) {
+    if (!isLoadingSnapshots && !isLoading && chartData) {
       const reducedChartData: ChartDataType = chartData.reduce((acc, vaultData) => {
         const date = vaultData.event_timestamp;
         const totalAssetsValue = Number(
@@ -73,7 +83,7 @@ export default function MetricsView({ vaultId, valueKey, label }: MetricsViewPro
               day: "numeric",
               year: "numeric",
             });
-          console.log("formattedDate", formattedDate);
+
           if (formattedDate !== "Invalid Date") d.dateLabel = formattedDate;
 
           return d;
@@ -82,15 +92,18 @@ export default function MetricsView({ vaultId, valueKey, label }: MetricsViewPro
 
       setFormattedChartData(reducedChartData);
     }
-  }, [chartData, range]);
+  }, [chartData, range, isLoading]);
 
   return (
     <VaultAreaChart
-      data={formattedChartData[vaultId]}
+      data={formattedChartData[vaultId] || []}
       valueKey={valueKey}
+      valueLabel={valueLabel}
+      valueUnit={valueUnit}
       label={label}
       range={range}
       setRange={setRange}
+      isLoading={isLoading}
     />
   );
 }

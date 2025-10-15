@@ -27,7 +27,7 @@ export default function FundOperate() {
   }, [isLoading]);
 
   try {
-    const { vault_name } = useFundData();
+    const { vault_name, token_symbol } = useFundData();
 
     return (
       !vaultLoading && (
@@ -52,9 +52,32 @@ export default function FundOperate() {
 
               <OverviewCard isLoading={isLoading} />
 
-              <MetricsView vaultId={vaultId!} valueKey="sharePiceValue" label="Share Price" />
+              <MetricsView
+                vaultId={vaultId!}
+                valueKey="sharePiceValue"
+                valueLabel="Price"
+                valueUnit={token_symbol}
+                label="Price History"
+                isLoading={isLoading}
+              />
 
-              <MetricsView vaultId={vaultId!} valueKey="totalAssetsValue" label="Total Assets" />
+              <MetricsView
+                vaultId={vaultId!}
+                valueKey="totalAssetsValue"
+                valueLabel="TVL"
+                valueUnit={token_symbol}
+                label="Total Value"
+                isLoading={isLoading}
+              />
+
+              <MetricsView
+                vaultId={vaultId!}
+                valueKey="apyValue"
+                valueLabel="APY"
+                valueUnit="%"
+                label="Returns - Performance"
+                isLoading={isLoading}
+              />
 
               <FeesCard isLoading={isLoading} />
 

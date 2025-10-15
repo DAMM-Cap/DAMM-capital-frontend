@@ -174,6 +174,25 @@ const ChartTooltipContent = React.forwardRef<
 
     const nestLabel = payload.length === 1 && indicator !== "dot";
 
+    const renderIndicator = (indicatorColor: string) => {
+      return (
+        <div
+          className={cn("shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]", {
+            "h-2.5 w-2.5": indicator === "dot",
+            "w-1": indicator === "line",
+            "w-0 border-[1.5px] border-dashed bg-transparent": indicator === "dashed",
+            "my-0.5": nestLabel && indicator === "dashed",
+          })}
+          style={
+            {
+              "--color-bg": indicatorColor,
+              "--color-border": indicatorColor,
+            } as React.CSSProperties
+          }
+        />
+      );
+    };
+
     return (
       <div
         ref={ref}
@@ -198,36 +217,20 @@ const ChartTooltipContent = React.forwardRef<
                 )}
               >
                 {formatter && item?.value !== undefined && item.name ? (
-                  formatter(item.value, String(item.name), item, index, item.payload)
+                  <>
+                    {!hideIndicator && renderIndicator(indicatorColor)}
+                    {formatter(item.value, String(item.name), item, index, item.payload)}
+                  </>
                 ) : (
                   <>
                     {itemConfig?.icon ? (
                       <itemConfig.icon />
                     ) : (
-                      !hideIndicator && (
-                        <div
-                          className={cn(
-                            "shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]",
-                            {
-                              "h-2.5 w-2.5": indicator === "dot",
-                              "w-1": indicator === "line",
-                              "w-0 border-[1.5px] border-dashed bg-transparent":
-                                indicator === "dashed",
-                              "my-0.5": nestLabel && indicator === "dashed",
-                            },
-                          )}
-                          style={
-                            {
-                              "--color-bg": indicatorColor,
-                              "--color-border": indicatorColor,
-                            } as React.CSSProperties
-                          }
-                        />
-                      )
+                      !hideIndicator && renderIndicator(indicatorColor)
                     )}
                     <div
                       className={cn(
-                        "flex flex-1 justify-between leading-none",
+                        "flex flex-1 gap-2 justify-between leading-none",
                         nestLabel ? "items-end" : "items-center",
                       )}
                     >

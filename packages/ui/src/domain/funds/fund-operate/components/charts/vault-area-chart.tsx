@@ -1,5 +1,6 @@
-import { Card, Label, Select } from "@/components";
+import { Card, Label, LoadingField, Select } from "@/components";
 import { ChartDataType, ChartRangeTypes } from "@/services/api/types/snapshot";
+import { formatToFourDecimals } from "@/shared/utils";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   ChartContainer,
@@ -50,58 +51,96 @@ const viewOptions: { id: ChartRangeTypes; label: string }[] = [
 const VaultAreaChart = ({
   data,
   valueKey,
+  valueLabel,
+  valueUnit,
   label,
   range,
   setRange,
+  isLoading,
 }: {
   data: ChartDataType[string];
   valueKey: string;
+  valueLabel: string;
+  valueUnit: string;
   label: string;
   range: ChartRangeTypes;
   setRange: (range: ChartRangeTypes) => void;
+  isLoading: boolean;
 }) => {
   return (
     <Card variant="fund" className="!max-w-full min-w-0">
       <div className="flex items-center justify-between">
         <Label label={label} className="domain-title mb-2" />
-        <Select
-          className="scale-75 -mt-4 min-w-[100px]"
-          value={range}
-          onChange={(e) => setRange(e.target.value as ChartRangeTypes)}
-          label="Range"
-          children={viewOptions.map((option) => (
-            <option key={option.id} value={option.id} label={option.label}>
-              {option.label}
-            </option>
-          ))}
+        {!isLoading && (
+          <Select
+            className="scale-75 -mt-4 min-w-[100px]"
+            value={range}
+            onChange={(e) => setRange(e.target.value as ChartRangeTypes)}
+            label="Range"
+            children={viewOptions.map((option) => (
+              <option key={option.id} value={option.id} label={option.label}>
+                {option.label}
+              </option>
+            ))}
+          />
+        )}
+      </div>
+      {!isLoading && (
+        <ViewToggle
+          views={viewOptions}
+          activeView={range}
+          onViewChange={(viewId) => setRange(viewId as ChartRangeTypes)}
+          className="mb-2"
         />
-      </div>
-      <ViewToggle
-        views={viewOptions}
-        activeView={range}
-        onViewChange={(viewId) => setRange(viewId as ChartRangeTypes)}
-        className="mb-2"
-      />
+      )}
 
-      <div className="max-w-full">
-        <ChartContainer config={chartConfig} className="h-[200px] w-full">
-          <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid opacity={0.1} />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <ChartTooltip content={<ChartTooltipContent className="bg-disabled" />} />
-            <Area
-              type="monotoneX"
-              dataKey={valueKey}
-              strokeWidth={2}
-              strokeOpacity={0.8}
-              fillOpacity={0.2}
-              stroke="var(--color-primary)"
-              fill="var(--color-primary)"
-            />
-          </AreaChart>
-        </ChartContainer>
-      </div>
+      {!isLoading ? (
+        <div className="max-w-full">
+          <ChartContainer config={chartConfig} className="h-[200px] w-full">
+            <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <CartesianGrid opacity={0.1} />
+              <XAxis
+                dataKey="date"
+                tickFormatter={(value) =>
+                  data.find((entry) => entry.date === value)?.dateLabel || value
+                }
+              />
+              <YAxis />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(value) =>
+                      data.find((entry) => entry.date === value)?.dateLabel || value
+                    }
+                    className="bg-disabled"
+                    formatter={(value) => {
+                      return (
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{valueLabel}:</span>
+                          <span>
+                            {formatToFourDecimals(value)} {valueUnit}
+                          </span>
+                        </div>
+                      );
+                    }}
+                  />
+                }
+              />
+              <Area
+                type="monotoneX"
+                dataKey={valueKey}
+                strokeWidth={2}
+                strokeOpacity={0.8}
+                fillOpacity={0.2}
+                stroke="var(--color-primary)"
+                fill="var(--color-primary)"
+              />
+            </AreaChart>
+          </ChartContainer>
+        </div>
+      ) : (
+        <LoadingField className="!h-[200px] w-full" />
+      )}
     </Card>
   );
 };
