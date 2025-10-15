@@ -24,7 +24,10 @@ export type ChartRangeTypes = "24h" | "7d" | "all" | "1y" | "6m" | "1m";
 export interface ChartDataType {
   [key: string]: {
     date: string;
-    value: number;
+    dateLabel: string;
+    totalAssetsValue: number;
+    sharePiceValue: number;
+    apyValue: number;
     label: string;
     metric: "hours" | "days";
   }[];

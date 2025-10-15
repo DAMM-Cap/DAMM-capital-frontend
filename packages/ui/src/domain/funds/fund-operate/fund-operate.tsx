@@ -1,18 +1,17 @@
 import { Breadcrumb, Label } from "@/components";
+import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSearch } from "@tanstack/react-router";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import FeesCard from "./components/fees-card";
 import FundCard from "./components/fund-card";
+import ManagementCard from "./components/management-card";
+import MetricsView from "./components/metrics";
 import OverviewCard from "./components/overview-card";
 import RiskDisclosureCard from "./components/risk-disclosure-card";
 import ThesisCard from "./components/thesis-card";
 
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
-
-import { useIsMobile } from "@/components/hooks/use-is-mobile";
-import clsx from "clsx";
-import Example from "./components/charts/recharts-example";
-import ManagementCard from "./components/management-card";
 
 export default function FundOperate() {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
@@ -53,7 +52,9 @@ export default function FundOperate() {
 
               <OverviewCard isLoading={isLoading} />
 
-              <Example />
+              <MetricsView vaultId={vaultId!} valueKey="sharePiceValue" label="Share Price" />
+
+              <MetricsView vaultId={vaultId!} valueKey="totalAssetsValue" label="Total Assets" />
 
               <FeesCard isLoading={isLoading} />
 

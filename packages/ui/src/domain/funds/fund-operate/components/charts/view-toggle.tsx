@@ -1,4 +1,5 @@
 import { Button } from "@/components";
+import clsx from "clsx";
 import React from "react";
 
 interface ViewToggleProps {
@@ -19,18 +20,15 @@ export default function ViewToggle({
   className = "",
 }: ViewToggleProps) {
   return (
-    <div
-      className={`flex bg-surface-light dark:bg-zinc-900 rounded-xl p-1 border border-border-light dark:border-zinc-800 ${className}`}
-    >
+    <div className={clsx("flex", className)}>
       {views.map((view) => (
         <Button
           key={view.id}
           onClick={() => onViewChange(view.id)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 text-sm font-medium ${
-            activeView === view.id
-              ? "bg-white dark:bg-zinc-800 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-700 border-2 border-lime-400/80 hover:border-lime-400"
-              : "text-muted-light dark:text-muted hover:text-foreground-light dark:hover:text-foreground"
-          }`}
+          variant="secondary"
+          className={clsx("flex items-center h-6 text-xs transition-all duration-200", {
+            "!bg-disabled !border-none": activeView !== view.id,
+          })}
         >
           {view.icon && <span className="w-4 h-4">{view.icon}</span>}
           {view.label}
