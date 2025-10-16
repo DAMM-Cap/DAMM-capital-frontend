@@ -8,90 +8,38 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as PortfolioIndexRouteImport } from './routes/portfolio/index'
+import { Route as MyWalletIndexRouteImport } from './routes/my-wallet/index'
+import { Route as FundsIndexRouteImport } from './routes/funds/index'
+import { Route as FundOperateIndexRouteImport } from './routes/fund-operate/index'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
-import { Route as PortfolioIndexImport } from './routes/portfolio/index'
-import { Route as MyWalletIndexImport } from './routes/my-wallet/index'
-import { Route as FundsIndexImport } from './routes/funds/index'
-import { Route as FundOperateIndexImport } from './routes/fund-operate/index'
-
-// Create/Update Routes
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PortfolioIndexRoute = PortfolioIndexImport.update({
+const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
   id: '/portfolio/',
   path: '/portfolio/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const MyWalletIndexRoute = MyWalletIndexImport.update({
+const MyWalletIndexRoute = MyWalletIndexRouteImport.update({
   id: '/my-wallet/',
   path: '/my-wallet/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const FundsIndexRoute = FundsIndexImport.update({
+const FundsIndexRoute = FundsIndexRouteImport.update({
   id: '/funds/',
   path: '/funds/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const FundOperateIndexRoute = FundOperateIndexImport.update({
+const FundOperateIndexRoute = FundOperateIndexRouteImport.update({
   id: '/fund-operate/',
   path: '/fund-operate/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/fund-operate/': {
-      id: '/fund-operate/'
-      path: '/fund-operate'
-      fullPath: '/fund-operate'
-      preLoaderRoute: typeof FundOperateIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/funds/': {
-      id: '/funds/'
-      path: '/funds'
-      fullPath: '/funds'
-      preLoaderRoute: typeof FundsIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/my-wallet/': {
-      id: '/my-wallet/'
-      path: '/my-wallet'
-      fullPath: '/my-wallet'
-      preLoaderRoute: typeof MyWalletIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/portfolio/': {
-      id: '/portfolio/'
-      path: '/portfolio'
-      fullPath: '/portfolio'
-      preLoaderRoute: typeof PortfolioIndexImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -100,7 +48,6 @@ export interface FileRoutesByFullPath {
   '/my-wallet': typeof MyWalletIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/fund-operate': typeof FundOperateIndexRoute
@@ -108,16 +55,14 @@ export interface FileRoutesByTo {
   '/my-wallet': typeof MyWalletIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/fund-operate/': typeof FundOperateIndexRoute
   '/funds/': typeof FundsIndexRoute
   '/my-wallet/': typeof MyWalletIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/fund-operate' | '/funds' | '/my-wallet' | '/portfolio'
@@ -132,13 +77,52 @@ export interface FileRouteTypes {
     | '/portfolio/'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FundOperateIndexRoute: typeof FundOperateIndexRoute
   FundsIndexRoute: typeof FundsIndexRoute
   MyWalletIndexRoute: typeof MyWalletIndexRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio/': {
+      id: '/portfolio/'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-wallet/': {
+      id: '/my-wallet/'
+      path: '/my-wallet'
+      fullPath: '/my-wallet'
+      preLoaderRoute: typeof MyWalletIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/funds/': {
+      id: '/funds/'
+      path: '/funds'
+      fullPath: '/funds'
+      preLoaderRoute: typeof FundsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fund-operate/': {
+      id: '/fund-operate/'
+      path: '/fund-operate'
+      fullPath: '/fund-operate'
+      preLoaderRoute: typeof FundOperateIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -148,39 +132,6 @@ const rootRouteChildren: RootRouteChildren = {
   MyWalletIndexRoute: MyWalletIndexRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/fund-operate/",
-        "/funds/",
-        "/my-wallet/",
-        "/portfolio/"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/fund-operate/": {
-      "filePath": "fund-operate/index.tsx"
-    },
-    "/funds/": {
-      "filePath": "funds/index.tsx"
-    },
-    "/my-wallet/": {
-      "filePath": "my-wallet/index.tsx"
-    },
-    "/portfolio/": {
-      "filePath": "portfolio/index.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

@@ -102,7 +102,8 @@ export default function SecondaryActionCard({
     }
   };
 
-  const extraDisableOnClaimableDeposit = envParsed().BOT_CLAIMS_ON_BEHALF_ACTIVE !== "false";
+  const extraDisableOnClaimableDeposit =
+    envParsed().BOT_CLAIMS_ON_BEHALF_ACTIVE !== "false" && envParsed().USE_SEPOLIA === "true";
 
   const vm = useSecondaryActionViewModel({
     // deposit

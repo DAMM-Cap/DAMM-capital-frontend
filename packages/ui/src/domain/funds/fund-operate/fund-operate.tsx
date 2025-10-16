@@ -1,33 +1,32 @@
 import { Breadcrumb, Label } from "@/components";
+import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSearch } from "@tanstack/react-router";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import FeesCard from "./components/fees-card";
 import FundCard from "./components/fund-card";
+import ManagementCard from "./components/management-card";
+import MetricsView from "./components/metrics";
 import OverviewCard from "./components/overview-card";
 import RiskDisclosureCard from "./components/risk-disclosure-card";
 import ThesisCard from "./components/thesis-card";
 
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
 
-import { useIsMobile } from "@/components/hooks/use-is-mobile";
-import clsx from "clsx";
-import ManagementCard from "./components/management-card";
-
 export default function FundOperate() {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-  }, [isLoading]);
+  }, []);
 
   try {
-    const { vault_name } = useFundData();
+    const { vault_name, token_symbol } = useFundData();
 
     return (
       !vaultLoading && (
@@ -51,6 +50,33 @@ export default function FundOperate() {
               <ThesisCard isLoading={isLoading} />
 
               <OverviewCard isLoading={isLoading} />
+
+              <MetricsView
+                vaultId={vaultId!}
+                valueKey="sharePiceValue"
+                valueLabel="Price"
+                valueUnit={token_symbol}
+                label="Price History"
+                isLoading={isLoading}
+              />
+
+              <MetricsView
+                vaultId={vaultId!}
+                valueKey="totalAssetsValue"
+                valueLabel="TVL"
+                valueUnit={token_symbol}
+                label="Total Value"
+                isLoading={isLoading}
+              />
+
+              <MetricsView
+                vaultId={vaultId!}
+                valueKey="apyValue"
+                valueLabel="APY"
+                valueUnit="%"
+                label="Returns - Performance"
+                isLoading={isLoading}
+              />
 
               <FeesCard isLoading={isLoading} />
 

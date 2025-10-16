@@ -9,8 +9,8 @@ import { usePortfolioData } from "./hooks/use-portfolio-data";
 export default function Portfolio() {
   const navigate = useNavigate();
   const { isSignedIn } = useSession();
-  const [isLoadingFund, setIsLoadingFund] = useState(false);
-  const { usePortfolioSingleValuesData, isLoading } = usePortfolioData();
+  const [isLoadingFund, setIsLoadingFund] = useState(true);
+  const { usePortfolioSingleValuesData } = usePortfolioData();
 
   const { tvl, yieldEarned, deposited } = usePortfolioSingleValuesData();
 
@@ -33,11 +33,10 @@ export default function Portfolio() {
   };
 
   useEffect(() => {
-    setIsLoadingFund(true);
     setTimeout(() => {
       setIsLoadingFund(false);
     }, 1000);
-  }, [isLoading]);
+  }, []);
 
   useEffect(() => {
     if (!isSignedIn) {

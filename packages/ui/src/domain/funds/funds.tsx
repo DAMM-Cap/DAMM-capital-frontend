@@ -11,10 +11,12 @@ import { useEffect, useState } from "react";
 export default function Funds() {
   const navigate = useNavigate();
   const { isSignedIn, login } = useSession();
-  const [isLoadingFund, setIsLoadingFund] = useState(false);
-  const { vaults, isLoading } = useVaults();
+  const [isLoadingFund, setIsLoadingFund] = useState(true);
+  const { vaults } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
   const vaultMetrics: VaultMetricsView[] | undefined = vaults?.vaultMetrics;
+  const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;
+
   const {
     isOpen: openModalTerms,
     open: setOpenModalTerms,
@@ -22,11 +24,10 @@ export default function Funds() {
   } = useModal(false);
 
   useEffect(() => {
-    setIsLoadingFund(true);
     setTimeout(() => {
       setIsLoadingFund(false);
     }, 1000);
-  }, [isLoading]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -38,55 +39,66 @@ export default function Funds() {
         />
       </div>
 
-      <Table
-        tableHeaders={[
-          { label: "Name", className: "text-left" },
-          { label: "Net APY", className: "text-left" },
-          { label: "30 days Net APY", className: "text-left" },
-          { label: "AUM", className: "text-left" },
-          { label: "Underlying Asset", className: "text-left" },
-        ]}
-        isLoading={isLoadingFund}
-        rows={vaultsData?.map((fund) => {
-          const metrics = vaultMetrics?.find((v) => v.vaultId === fund.staticData.vault_id);
-          return {
-            onClick: () => {
-              navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
-            },
-            rowFields: [
-              {
-                leftIcon: () => <DammStableIcon size={32} />,
-                value: fund.staticData.vault_name,
-                subtitle: fund.staticData.vault_symbol,
-                className: "text-left font-bold text-lg",
+      {!noVaults && (
+        <Table
+          tableHeaders={[
+            { label: "Name", className: "text-left" },
+            { label: "Net APY", className: "text-left" },
+            { label: "30 days Net APY", className: "text-left" },
+            { label: "AUM", className: "text-left" },
+            { label: "Underlying Asset", className: "text-left" },
+          ]}
+          isLoading={isLoadingFund}
+          rows={vaultsData?.map((fund) => {
+            const metrics = vaultMetrics?.find((v) => v.vaultId === fund.staticData.vault_id);
+            return {
+              onClick: () => {
+                navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
               },
-              {
-                value: metrics?.netApy.toString() || "0",
-                className: "text-left text-primary",
-              },
-              {
-                value: metrics?.netApy30d.toString() || "0",
-                className: "text-left",
-              },
-              {
-                value: fund.vaultData.aum.toString(),
-                className: "text-left",
-              },
-              {
-                leftIcon: () => (
-                  <img
-                    src={fund.staticData.vault_icon}
-                    alt={fund.staticData.vault_name}
-                    className="w-5 h-5 object-cover rounded-full"
-                  />
-                ),
-                value: fund.staticData.token_symbol,
-                className: "text-left",
-              },
-            ],
-          };
-        })}
-      />
+              rowFields: [
+                {
+                  leftIcon: () => <DammStableIcon size={32} />,
+                  value: fund.staticData.vault_name,
+                  subtitle: fund.staticData.vault_symbol,
+                  className: "text-left font-bold text-lg",
+                },
+                {
+                  value: metrics?.netApy.toString() || "0",
+                  className: "text-left text-primary",
+                },
+                {
+                  value: metrics?.netApy30d.toString() || "0",
+                  className: "text-left",
+                },
+                {
+                  value: fund.vaultData.aum.toString(),
+                  className: "text-left",
+                },
+                {
+                  leftIcon: () => (
+                    <img
+                      src={fund.staticData.vault_icon}
+                      alt={fund.staticData.vault_name}
+                      className="w-5 h-5 object-cover rounded-full"
+                    />
+                  ),
+                  value: fund.staticData.token_symbol,
+                  className: "text-left",
+                },
+              ],
+            };
+          })}
+        />
+      )}
+
+      {noVaults && (
+        <Card variant="fund" className="flex flex-col gap-4">
+          <Label
+            label="We currently have no active funds in this chain."
+            className="domain-subtitle"
+          />
+        </Card>
+      )}
 
       {!isSignedIn && (
         <Card

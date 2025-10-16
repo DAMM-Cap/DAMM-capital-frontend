@@ -97,6 +97,7 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                 { label: "Sharpe Ratio", className: "text-left" },
                 { label: "Chain", className: "text-left" },
                 { label: "Settlement Frequency", className: "text-left" },
+                { label: "", className: "text-left" },
               ]}
               className={clsx("", { "-mt-2": isMobile, "mt-6": !isMobile })}
               isLoading={isLoading}
@@ -113,6 +114,10 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                     },
                     {
                       value: "Average: 48 hours",
+                      className: "text-left",
+                    },
+                    {
+                      value: "",
                       className: "text-left",
                     },
                   ],

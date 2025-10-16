@@ -1,5 +1,5 @@
 import envParsed from "@/envParsed";
-import { base, baseSepolia, sepolia } from "viem/chains";
+import { optimism, sepolia } from "viem/chains";
 
 import { ethereumChainLogo, optimismChainLogo } from "@/components/token-icons";
 import type { Chain } from "viem";
@@ -7,43 +7,32 @@ import type { Chain } from "viem";
 export type NetworkConfig = {
   chain: Chain;
   rpcUrl?: string;
-  network: "base" | "base-sepolia" | "ethereum-sepolia";
+  network: "ethereum-sepolia" | "optimism";
   explorerUrl: string;
 };
 
 export const getNetworkConfig = (): NetworkConfig => {
-  const { USE_MAINNET, USE_SEPOLIA, BASE_NODE_URL, SEPOLIA_NODE_URL } = envParsed();
-
-  if (USE_MAINNET === "true") {
-    baseNetworkConfig.rpcUrl = BASE_NODE_URL || "https://base.drpc.org";
-    return baseNetworkConfig;
-  }
+  const { USE_SEPOLIA, SEPOLIA_NODE_URL, OPTIMISM_NODE_URL } = envParsed();
 
   if (USE_SEPOLIA === "true") {
     sepoliaNetworkConfig.rpcUrl = SEPOLIA_NODE_URL || "https://sepolia.gateway.tenderly.co";
     return sepoliaNetworkConfig;
   }
 
-  baseSepoliaNetworkConfig.rpcUrl = BASE_NODE_URL || "https://base-sepolia-rpc.publicnode.com";
-  return baseSepoliaNetworkConfig;
+  optimismNetworkConfig.rpcUrl = OPTIMISM_NODE_URL || "https://gateway.tenderly.co/public/optimism";
+  return optimismNetworkConfig;
+};
+
+const optimismNetworkConfig: NetworkConfig = {
+  chain: optimism,
+  network: "optimism",
+  explorerUrl: "https://optimistic.etherscan.io",
 };
 
 const sepoliaNetworkConfig: NetworkConfig = {
   chain: sepolia,
   network: "ethereum-sepolia",
   explorerUrl: "https://sepolia.etherscan.io",
-};
-
-const baseSepoliaNetworkConfig: NetworkConfig = {
-  chain: baseSepolia,
-  network: "base-sepolia",
-  explorerUrl: "https://sepolia.basescan.org",
-};
-
-const baseNetworkConfig: NetworkConfig = {
-  chain: base,
-  network: "base",
-  explorerUrl: "https://basescan.org",
 };
 
 export const getChainLogo = (chain: Chain) => {
