@@ -1,4 +1,4 @@
-import { Card, Label, LoadingField, Select } from "@/components";
+import { Card, Label, LoadingField } from "@/components";
 import { ChartDataType, ChartRangeTypes } from "@/services/api/types/snapshot";
 import { formatToFourDecimals } from "@/shared/utils";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
