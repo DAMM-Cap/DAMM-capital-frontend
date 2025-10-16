@@ -69,22 +69,7 @@ const VaultAreaChart = ({
 }) => {
   return (
     <Card variant="fund" className="!max-w-full min-w-0">
-      <div className="flex items-center justify-between">
-        <Label label={label} className="domain-title mb-2" />
-        {!isLoading && (
-          <Select
-            className="scale-75 -mt-4 min-w-[100px]"
-            value={range}
-            onChange={(e) => setRange(e.target.value as ChartRangeTypes)}
-            label="Range"
-            children={viewOptions.map((option) => (
-              <option key={option.id} value={option.id} label={option.label}>
-                {option.label}
-              </option>
-            ))}
-          />
-        )}
-      </div>
+      <Label label={label} className="domain-title mb-2" />
       {!isLoading && (
         <ViewToggle
           views={viewOptions}

@@ -1,4 +1,4 @@
-import { Button, Label, Table } from "@/components";
+import { Button, Card, Label, Table } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { useModal } from "@/hooks/use-modal";
@@ -24,11 +24,12 @@ export default function MyWallet() {
     open: openSendTokens,
   } = useModal(false);
 
-  const [isLoadingFund, setIsLoadingFund] = useState(false);
-  const { vaults, isLoading } = useVaults();
+  const [isLoadingFund, setIsLoadingFund] = useState(true);
+  const { vaults } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
   const { data: tokensBalance } = useTokensBalance();
   const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
+  const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;
 
   useEffect(() => {
     if (vaultsData) {
@@ -59,18 +60,17 @@ export default function MyWallet() {
   }, [vaultsData, tokensBalance]);
 
   useEffect(() => {
-    setIsLoadingFund(true);
     setTimeout(() => {
       setIsLoadingFund(false);
     }, 1000);
-  }, [isLoading]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex flex-row justify-between mb-10">
         <Label label="Wallet Overview" className="domain-title" />
 
-        {isSmartAccount && (
+        {isSmartAccount && !noVaults && (
           <div className="flex flex-row gap-4">
             <Button onClick={openReceiveTokens} disabled={!isSignedIn || isConnecting}>
               <LogInIcon className="rotate-90" />
@@ -87,7 +87,7 @@ export default function MyWallet() {
           </div>
         )}
       </div>
-      {vaultsData && tokens && (
+      {!noVaults && tokens && (
         <Table
           tableHeaders={[
             { label: "Assets", className: "text-left" },
@@ -108,6 +108,14 @@ export default function MyWallet() {
             ],
           }))}
         />
+      )}
+      {noVaults && (
+        <Card variant="fund" className="flex flex-col gap-4">
+          <Label
+            label="We currently have no active funds in this chain."
+            className="domain-subtitle"
+          />
+        </Card>
       )}
       <ReceiveTokensDialog
         isOpen={isOpenReceiveTokens}

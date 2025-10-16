@@ -35,7 +35,7 @@ export default function ManagementCard({
     return (
       !vaultLoading && (
         <div
-          className={clsx("flex-1", {
+          className={clsx("flex-1 overflow-y-auto max-h-content-area scrollbar-visible", {
             "w-full": isMobile,
             "min-w-[300px] max-w-[360px]": !isMobile,
           })}

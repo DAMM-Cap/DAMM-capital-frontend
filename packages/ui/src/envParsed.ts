@@ -7,10 +7,9 @@ const env = {
   API_GATEWAY: import.meta.env.VITE_API_GATEWAY,
   PRIVY_APP_ID: import.meta.env.VITE_PRIVY_APP_ID,
   PRIVY_CLIENT_ID: import.meta.env.VITE_PRIVY_CLIENT_ID,
-  USE_MAINNET: import.meta.env.VITE_USE_MAINNET,
   USE_SEPOLIA: import.meta.env.VITE_USE_SEPOLIA,
-  BASE_NODE_URL: import.meta.env.VITE_BASE_NODE_URL,
   SEPOLIA_NODE_URL: import.meta.env.VITE_SEPOLIA_NODE_URL,
+  OPTIMISM_NODE_URL: import.meta.env.VITE_OPTIMISM_NODE_URL,
   BOT_CLAIMS_ON_BEHALF_ACTIVE: import.meta.env.VITE_BOT_CLAIMS_ON_BEHALF_ACTIVE,
 };
 
@@ -20,10 +19,9 @@ const envSchema = z
     API_GATEWAY: z.string().url().optional().default("http://localhost:5000"),
     PRIVY_APP_ID: z.string().optional().default(""),
     PRIVY_CLIENT_ID: z.string().optional().default(""),
-    USE_MAINNET: z.string().optional().default(""),
     USE_SEPOLIA: z.string().optional().default(""),
-    BASE_NODE_URL: z.string().optional().default(""),
     SEPOLIA_NODE_URL: z.string().optional().default(""),
+    OPTIMISM_NODE_URL: z.string().optional().default(""),
     BOT_CLAIMS_ON_BEHALF_ACTIVE: z.string().optional().default(""),
   })
   .required();

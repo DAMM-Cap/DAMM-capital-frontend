@@ -16,15 +16,14 @@ import { useFundOperateData } from "./hooks/use-fund-operate-data";
 export default function FundOperate() {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-  }, [isLoading]);
+  }, []);
 
   try {
     const { vault_name, token_symbol } = useFundData();

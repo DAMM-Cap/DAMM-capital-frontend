@@ -118,7 +118,7 @@ export function useFundOperateData(vaultId: string) {
   }
 
   function useFundData() {
-    if (!selectedVault || !selectedVaultMetrics) {
+    if (!selectedVault) {
       return {
         vault_name: "",
         vault_symbol: "",
@@ -168,9 +168,9 @@ export function useFundOperateData(vaultId: string) {
       entranceRate: selectedVault.vaultData.entranceRate,
       exitRate: selectedVault.vaultData.exitRate,
       walletBalance: walletBalance,
-      sharpe: selectedVaultMetrics.sharpe,
-      netApy: selectedVaultMetrics.netApy,
-      netApy30d: selectedVaultMetrics.netApy30d,
+      sharpe: selectedVaultMetrics?.sharpe || 0,
+      netApy: selectedVaultMetrics?.netApy || 0,
+      netApy30d: selectedVaultMetrics?.netApy30d || 0,
       aum: selectedVault.vaultData.aum,
     };
   }
