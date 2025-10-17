@@ -118,7 +118,7 @@ export function useFundOperateData(vaultId: string) {
   }
 
   function useFundData() {
-    if (!selectedVault || !selectedVaultMetrics) {
+    if (!selectedVault) {
       return {
         vault_name: "",
         vault_symbol: "",
