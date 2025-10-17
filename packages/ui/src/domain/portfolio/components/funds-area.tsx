@@ -15,8 +15,8 @@ export default function FundsArea({
     if (!vaultIds) return true;
     return vaultIds.every((vaultId) => {
       const { useFundData } = usePortfolioData(vaultId)!;
-      const { positionSize } = useFundData();
-      return Number(positionSize) === 0;
+      const { positionSize, operationActive } = useFundData();
+      return Number(positionSize) === 0 && !operationActive;
     });
   };
 
