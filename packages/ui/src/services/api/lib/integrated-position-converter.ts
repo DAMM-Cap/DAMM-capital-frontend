@@ -1,5 +1,5 @@
 import { IntegratedDataResponse } from "@/services/api/types/vault-data";
-import { formatToFourDecimals } from "@/shared/utils";
+import { formatToMaxDefinition } from "@/shared/utils";
 import { BigNumber } from "ethers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
 
@@ -137,6 +137,8 @@ export function convertIntegratedPosition(
 
     const formattedPositionValue = p.position_value / 10 ** p.token_decimals;
     const formattedUserTotalSharesValue = p.user_total_shares / 10 ** p.vault_decimals;
+    const formattedPositionConvertedValue =
+      (p.user_total_shares * p.share_price) / 10 ** p.token_decimals;
 
     const thisVaultData: IntegratedDataResponse = {
       staticData: {
@@ -152,32 +154,31 @@ export function convertIntegratedPosition(
         fee_receiver_address: p.fee_receiver_address,
       },
       vaultData: {
-        tvl: formatToFourDecimals(p.latest_tvl / 10 ** p.token_decimals),
-        tvlChange: formatToFourDecimals(tvlChangePct),
-        apr: formatToFourDecimals(p.latest_apy),
-        aprChange: formatToFourDecimals(apyChangePct),
-        valueGained: formatToFourDecimals(valueGainedWLD),
-        valueGainedUSD: formatToFourDecimals(valueGainedUSD),
-        position: formatToFourDecimals(formattedPositionValue),
-        positionUSD: formatToFourDecimals(formattedPositionValue * wldUsdPrice),
-        entranceRate: formatToFourDecimals(p.entrance_rate),
-        exitRate: formatToFourDecimals(p.exit_rate),
-        performanceFee: formatToFourDecimals(p.performance_fee),
-        managementFee: formatToFourDecimals(p.management_fee),
-        sharePrice: formatToFourDecimals(Number(p.share_price)),
-        aum: formatToFourDecimals((p.latest_tvl / 10 ** p.token_decimals) * p.share_price),
+        tvl: formatToMaxDefinition(p.latest_tvl / 10 ** p.token_decimals),
+        tvlChange: formatToMaxDefinition(tvlChangePct),
+        apr: formatToMaxDefinition(p.latest_apy),
+        aprChange: formatToMaxDefinition(apyChangePct),
+        valueGained: formatToMaxDefinition(valueGainedWLD),
+        valueGainedUSD: formatToMaxDefinition(valueGainedUSD),
+        position: formatToMaxDefinition(formattedPositionValue),
+        positionUSD: formatToMaxDefinition(formattedPositionValue * wldUsdPrice),
+        entranceRate: formatToMaxDefinition(p.entrance_rate),
+        exitRate: formatToMaxDefinition(p.exit_rate),
+        performanceFee: formatToMaxDefinition(p.performance_fee),
+        managementFee: formatToMaxDefinition(p.management_fee),
+        sharePrice: Number(p.share_price),
+        aum: formatToMaxDefinition((p.latest_tvl / 10 ** p.token_decimals) * p.share_price),
       },
       positionData: {
-        totalValue: formatToFourDecimals(formattedUserTotalSharesValue),
-        totalValueUSD: formatToFourDecimals(formattedUserTotalSharesValue * wldUsdPrice),
-        availableToRedeem: formatToFourDecimals(availableToRedeemWLD),
-        availableToRedeemUSD: formatToFourDecimals(availableToRedeemWLD * wldUsdPrice),
-        claimableShares: formatToFourDecimals(claimableShares),
-        vaultShare: formatToFourDecimals(vaultSharePct),
-        //sharesInWallet: sharesInWallet || 0,
-        sharesInWallet: formatToFourDecimals(p.shares_balance),
-        wldBalance: formatToFourDecimals(wldBalance || 0),
-        usdcBalance: formatToFourDecimals(usdcBalance || 0),
+        totalValue: formatToMaxDefinition(formattedUserTotalSharesValue),
+        totalValueUSD: formatToMaxDefinition(formattedPositionConvertedValue),
+        availableToRedeem: formatToMaxDefinition(availableToRedeemWLD),
+        availableToRedeemUSD: formatToMaxDefinition(availableToRedeemWLD * wldUsdPrice),
+        claimableShares: formatToMaxDefinition(claimableShares),
+        vaultShare: formatToMaxDefinition(vaultSharePct),
+        sharesInWallet: formatToMaxDefinition(p.shares_balance),
+        wldBalance: formatToMaxDefinition(wldBalance || 0),
+        usdcBalance: formatToMaxDefinition(usdcBalance || 0),
       },
     };
 

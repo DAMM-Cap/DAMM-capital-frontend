@@ -101,7 +101,7 @@ export function useSecondaryActionViewModel({
       return {
         visible: true,
         label: "Withdraw Settled",
-        amountLabel: `${String(claimableRedeemRequest)} ${token_symbol}`,
+        amountLabel: `${String(claimableRedeemRequest)} ${vault_symbol}`,
         buttonLabel: "Redeem",
         disabled: false,
         statusIcon: "check",
@@ -117,7 +117,7 @@ export function useSecondaryActionViewModel({
       return {
         visible: true,
         label: "Withdraw Requested",
-        amountLabel: `${String(pendingRedeemRequest)} ${token_symbol}`,
+        amountLabel: `${String(pendingRedeemRequest)} ${vault_symbol}`,
         buttonLabel: "Redeem",
         disabled: true,
         statusIcon: "clock",
@@ -133,7 +133,7 @@ export function useSecondaryActionViewModel({
       return {
         visible: true,
         label: "Deposit Settled",
-        amountLabel: `${String(claimableDepositRequest)} ${vault_symbol}`,
+        amountLabel: `${String(claimableDepositRequest)} ${token_symbol}`,
         buttonLabel: "Claim",
         disabled: extraDisableOnClaimableDeposit ?? true,
         statusIcon: "check",
@@ -148,7 +148,7 @@ export function useSecondaryActionViewModel({
     return {
       visible: true,
       label: "Deposit Requested",
-      amountLabel: `${String(pendingDepositRequest)} ${vault_symbol}`,
+      amountLabel: `${String(pendingDepositRequest)} ${token_symbol}`,
       buttonLabel: "Cancel Deposit",
       disabled: false,
       statusIcon: "clock",

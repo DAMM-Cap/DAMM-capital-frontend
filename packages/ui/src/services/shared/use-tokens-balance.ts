@@ -2,7 +2,7 @@ import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { publicClient } from "@/services/viem/viem";
 import { getNetworkConfig } from "@/shared/config/network";
-import { formatToFourDecimals } from "@/shared/utils";
+import { formatToMaxDefinition } from "@/shared/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Abi, Address, formatUnits, isAddress, MulticallParameters } from "viem";
 import IERC20ABI from "../lagoon/abis/IERC20.json";
@@ -14,6 +14,7 @@ export interface TokensBalance {
     [vaultId: string]: {
       availableSupply: string;
       shares: string;
+      assets: string;
     };
   };
 }
@@ -41,36 +42,117 @@ export function useTokensBalance() {
           result.nativeBalance = formatUnits(balanceNative.toBigInt(), 18).substring(0, 8);
         } */
 
-        const contracts: MulticallParameters["contracts"] = vaults.vaultsData.flatMap((vault) => [
+        const queryArray = [
           {
-            address: vault.staticData.token_address as Address,
+            address: "0x" as Address,
             abi: IERC20ABI as Abi,
             functionName: "balanceOf",
             args: [evmAddress as Address],
           },
           {
-            address: vault.staticData.vault_address as Address,
+            address: "0x" as Address,
             abi: VaultABI as Abi,
             functionName: "balanceOf",
             args: [evmAddress as Address],
           },
-        ]);
+          {
+            address: "0x" as Address,
+            abi: VaultABI as Abi,
+            functionName: "claimableDepositRequest",
+            args: [0, evmAddress as Address],
+          },
+          {
+            address: "0x" as Address,
+            abi: VaultABI as Abi,
+            functionName: "pendingRedeemRequest",
+            args: [0, evmAddress as Address],
+          },
+          /* {
+            address: "0x" as Address,
+            abi: VaultABI as Abi,
+            functionName: "maxMint",
+            args: [evmAddress as Address],
+          },
+          {
+            address: "0x" as Address,
+            abi: VaultABI as Abi,
+            functionName: "maxRedeem",
+            args: [evmAddress as Address],
+          }, */
+        ];
+
+        const queryLength = queryArray.length;
+
+        const contracts: MulticallParameters["contracts"] = vaults.vaultsData.flatMap((vault) => {
+          queryArray[0].address = vault.staticData.token_address as Address;
+          queryArray[1].address = vault.staticData.vault_address as Address;
+          queryArray[2].address = vault.staticData.vault_address as Address;
+          queryArray[3].address = vault.staticData.vault_address as Address;
+          /* queryArray[4].address = vault.staticData.vault_address as Address;
+          queryArray[5].address = vault.staticData.vault_address as Address; */
+          return queryArray;
+        });
 
         const results = await publicClient.multicall({
           contracts,
           allowFailure: false,
         });
 
+        const conversionArray = [
+          {
+            address: "0x" as Address,
+            abi: VaultABI as Abi,
+            functionName: "convertToAssets",
+            args: [0n],
+          },
+          {
+            address: "0x" as Address,
+            abi: VaultABI as Abi,
+            functionName: "convertToShares",
+            args: [0n],
+          },
+          {
+            address: "0x" as Address,
+            abi: VaultABI as Abi,
+            functionName: "convertToAssets",
+            args: [0n],
+          },
+        ];
+        const conversionArrayLength = conversionArray.length;
+
+        const resultsAssets = await publicClient.multicall({
+          contracts: vaults.vaultsData.flatMap((vault, i) => {
+            conversionArray[0].address = vault.staticData.vault_address as Address;
+            conversionArray[0].args = [results[i * queryLength + 1] as bigint];
+            conversionArray[1].address = vault.staticData.vault_address as Address;
+            conversionArray[1].args = [results[i * queryLength + 2] as bigint];
+            conversionArray[2].address = vault.staticData.vault_address as Address;
+            conversionArray[2].args = [results[i * queryLength + 3] as bigint];
+            return conversionArray;
+          }) as MulticallParameters["contracts"],
+          allowFailure: false,
+        });
+
         vaults.vaultsData.forEach((v, i) => {
-          const availableSupply = results[i * 2] as bigint;
-          const shares = results[i * 2 + 1] as bigint;
+          const availableSupply = results[i * queryLength] as bigint;
+          const shares =
+            BigInt(results[i * queryLength + 1] as bigint) +
+            BigInt(resultsAssets[i * conversionArrayLength + 1] as bigint) +
+            BigInt(results[i * queryLength + 3] as bigint);
+          const assets =
+            BigInt(resultsAssets[i * conversionArrayLength] as bigint) +
+            BigInt(results[i * queryLength + 2] as bigint) +
+            BigInt(resultsAssets[i * conversionArrayLength + 2] as bigint);
 
           result.vaultBalances[v.staticData.vault_id.toString()] = {
-            availableSupply: formatToFourDecimals(
+            availableSupply: formatToMaxDefinition(
               Number(formatUnits(availableSupply, v.staticData.token_decimals)),
             ).toString(),
-            shares: formatToFourDecimals(
+            shares: formatToMaxDefinition(
               Number(formatUnits(shares, v.staticData.vault_decimals)),
+            ).toString(),
+            assets: formatToMaxDefinition(
+              Number(formatUnits(assets, v.staticData.token_decimals)),
             ).toString(),
           };
         });

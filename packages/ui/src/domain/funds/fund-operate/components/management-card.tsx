@@ -1,4 +1,4 @@
-import { Card, Label, TitleLabel } from "@/components";
+import { Card, DammStableIcon, Label, TitleLabel } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSession } from "@/context/session-context";
 import { useSearch } from "@tanstack/react-router";
@@ -12,9 +12,11 @@ import Withdraw from "../withdraw";
 export default function ManagementCard({
   isLoading,
   handleLoading,
+  className,
 }: {
   isLoading: boolean;
   handleLoading: (isLoading: boolean) => void;
+  className?: string;
 }) {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
@@ -26,16 +28,16 @@ export default function ManagementCard({
       vault_name,
       vault_icon,
       token_symbol,
-      //totalValue, // This is the availableAssets comming from the backend
-      vaultShare,
+      vault_symbol,
+      totalValueRaw,
       walletBalance,
-      availableAssets, // This is the totalValue returned from the blockchain
+      totalValueUSD,
     } = useFundData();
 
     return (
       !vaultLoading && (
         <div
-          className={clsx("flex-1 overflow-y-auto max-h-content-area scrollbar-visible", {
+          className={clsx("flex-1", className, {
             "w-full": isMobile,
             "min-w-[300px] max-w-[360px]": !isMobile,
           })}
@@ -47,15 +49,9 @@ export default function ManagementCard({
               className="!text-sm text-neutral font-montserrat font-normal leading-none mb-4"
             />
             <TitleLabel
-              title={availableAssets.toString() + " " + token_symbol}
-              leftIcon={
-                <img
-                  src={vault_icon}
-                  alt={vault_name}
-                  className="w-5 h-5 object-cover rounded-full"
-                />
-              }
-              secondaryTitle={vaultShare}
+              title={totalValueRaw.toString() + " " + vault_symbol}
+              leftIcon={<DammStableIcon size={20} />}
+              secondaryTitle={totalValueUSD?.toString()}
               label="My position"
               isLoading={isLoading}
             />

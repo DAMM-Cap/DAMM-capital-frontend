@@ -1,6 +1,6 @@
 import { Card, Label, LoadingField } from "@/components";
 import { ChartDataType, ChartRangeTypes } from "@/services/api/types/snapshot";
-import { formatToFourDecimals } from "@/shared/utils";
+import { formatToMaxDefinition } from "@/shared/utils";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   ChartContainer,
@@ -103,7 +103,7 @@ const VaultAreaChart = ({
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{valueLabel}:</span>
                           <span>
-                            {formatToFourDecimals(value)} {valueUnit}
+                            {formatToMaxDefinition(value)} {valueUnit}
                           </span>
                         </div>
                       );

@@ -84,7 +84,11 @@ export default function FundOperate() {
             </div>
             {!isMobile && (
               <div className="flex justify-end col-span-1">
-                <ManagementCard handleLoading={setIsLoading} isLoading={isLoading} />
+                <ManagementCard
+                  handleLoading={setIsLoading}
+                  isLoading={isLoading}
+                  className="overflow-y-auto max-h-content-area scrollbar-visible"
+                />
               </div>
             )}
           </div>

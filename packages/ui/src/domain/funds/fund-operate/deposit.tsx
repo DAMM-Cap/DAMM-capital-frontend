@@ -33,7 +33,6 @@ export default function Deposit({
   const [validReferral, setValidReferral] = useState(false);
 
   const {
-    position,
     conversionValue,
     vault_address,
     token_address,
@@ -44,6 +43,7 @@ export default function Deposit({
     entranceRate,
     walletBalance: max,
     isUserWhitelisted,
+    getConvertedValue,
   } = useDepositData();
 
   const {
@@ -151,12 +151,12 @@ export default function Deposit({
         open={openModal}
         onClose={() => setCloseModal()}
         amount={amount}
+        convertedAmount={getConvertedValue(Number(amount))}
         onAmountChange={(e) => setAmount(e.target.value)}
         onMaxClick={() => setAmount(max.toString())}
         max={max}
-        position={position}
+        walletBalance={max}
         conversionValue={conversionValue}
-        positionConverted={position * conversionValue}
         referralCode={referral}
         invalidReferral={invalidReferral}
         validReferral={validReferral}

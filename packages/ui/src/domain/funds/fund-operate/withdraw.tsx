@@ -1,5 +1,5 @@
 import { Button } from "@/components";
-import { getTokenLogo } from "@/components/token-icons";
+//import { getTokenLogo } from "@/components/token-icons";
 import { useModal } from "@/hooks/use-modal";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import clsx from "clsx";
@@ -28,12 +28,14 @@ export default function Withdraw({
   const [invalidAmount, setInvalidAmount] = useState(false);
 
   const {
-    position,
+    position: max,
     conversionValue,
     vault_address,
-    availableAssets: max,
     token_symbol,
     vault_symbol,
+    vault_decimals,
+    positionUSD,
+    getConvertedValue,
   } = useWithdrawData();
 
   const {
@@ -70,7 +72,7 @@ export default function Withdraw({
     handleLoading(true);
 
     // Execute transaction
-    const tx = await submitRequestWithdraw(vault_address, amount);
+    const tx = await submitRequestWithdraw(vault_address, vault_decimals!, amount);
 
     // Wait for confirmation
     await tx.wait();
@@ -83,13 +85,13 @@ export default function Withdraw({
     return null;
   }
 
-  const tokenIcon = (
+  /* const tokenIcon = (
     <img
       src={getTokenLogo(token_symbol)}
       alt={token_symbol}
       className="w-5 h-5 object-cover rounded-full"
     />
-  );
+  ); */
 
   return (
     <div className={className}>
@@ -109,19 +111,20 @@ export default function Withdraw({
         open={openModalWithdraw}
         onClose={() => setCloseModalWithdraw()}
         amount={amount}
+        convertedAmount={getConvertedValue(Number(amount))}
         onAmountChange={(e) => setAmount(e.target.value)}
         onMaxClick={() => setAmount(max.toString())}
         max={max}
-        position={position}
-        positionConverted={position * conversionValue}
+        position={max}
+        conversionValue={conversionValue}
+        positionConverted={positionUSD.toString()}
         onWithdraw={() => handleWithdraw()}
         isLoading={isLoading}
         isInsufficientShares={isInsufficientBalance}
         invalidAmount={invalidAmount}
         tokenSymbol={token_symbol}
         vaultSymbol={vault_symbol}
-        tokenIcon={tokenIcon}
-        conversionValue={conversionValue}
+        //tokenIcon={tokenIcon}
       />
     </div>
   );

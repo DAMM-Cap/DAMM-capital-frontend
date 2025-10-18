@@ -146,7 +146,7 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
               tokenIcon={
                 tokenIconElement ? React.createElement(selectedRow.icon!, { size: 20 }) : undefined
               }
-              tokenSecondaryLabel={`$${max}`}
+              tokenSecondaryLabel={`Available: $${max}`}
               noEdit={isLoading}
               amount={amount}
               onAmountChange={(e) => setAmount(e.target.value)}

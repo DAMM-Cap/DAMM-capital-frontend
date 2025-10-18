@@ -8,8 +8,7 @@ interface DepositModalProps {
   onAmountChange: React.ChangeEventHandler<HTMLInputElement>;
   onMaxClick: () => void;
   max: number;
-  position: number;
-  positionConverted: number;
+  walletBalance: number;
   referralCode: string;
   onReferralCodeChange: React.ChangeEventHandler<HTMLInputElement>;
   onDeposit: () => void;
@@ -22,6 +21,7 @@ interface DepositModalProps {
   vaultSymbol: string;
   tokenIcon: React.ReactNode;
   conversionValue: number;
+  convertedAmount: number;
 }
 
 const DepositModal: React.FC<DepositModalProps> = ({
@@ -31,8 +31,7 @@ const DepositModal: React.FC<DepositModalProps> = ({
   onAmountChange,
   onMaxClick,
   max,
-  position,
-  positionConverted,
+  walletBalance,
   referralCode,
   onReferralCodeChange,
   onDeposit,
@@ -45,6 +44,7 @@ const DepositModal: React.FC<DepositModalProps> = ({
   vaultSymbol,
   tokenIcon: TokenIcon,
   conversionValue,
+  convertedAmount,
 }) => {
   return (
     <Modal
@@ -65,15 +65,14 @@ const DepositModal: React.FC<DepositModalProps> = ({
       )}
     >
       <TitleLabel
-        label="My position"
-        title={`${position} ${tokenSymbol}`}
+        label="My wallet balance"
+        title={`${walletBalance} ${tokenSymbol}`}
         leftIcon={TokenIcon}
-        secondaryTitle={`$${positionConverted}`}
       />
       <TokenAmountInput
         tokenLabel={tokenSymbol}
         tokenIcon={TokenIcon}
-        tokenSecondaryLabel={`$${max}`}
+        tokenSecondaryLabel={`$${convertedAmount} ${vaultSymbol}`}
         conversionLeftText={`1 ${tokenSymbol}`}
         conversionRightText={`${conversionValue} ${vaultSymbol}`}
         amount={amount}

@@ -11,6 +11,7 @@ const env = {
   SEPOLIA_NODE_URL: import.meta.env.VITE_SEPOLIA_NODE_URL,
   OPTIMISM_NODE_URL: import.meta.env.VITE_OPTIMISM_NODE_URL,
   BOT_CLAIMS_ON_BEHALF_ACTIVE: import.meta.env.VITE_BOT_CLAIMS_ON_BEHALF_ACTIVE,
+  MAX_DEFINITION: parseInt(import.meta.env.VITE_MAX_DEFINITION || "5"),
 };
 
 const envSchema = z
@@ -23,6 +24,7 @@ const envSchema = z
     SEPOLIA_NODE_URL: z.string().optional().default(""),
     OPTIMISM_NODE_URL: z.string().optional().default(""),
     BOT_CLAIMS_ON_BEHALF_ACTIVE: z.string().optional().default(""),
+    MAX_DEFINITION: z.number().optional().default(5),
   })
   .required();
 

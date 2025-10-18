@@ -2,7 +2,7 @@ import { useSession } from "@/context/session-context";
 import { EvmBatchCall, EvmCall, usePrivyTxs } from "@/services/privy/use-privy-txs";
 import { TransactionResponse } from "@ethersproject/providers";
 import { BigNumber } from "ethers";
-import { parseEther } from "ethers/lib/utils";
+import { parseUnits } from "ethers/lib/utils";
 import IERC20ABI from "./abis/IERC20.json";
 import VaultABI from "./abis/Vault.json";
 
@@ -13,6 +13,7 @@ export function useWithdraw() {
   const submitRedeem = async (
     vaultAddress: string,
     underlyingTokenAddress: string,
+    vaultDecimals: number,
     feeReceiverAddress: string,
     exitRate: number,
     amount: string,
@@ -22,7 +23,7 @@ export function useWithdraw() {
 
     const txs: EvmBatchCall = [];
 
-    const amountInWei = parseEther(amount);
+    const amountInWei = parseUnits(amount, vaultDecimals);
 
     const redeemCall = {
       to: vaultAddress as `0x${string}`,
@@ -59,13 +60,13 @@ export function useWithdraw() {
 
   // This should be used instead of submitRequestWithdraw only if the vault
   // has closed state. This is a synchronous operation.
-  const submitWithdraw = async (vaultAddress: string, amount: string) => {
+  const submitWithdraw = async (vaultAddress: string, vaultDecimals: number, amount: string) => {
     if (!isSignedIn) throw new Error("Failed connection");
     if (!usersAccount) throw new Error("Failed account");
 
     const txs: EvmBatchCall = [];
 
-    const amountInWei = parseEther(amount);
+    const amountInWei = parseUnits(amount, vaultDecimals);
 
     const withdrawCall = {
       to: vaultAddress as `0x${string}`,
@@ -85,13 +86,17 @@ export function useWithdraw() {
     }
   };
 
-  const submitRequestWithdraw = async (vaultAddress: string, amount: string) => {
+  const submitRequestWithdraw = async (
+    vaultAddress: string,
+    vaultDecimals: number,
+    amount: string,
+  ) => {
     if (!isSignedIn) throw new Error("Failed connection");
     if (!usersAccount) throw new Error("Failed account");
 
     const txs: EvmCall[] = [];
 
-    const amountInWei = parseEther(amount);
+    const amountInWei = parseUnits(amount, vaultDecimals);
 
     const claimSharesAndRequestRedeemCall = {
       to: vaultAddress as `0x${string}`,

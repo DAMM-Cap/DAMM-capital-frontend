@@ -117,13 +117,13 @@ export function useDeposit() {
     }
   };
 
-  const submitDeposit = async (vaultAddress: string, vaultDecimals: number, amount: string) => {
+  const submitDeposit = async (vaultAddress: string, tokenDecimals: number, amount: string) => {
     if (!isSignedIn) throw new Error("Failed connection");
     if (!usersAccount) throw new Error("Failed account");
 
     const txs: EvmBatchCall = [];
 
-    const amountInWei = parseUnits(amount, vaultDecimals);
+    const amountInWei = parseUnits(amount, tokenDecimals);
 
     const depositCall = {
       to: vaultAddress as `0x${string}`,

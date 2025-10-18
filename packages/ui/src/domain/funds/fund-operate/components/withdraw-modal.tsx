@@ -1,4 +1,4 @@
-import { Button, Label, Modal, TitleLabel, TokenAmountInput } from "@/components";
+import { Button, DammStableIcon, Label, Modal, TitleLabel, TokenAmountInput } from "@/components";
 import React from "react";
 
 interface WithdrawModalProps {
@@ -9,15 +9,16 @@ interface WithdrawModalProps {
   onMaxClick: () => void;
   max: number;
   position: number;
-  positionConverted: number;
+  positionConverted: string;
   onWithdraw: () => void;
   isLoading: boolean;
   isInsufficientShares: boolean;
   invalidAmount: boolean;
   tokenSymbol: string;
   vaultSymbol: string;
-  tokenIcon: React.ReactNode;
+  //tokenIcon: React.ReactNode;
   conversionValue: number;
+  convertedAmount: number;
 }
 
 const WithdrawModal: React.FC<WithdrawModalProps> = ({
@@ -35,8 +36,9 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
   invalidAmount,
   tokenSymbol,
   vaultSymbol,
-  tokenIcon: TokenIcon,
+  //tokenIcon: TokenIcon,
   conversionValue,
+  convertedAmount,
 }) => {
   return (
     <Modal
@@ -58,16 +60,20 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
     >
       <TitleLabel
         label="My claimable shares"
-        title={`${position} ${tokenSymbol}`}
-        leftIcon={TokenIcon}
-        secondaryTitle={`$${positionConverted}`}
+        title={`${position} ${vaultSymbol}`}
+        leftIcon={<DammStableIcon />}
+        //leftIcon={TokenIcon}
+        secondaryTitle={positionConverted}
       />
       <TokenAmountInput
-        tokenLabel={tokenSymbol}
-        tokenIcon={TokenIcon}
-        tokenSecondaryLabel={`$${max}`}
-        conversionLeftText={`1 ${tokenSymbol}`}
-        conversionRightText={`${conversionValue} ${vaultSymbol}`}
+        tokenLabel={vaultSymbol}
+        tokenIcon={<DammStableIcon />}
+        /* tokenLabel={tokenSymbol}
+        tokenIcon={TokenIcon} */
+        tokenSecondaryLabel={`$${convertedAmount} ${tokenSymbol}`}
+        //tokenSecondaryLabel={`$${max}`}
+        conversionLeftText={`1 ${vaultSymbol}`}
+        conversionRightText={`${conversionValue} ${tokenSymbol}`}
         amount={amount}
         onAmountChange={onAmountChange}
         onMaxClick={onMaxClick}

@@ -58,6 +58,7 @@ export default function SecondaryActionCard({
     claimableDepositRequest,
     pendingDepositRequest,
     isPendingDepositRequest,
+    token_decimals,
     vault_decimals,
   } = useDepositData();
 
@@ -68,7 +69,7 @@ export default function SecondaryActionCard({
     handleLoading(true);
     try {
       const amount = String(claimableDepositRequest);
-      const tx = await submitDeposit(vault_address, vault_decimals, amount);
+      const tx = await submitDeposit(vault_address, token_decimals, amount);
       await tx.wait();
     } finally {
       handleLoading(false);
@@ -82,6 +83,7 @@ export default function SecondaryActionCard({
       const tx = await submitRedeem(
         vault_address,
         token_address,
+        vault_decimals,
         fee_receiver_address,
         exitRate,
         amount,

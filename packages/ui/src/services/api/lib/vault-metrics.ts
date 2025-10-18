@@ -1,4 +1,4 @@
-import { formatToFourDecimals } from "@/shared/utils";
+import { formatToMaxDefinition } from "@/shared/utils";
 
 function computeVaultMetrics(snapshots: any[]) {
   if (!snapshots.length) return { netApy: 0, netApy30d: 0, sharpe: 0 };
@@ -42,9 +42,9 @@ function computeVaultMetrics(snapshots: any[]) {
   const annualFactor = 8760 / avgDelta;
   const sharpe = sigma > 0 ? (mean * annualFactor) / (sigma * Math.sqrt(annualFactor)) : 0;
 
-  const netApyFormatted = formatToFourDecimals(netApy);
-  const netApy30dFormatted = formatToFourDecimals(netApy30d);
-  const sharpeFormatted = formatToFourDecimals(sharpe);
+  const netApyFormatted = formatToMaxDefinition(netApy);
+  const netApy30dFormatted = formatToMaxDefinition(netApy30d);
+  const sharpeFormatted = formatToMaxDefinition(sharpe);
 
   return { netApy: netApyFormatted, netApy30d: netApy30dFormatted, sharpe: sharpeFormatted };
 }
