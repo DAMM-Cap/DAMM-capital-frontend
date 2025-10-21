@@ -11,18 +11,17 @@ export default function FundsArea({
 }) {
   const { vaultIds } = usePortfolioData();
 
-  const noPosition = () => {
-    if (!vaultIds) return true;
-    return vaultIds.every((vaultId) => {
-      const { useFundData } = usePortfolioData(vaultId)!;
-      const { positionSize, operationActive } = useFundData();
-      return Number(positionSize) === 0 && !operationActive;
-    });
-  };
+  const noVaults = !vaultIds || vaultIds.length === 0 || !vaultIds?.[0];
 
-  const noVaults = !vaultIds || vaultIds.length === 0 || !vaultIds?.[0] || noPosition();
+  if (noVaults) {
+    return (
+      <Card variant="fund" className="flex flex-col gap-4">
+        <Label label="You currently hold no assets in any Fund." className="domain-subtitle" />
+      </Card>
+    );
+  }
 
-  return !noVaults ? (
+  return (
     <div className="justify-between items-center mb-10 gap-4 max-w-full">
       {vaultIds?.map((vaultId) => (
         <FundCard
@@ -33,9 +32,5 @@ export default function FundsArea({
         />
       ))}
     </div>
-  ) : (
-    <Card variant="fund" className="flex flex-col gap-4">
-      <Label label="You currently hold no assets in any Fund." className="domain-subtitle" />
-    </Card>
   );
 }

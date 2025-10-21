@@ -99,6 +99,7 @@ export function useDeposit() {
         namespace: "DAMM-Capital",
       });
     }
+
     const requestDepositCall = {
       to: vaultAddress as `0x${string}`,
       value: 0n,
