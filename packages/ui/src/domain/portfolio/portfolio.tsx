@@ -14,24 +14,6 @@ export default function Portfolio() {
 
   const { tvl, yieldEarned, deposited } = usePortfolioSingleValuesData();
 
-  const singleValueCards = {
-    tvl: {
-      label: "Total Portfolio Value",
-      value: tvl.toString(),
-      className: "",
-    },
-    yieldEarned: {
-      label: "Total Yield Earned",
-      value: yieldEarned.toString(),
-      className: "!text-primary",
-    },
-    deposited: {
-      label: "Total Deposited",
-      value: deposited.toString(),
-      className: "",
-    },
-  };
-
   useEffect(() => {
     setTimeout(() => {
       setIsLoadingFund(false);
@@ -56,15 +38,22 @@ export default function Portfolio() {
 
       <div className="overflow-y-auto max-h-content-area scrollbar-visible">
         <div className="flex flex-wrap justify-between items-center gap-x-4">
-          {Object.values(singleValueCards).map((card, index) => (
-            <SingleValueCard
-              label={card.label}
-              value={card.value}
-              isLoading={isLoadingFund}
-              className={card.className}
-              key={index.toString()}
-            />
-          ))}
+          <SingleValueCard
+            label="Total Portfolio Value"
+            value={tvl.toString()}
+            isLoading={isLoadingFund}
+          />
+          <SingleValueCard
+            label="Total Yield Earned"
+            value={yieldEarned.toString()}
+            isLoading={isLoadingFund}
+            className="!text-primary"
+          />
+          <SingleValueCard
+            label="Total Deposited"
+            value={deposited.toString()}
+            isLoading={isLoadingFund}
+          />
         </div>
 
         <FundsArea isLoading={isLoadingFund} handleIsLoading={setIsLoadingFund} />
