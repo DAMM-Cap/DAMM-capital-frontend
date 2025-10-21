@@ -1,5 +1,4 @@
 import {
-  useConnectOrCreateWallet,
   useLogout,
   useMfaEnrollment,
   usePrivy,
@@ -25,7 +24,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // Hooks
   const { showMfaEnrollmentModal } = useMfaEnrollment();
   const { logout } = useLogout();
-  const { ready, user, login, connectOrCreateWallet, authenticated } = usePrivy();
+  const { ready, user, login, authenticated } = usePrivy();
 
   const isSmartAccount = !!user?.smartWallet;
   const evmAddress = useMemo(() => {
