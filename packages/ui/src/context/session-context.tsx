@@ -1,10 +1,9 @@
 import {
-  useConnectOrCreateWallet,
   useLogout,
   useMfaEnrollment,
   usePrivy,
 } from "@privy-io/react-auth";
-import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, type ReactNode, useContext, useMemo, useState } from "react";
 
 interface SessionContextType {
   evmAddress: string;
@@ -19,49 +18,42 @@ interface SessionContextType {
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
+  // States
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  // Hooks
   const { showMfaEnrollmentModal } = useMfaEnrollment();
   const { logout } = useLogout();
-  const { ready, authenticated, user } = usePrivy();
-  const { connectOrCreateWallet } = useConnectOrCreateWallet();
+  const { ready, user, login, authenticated } = usePrivy();
 
-  const [evmAddress, setEvmAddress] = useState<string>("");
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [isSmartAccount, setIsSmartAccount] = useState(false);
+  const isSmartAccount = !!user?.smartWallet;
+  const evmAddress = useMemo(() => {
+    if (isSmartAccount) {
+      return user?.smartWallet?.address ?? "0x";
+    }
 
-  const handleLogin = () => {
+    return user?.wallet?.address ?? "0x";
+  }, [user, isSmartAccount]);
+
+  const handleLogin = async () => {
+    if (!ready || isConnecting) return;
+
     setIsConnecting(true);
-    connectOrCreateWallet();
-    setTimeout(() => {
+
+    try {
+      await login();
+    } catch (err) {
+      console.error("Login process failed:", err);
+    } finally {
       setIsConnecting(false);
-    }, 5000);
+    }
   };
-
-  useEffect(() => {
-    if (!ready) {
-      return;
-    }
-
-    if (user && authenticated) {
-      const wallet = user?.wallet?.address || undefined;
-      const smartAccount = user?.smartWallet?.address || undefined;
-
-      setIsSmartAccount(!!smartAccount);
-      setEvmAddress(!!smartAccount ? smartAccount! : wallet!);
-      setIsSignedIn(true);
-      setIsConnecting(false);
-    } else {
-      setIsSignedIn(false);
-      setEvmAddress("");
-      setIsConnecting(false);
-    }
-  }, [ready, user, authenticated]);
 
   return (
     <SessionContext.Provider
       value={{
         evmAddress,
-        isSignedIn,
+        isSignedIn: authenticated,
         isConnecting,
         isSmartAccount,
         showMfaModal: showMfaEnrollmentModal,
