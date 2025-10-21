@@ -15,6 +15,7 @@ export interface TokensBalance {
       availableSupply: string;
       shares: string;
       assets: string;
+      sharePrice: string;
     };
   };
 }
@@ -143,6 +144,9 @@ export function useTokensBalance() {
             BigInt(resultsAssets[i * conversionArrayLength] as bigint) +
             BigInt(results[i * queryLength + 2] as bigint) +
             BigInt(resultsAssets[i * conversionArrayLength + 2] as bigint);
+          const sharePrice =
+            Number(formatUnits(assets, v.staticData.token_decimals)) /
+            Number(formatUnits(shares, v.staticData.vault_decimals));
 
           result.vaultBalances[v.staticData.vault_id.toString()] = {
             availableSupply: formatToMaxDefinition(
@@ -154,6 +158,7 @@ export function useTokensBalance() {
             assets: formatToMaxDefinition(
               Number(formatUnits(assets, v.staticData.token_decimals)),
             ).toString(),
+            sharePrice: (sharePrice / 10 ** v.staticData.token_decimals).toString(),
           };
         });
 

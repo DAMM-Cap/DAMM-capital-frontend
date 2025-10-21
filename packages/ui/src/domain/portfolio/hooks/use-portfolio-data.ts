@@ -1,5 +1,6 @@
 import { useVaults } from "@/context/vault-context";
-import { VaultsDataView } from "@/services/api/types/data-presenter";
+import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
+import { useUserPosition } from "@/services/api/use-user-position";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useEffect, useState } from "react";
@@ -15,12 +16,28 @@ export enum OperationStatus {
 export function usePortfolioData(vaultId?: string) {
   const { vaults, isLoading } = useVaults();
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-  // Operation state polled via shared hook
+
+  const { data: userPosition } = useUserPosition();
+
+  const [vaultsData, setVaultsData] = useState<
+    Record<string, Record<"positionValue" | "totalAssets" | "yieldEarned", number>>
+  >({});
+
+  const [totalPositionValue, setTotalPositionValue] = useState<number>(0);
+  const [totalTotalAssets, setTotalTotalAssets] = useState<number>(0);
+  const [totalYieldEarned, setTotalYieldEarned] = useState<number>(0);
+
+  const [selectedVaultMetrics, setSelectedVaultMetrics] = useState<VaultMetricsView | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
-    if (vaultId && vaults?.vaultsData) {
+    if (vaultId && vaults?.vaultsData && vaults?.vaultMetrics) {
       const foundVault = vaults.vaultsData.find((v) => v.staticData.vault_id === vaultId);
       setSelectedVault(foundVault);
+
+      const foundVaultMetrics = vaults.vaultMetrics.find((v) => v.vaultId === vaultId);
+      setSelectedVaultMetrics(foundVaultMetrics);
     }
   }, [vaultId, vaults]);
 
@@ -28,6 +45,44 @@ export function usePortfolioData(vaultId?: string) {
     selectedVault?.staticData.vault_address,
     selectedVault?.staticData.token_decimals,
   );
+
+  useEffect(() => {
+    let totalPositionValue = 0;
+    let totalTotalAssets = 0;
+    let totalYieldEarned = 0;
+    userPosition?.forEach((vaultUserPositionData) => {
+      const selectedVault = vaults?.vaultsData.find(
+        (v) => v.staticData.vault_id === vaultUserPositionData.vault_id,
+      );
+      if (!selectedVault) return;
+
+      const positionValue =
+        (Number(vaultUserPositionData.user_total_shares) *
+          Number(vaultUserPositionData.share_price) *
+          10 ** selectedVault.staticData.token_decimals) /
+        10 ** selectedVault.staticData.vault_decimals;
+      totalPositionValue += positionValue;
+
+      const totalAssets =
+        Number(vaultUserPositionData.total_assets) / 10 ** selectedVault.staticData.token_decimals;
+      totalTotalAssets += totalAssets;
+
+      const yieldEarned = positionValue - totalAssets;
+      totalYieldEarned += yieldEarned;
+
+      setVaultsData((prevVaultsData) => ({
+        ...prevVaultsData,
+        [vaultUserPositionData.vault_id as string]: {
+          positionValue: formatToMaxDefinition(positionValue),
+          totalAssets: formatToMaxDefinition(totalAssets),
+          yieldEarned: formatToMaxDefinition(yieldEarned),
+        },
+      }));
+    });
+    setTotalPositionValue(formatToMaxDefinition(totalPositionValue));
+    setTotalTotalAssets(formatToMaxDefinition(totalTotalAssets));
+    setTotalYieldEarned(formatToMaxDefinition(totalYieldEarned));
+  }, [userPosition, vaults]);
 
   function useFundData() {
     if (!selectedVault) {
@@ -62,14 +117,12 @@ export function usePortfolioData(vaultId?: string) {
       operation = OperationStatus.ASSETS_CLAIMABLE;
       operationVariant = "outline";
     }
+
     return {
       vault_name: selectedVault.staticData.vault_name,
-      apr: selectedVault.vaultData.apr,
-      positionSize: selectedVault.vaultData.positionRaw,
-      yieldEarned: formatToMaxDefinition(
-        selectedVault.vaultData.positionRaw * selectedVault.vaultData.sharePrice -
-          selectedVault.vaultData.positionRaw,
-      ),
+      apr: selectedVaultMetrics?.netApy ?? 0,
+      positionSize: vaultsData[selectedVault.staticData.vault_id]?.positionValue ?? 0,
+      yieldEarned: vaultsData[selectedVault.staticData.vault_id]?.yieldEarned ?? 0,
       vault_icon: selectedVault.staticData.vault_icon,
       token_symbol: selectedVault.staticData.token_symbol,
       operation: operation,
@@ -79,25 +132,10 @@ export function usePortfolioData(vaultId?: string) {
   }
 
   function usePortfolioSingleValuesData() {
-    const { tvl, yieldEarned, deposited } = vaults?.vaultsData
-      ?.map((fund) => ({
-        tvl: fund.vaultData.positionRaw * fund.vaultData.sharePrice,
-        yieldEarned:
-          fund.vaultData.positionRaw * fund.vaultData.sharePrice - fund.vaultData.positionRaw,
-        deposited: fund.vaultData.positionRaw,
-      }))
-      .reduce(
-        (acc, curr) => ({
-          tvl: Number(acc.tvl) + Number(curr.tvl),
-          yieldEarned: Number(acc.yieldEarned) + Number(curr.yieldEarned),
-          deposited: Number(acc.deposited) + Number(curr.deposited),
-        }),
-        { tvl: 0, yieldEarned: 0, deposited: 0 },
-      ) ?? { tvl: 0, yieldEarned: 0, deposited: 0 };
     return {
-      tvl: formatToMaxDefinition(tvl),
-      yieldEarned: formatToMaxDefinition(yieldEarned),
-      deposited: deposited,
+      tvl: totalPositionValue,
+      yieldEarned: totalYieldEarned,
+      deposited: totalTotalAssets,
     };
   }
 
