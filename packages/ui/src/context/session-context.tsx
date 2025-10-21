@@ -7,7 +7,7 @@ import {
 import { createContext, type ReactNode, useContext, useMemo, useState } from "react";
 
 interface SessionContextType {
-  evmAddress: string | null;
+  evmAddress: string;
   isSignedIn: boolean;
   isConnecting: boolean;
   isSmartAccount: boolean;
@@ -21,53 +21,40 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 export function SessionProvider({ children }: { children: ReactNode }) {
   // States
   const [isConnecting, setIsConnecting] = useState(false);
-  const [embeddedWallet, setEmbeddedWallet] = useState<string | null>(null);
 
   // Hooks
   const { showMfaEnrollmentModal } = useMfaEnrollment();
-  const { logout } = useLogout({
-    onSuccess: () => {
-      setEmbeddedWallet(null);
-    },
-  });
-  const { ready, user } = usePrivy();
-  const { connectOrCreateWallet} = useConnectOrCreateWallet({
-    onSuccess: (params) => {
-      const { wallet } = params;
-      setEmbeddedWallet(wallet.address);
-      setIsConnecting(false);
-    },
-    onError: (error) => {
-      setEmbeddedWallet(null);
-      console.error("Login error:", error);
-      setIsConnecting(false);
-    },
-  });
-
+  const { logout } = useLogout();
+  const { ready, user, login, connectOrCreateWallet, authenticated } = usePrivy();
 
   const isSmartAccount = !!user?.smartWallet;
   const evmAddress = useMemo(() => {
     if (isSmartAccount) {
-      return user?.smartWallet?.address || null;
+      return user?.smartWallet?.address ?? "0x";
     }
 
-    return embeddedWallet;
-  }, [user, isSmartAccount, embeddedWallet]);
+    return user?.wallet?.address ?? "0x";
+  }, [user, isSmartAccount]);
 
- const handleLogin = () => {
+  const handleLogin = async () => {
     if (!ready || isConnecting) return;
-    
-    console.log("Starting login process...");
-    setIsConnecting(true);
-    connectOrCreateWallet();
-  };
 
+    setIsConnecting(true);
+
+    try {
+      await login();
+    } catch (err) {
+      console.error("Login process failed:", err);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
   return (
     <SessionContext.Provider
       value={{
         evmAddress,
-        isSignedIn: !!evmAddress,
+        isSignedIn: authenticated,
         isConnecting,
         isSmartAccount,
         showMfaModal: showMfaEnrollmentModal,
