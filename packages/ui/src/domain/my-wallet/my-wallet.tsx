@@ -1,8 +1,6 @@
 import { Button, Card, Label, Table } from "@/components";
 import { useSession } from "@/context/session-context";
-import { useVaults } from "@/context/vault-context";
 import { useModal } from "@/hooks/use-modal";
-import { VaultsDataView } from "@/services/api/types/data-presenter";
 import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { getNetworkConfig } from "@/shared/config/network";
 import { LogInIcon, SendIcon } from "lucide-react";
@@ -10,6 +8,7 @@ import { useEffect, useState } from "react";
 import { ReceiveTokensDialog } from "./components/receive-tokens-dialog";
 import SendTokensDialog, { Tokens } from "./components/send-tokens-dialog";
 import MyWalletSkeleton from "./components/my-wallet-skeleton";
+import { useGetVaults } from "@/services/api/use-get-vaults";
 
 export default function MyWallet() {
   const { evmAddress, isSignedIn, isConnecting, isSmartAccount } = useSession();
@@ -25,39 +24,37 @@ export default function MyWallet() {
     open: openSendTokens,
   } = useModal(false);
 
-  const { vaults, isLoading } = useVaults();
-  const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
-  const { data: tokensBalance } = useTokensBalance();
+  const { vaults = [], hasVaults, isLoading } = useGetVaults(evmAddress);
+  const { data: tokensBalance } = useTokensBalance(vaults);
   const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
-  const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;
 
   useEffect(() => {
-    if (vaultsData) {
+    if (hasVaults && vaults) {
       const tokens: Tokens = {};
-      vaultsData.map(
+      vaults.map(
         (fund) =>
-          (tokens[fund.staticData.vault_id.toString()] = {
+          (tokens[fund.id.toString()] = {
             icon: () => (
               <img
-                src={fund.staticData.vault_icon}
-                alt={fund.staticData.vault_name}
+                src={fund.icon}
+                alt={fund.name}
                 className="w-5 h-5 object-cover rounded-full"
               />
             ),
-            name: fund.staticData.vault_name,
-            symbol: fund.staticData.token_symbol,
+            name: fund.name,
+            symbol: fund.tokenSymbol,
             balance:
-              tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]?.availableSupply ||
+              tokensBalance?.vaultBalances[fund.id.toString()]?.availableSupply ||
               "0",
             metadata: {
-              address: fund.staticData.token_address,
-              decimals: fund.staticData.token_decimals,
+              address: fund.tokenAddress,
+              decimals: fund.tokenDecimals,
             },
           }),
       );
       setTokens(tokens);
     }
-  }, [vaultsData, tokensBalance]);
+  }, [vaults, tokensBalance]);
 
   const isLoadingFund = isConnecting || isLoading;
 
@@ -72,7 +69,7 @@ export default function MyWallet() {
       <div className="flex flex-row justify-between mb-10">
         <Label label="Wallet Overview" className="domain-title" />
 
-        {isSmartAccount && !noVaults && (
+        {isSmartAccount && hasVaults && (
           <div className="flex flex-row gap-4">
             <Button onClick={openReceiveTokens} disabled={!isSignedIn || isConnecting}>
               <LogInIcon className="rotate-90" />
@@ -90,22 +87,22 @@ export default function MyWallet() {
         )}
       </div>
 
-      {!noVaults && tokens && (
+      {hasVaults && tokens && (
         <Table
           tableHeaders={[
             { label: "Assets", className: "text-left" },
             { label: "Amount", className: "text-right" },
           ]}
           isLoading={isLoadingFund}
-          rows={vaultsData.map((fund) => ({
+          rows={vaults?.map((fund) => ({
             rowFields: [
               {
-                leftIcon: tokens[fund.staticData.vault_id.toString()].icon,
-                value: tokens[fund.staticData.vault_id.toString()].symbol,
+                leftIcon: tokens[fund.id.toString()].icon,
+                value: tokens[fund.id.toString()].symbol,
                 className: "text-left font-bold text-lg",
               },
               {
-                value: tokens[fund.staticData.vault_id].balance,
+                value: tokens[fund.id.toString()].balance,
                 className: "text-right",
               },
             ],
@@ -113,7 +110,7 @@ export default function MyWallet() {
         />
       )}
 
-      {noVaults && (
+      {!hasVaults && (
         <Card variant="fund" className="flex flex-col gap-4">
           <Label
             label="We currently have no active funds in this chain."

@@ -1,20 +1,18 @@
 import { Button, Card, DammStableIcon, Label, Table } from "@/components";
 import AcknowledgeTermsModal from "@/components/layout/acknowledge-terms-modal";
 import { useSession } from "@/context/session-context";
-import { useVaults } from "@/context/vault-context";
 import { useModal } from "@/hooks/use-modal";
-import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import FundsSkeleton from "./components/funds-skeleton";
+import { useGetVaults } from "@/services/api/use-get-vaults";
+import { useGetVaultMetrics } from "@/services/api/use-get-vault-metrics";
 
 export default function Funds() {
   const navigate = useNavigate();
-  const { isSignedIn, login, isConnecting } = useSession();
-  const { vaults, isLoading } = useVaults();
-  const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
-  const vaultMetrics: VaultMetricsView[] | undefined = vaults?.vaultMetrics;
-  const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;
+  const { isSignedIn, login, isConnecting, evmAddress: usersAccount } = useSession();
+  const { vaults: vaultsData, isLoading: isLoadingVaults, hasVaults } = useGetVaults(isSignedIn ? usersAccount : "0x");
+  const { vaultMetricsData: vaultMetrics, isLoading: isLoadingVaultMetrics } = useGetVaultMetrics(isSignedIn ? usersAccount : "0x");
 
   const {
     isOpen: openModalTerms,
@@ -22,7 +20,7 @@ export default function Funds() {
     toggle: toggleModalTerms,
   } = useModal(false);
 
-  const isLoadingFund = isConnecting || isLoading;
+  const isLoadingFund = isConnecting || isLoadingVaults || isLoadingVaultMetrics;
 
   if (isLoadingFund) {
     return (
@@ -42,7 +40,7 @@ export default function Funds() {
         />
       </div>
 
-      {!isLoadingFund && !noVaults && (
+      {!isLoadingFund && hasVaults && (
         <Table
           tableHeaders={[
             { label: "Name", className: "text-left" },
@@ -53,16 +51,16 @@ export default function Funds() {
           ]}
           isLoading={isLoadingFund}
           rows={vaultsData?.map((fund) => {
-            const metrics = vaultMetrics?.find((v) => v.vaultId === fund.staticData.vault_id);
+            const metrics = vaultMetrics?.find((v) => v.id === fund.id);
             return {
               onClick: () => {
-                navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
+                navigate({ to: "/fund-operate", search: { vaultId: fund.id } });
               },
               rowFields: [
                 {
                   leftIcon: () => <DammStableIcon size={32} />,
-                  value: fund.staticData.vault_name,
-                  subtitle: fund.staticData.vault_symbol,
+                  value: fund.name,
+                  subtitle: fund.symbol,
                   className: "text-left font-bold text-lg",
                 },
                 {
@@ -74,18 +72,18 @@ export default function Funds() {
                   className: "text-left",
                 },
                 {
-                  value: fund.vaultData.aum.toString(),
+                  value: fund.aum.toString(),
                   className: "text-left",
                 },
                 {
                   leftIcon: () => (
                     <img
-                      src={fund.staticData.vault_icon}
-                      alt={fund.staticData.vault_name}
+                      src={fund.icon}
+                      alt={fund.name}
                       className="w-5 h-5 object-cover rounded-full"
                     />
                   ),
-                  value: fund.staticData.token_symbol,
+                  value: fund.tokenSymbol,
                   className: "text-left",
                 },
               ],
@@ -94,7 +92,7 @@ export default function Funds() {
         />
       )}
 
-      {!isLoading && noVaults && (
+      {!isLoadingFund && !hasVaults && (
         <Card variant="fund" className="flex flex-col gap-4">
           <Label
             label="We currently have no active funds in this chain."

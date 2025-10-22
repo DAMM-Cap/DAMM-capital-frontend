@@ -1,7 +1,6 @@
 import envParsed from "@/envParsed";
 import {
   convertIntegratedPosition,
-  getNullMockedIntegratedPosition,
   IntegratedPosition,
 } from "@/services/api/lib/integrated-position-converter";
 import { getNullMockedVaultData } from "@/services/api/lib/mock-data/mocks";
@@ -34,10 +33,6 @@ export function useVaultData(wallet: string) {
         vaultData.positions.forEach((p: IntegratedPosition, i: number) => {
           p.token_symbol = `${p.token_symbol}(${i + 1})`;
         });
-        if (vaultData.positions.length === 0) {
-          console.warn("No positions found");
-          vaultData = getNullMockedIntegratedPosition();
-        }
 
         const integratedPositionData: IntegratedDataResponse[] =
           convertIntegratedPosition(vaultData);

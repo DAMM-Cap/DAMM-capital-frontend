@@ -5,36 +5,29 @@ import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { WithdrawModal } from "./components";
-import { useFundOperateData } from "./hooks/use-fund-operate-data";
+import { getConvertedValue } from "./utils/get-conversion-value";
+import { Vault } from "@/shared/types";
+import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 
 interface WithdrawProps {
-  vaultId: string;
+  vault: Vault;
   className?: string;
   disabled?: boolean;
   isLoading?: boolean;
 }
 
 export default function Withdraw({
-  vaultId,
+  vault,
   className,
   disabled,
   isLoading,
 }: WithdrawProps) {
-  const { useWithdrawData } = useFundOperateData(vaultId);
   const [amount, setAmount] = useState("");
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
 
-  const {
-    position: max,
-    conversionValue,
-    vault_address,
-    token_symbol,
-    vault_symbol,
-    vault_decimals,
-    positionUSD,
-    getConvertedValue,
-  } = useWithdrawData();
+  const { data: tokensBalance } = useTokensBalance([vault]);
+  const max = Number(tokensBalance?.vaultBalances[vault.id]?.availableSupply || 0);
 
   const {
     isOpen: openModalWithdraw,
@@ -69,7 +62,7 @@ export default function Withdraw({
     if (!validateForm()) return;
 
     // Execute transaction
-    const tx = await submitRequestWithdraw(vault_address, vault_decimals!, amount);
+    const tx = await submitRequestWithdraw(vault.address, vault.decimals, amount);
 
     // Wait for confirmation
     await tx.wait();
@@ -95,20 +88,19 @@ export default function Withdraw({
         open={openModalWithdraw}
         onClose={() => setCloseModalWithdraw()}
         amount={amount}
-        convertedAmount={getConvertedValue(Number(amount))}
+        convertedAmount={getConvertedValue(Number(amount), vault)}
         onAmountChange={(e) => setAmount(e.target.value)}
         onMaxClick={() => setAmount(max.toString())}
         max={max}
         position={max}
-        conversionValue={conversionValue}
+        conversionValue={getConvertedValue(Number(amount), vault)}
         positionConverted={positionUSD.toString()}
-        onWithdraw={() => handleWithdraw()}
+        onWithdraw={handleWithdraw}
         isLoading={isLoading || false} // TODO: Add loading state
         isInsufficientShares={isInsufficientBalance}
         invalidAmount={invalidAmount}
-        tokenSymbol={token_symbol}
-        vaultSymbol={vault_symbol}
-        //tokenIcon={tokenIcon}
+        tokenSymbol={vault.tokenSymbol}
+        vaultSymbol={vault.symbol}
       />
     </div>
   );

@@ -10,24 +10,22 @@ import OverviewCard from "./components/overview-card";
 import RiskDisclosureCard from "./components/risk-disclosure-card";
 import ThesisCard from "./components/thesis-card";
 
-import { useFundOperateData } from "./hooks/use-fund-operate-data";
-import { useVaults } from "@/context/vault-context";
 import { useSession } from "@/context/session-context";
+import { useGetVaultById } from "@/services/api/use-get-vault-by-id";
 
 export default function FundOperate() {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
-  const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
-  const { isLoading: isLoadingVaults } = useVaults();
-  const { isConnecting } = useSession();
+  const { isConnecting, evmAddress: usersAccount } = useSession();
+  const { vault, isLoading: isLoadingVault } = useGetVaultById(usersAccount, vaultId!);
+
+
   const isMobile = useIsMobile();
 
-    const { vault_name, token_symbol } = useFundData();
-
-    const isLoading = isConnecting || isLoadingVaults || vaultLoading;
+    const isLoading = isConnecting || isLoadingVault;
 
     return (
         <>
-          <Breadcrumb vaultName={vault_name} className="-mt-6" />
+          <Breadcrumb vaultName={vault?.name || ""} className="-mt-6" />
           <div
             className={clsx("grid gap-8 max-w-full", {
               "grid-cols-[2fr_1fr]": !isMobile,
@@ -41,7 +39,7 @@ export default function FundOperate() {
             >
               <FundCard isLoading={isLoading} />
 
-              {isMobile && <ManagementCard isLoading={isLoading} />}
+              {isMobile && <ManagementCard isLoading={isLoading} vault={vault!} />}
 
               <ThesisCard />
 
@@ -51,7 +49,7 @@ export default function FundOperate() {
                 vaultId={vaultId!}
                 valueKey="sharePiceValue"
                 valueLabel="Price"
-                valueUnit={token_symbol}
+                valueUnit={vault?.tokenSymbol || ""}
                 label="Price History"
                 isLoading={isLoading}
               />
@@ -60,7 +58,7 @@ export default function FundOperate() {
                 vaultId={vaultId!}
                 valueKey="totalAssetsValue"
                 valueLabel="TVL"
-                valueUnit={token_symbol}
+                valueUnit={vault?.tokenSymbol || ""}
                 label="Total Value"
                 isLoading={isLoading}
               />
@@ -83,6 +81,7 @@ export default function FundOperate() {
                 <ManagementCard
                   className="overflow-y-auto max-h-content-area scrollbar-visible"
                   isLoading={isLoading}
+                  vault={vault!}
                 />
               </div>
             )}

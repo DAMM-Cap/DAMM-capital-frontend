@@ -8,13 +8,16 @@ import SecondaryActionCard from "./secondary-action-card";
 import Deposit from "../deposit";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import Withdraw from "../withdraw";
+import { Vault } from "@/shared/types";
 
 export default function ManagementCard({
   className,
   isLoading,
+  vault,
 }: {
   className?: string;
   isLoading: boolean;
+  vault: Vault;
 }) {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: isLoadingFundOperateData } = useFundOperateData(vaultId!);
@@ -64,8 +67,8 @@ export default function ManagementCard({
         />
 
         <div className="flex flex-row gap-4">
-          <Deposit vaultId={vaultId!} className="w-full" disabled={!isSignedIn} />
-          <Withdraw vaultId={vaultId!} className="w-full" disabled={!isSignedIn} />
+          <Deposit vault={vault} className="w-full" disabled={!isSignedIn} />
+          <Withdraw vault={vault} className="w-full" disabled={!isSignedIn} />
         </div>
         {isSignedIn && <SecondaryActionCard vaultId={vaultId!} />}
       </Card>

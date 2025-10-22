@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 export function useFundOperateData(vaultId: string) {
   const { vaults } = useVaults();
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-  const { data: tokensBalance } = useTokensBalance();
+  const { data: tokensBalance } = useTokensBalance([]);
   const walletBalance = Number(tokensBalance?.vaultBalances[vaultId]?.availableSupply || 0);
   const availableAssets = Number(tokensBalance?.vaultBalances[vaultId]?.assets || 0);
   const availableShares = Number(tokensBalance?.vaultBalances[vaultId]?.shares || 0);
