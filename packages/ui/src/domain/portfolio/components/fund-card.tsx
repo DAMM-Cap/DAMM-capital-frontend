@@ -20,6 +20,7 @@ export default function FundCard({ isLoading, vaultId }: { isLoading: boolean; v
     positionSize,
     yieldEarned,
     vault_icon,
+    totalAssets,
     token_symbol,
     operation,
     operationVariant,
@@ -85,6 +86,7 @@ export default function FundCard({ isLoading, vaultId }: { isLoading: boolean; v
                 tableHeaders={[
                   { label: "Position Size", className: "text-left" },
                   { label: "Yield Earned", className: "text-left" },
+                  { label: "Total Assets", className: "text-left" },
                   { label: "Net APY", className: "text-left" },
                   { label: "Underlying Asset", className: "text-left" },
                 ]}
@@ -99,6 +101,10 @@ export default function FundCard({ isLoading, vaultId }: { isLoading: boolean; v
                       {
                         value: yieldEarned.toString(),
                         className: "text-left text-primary text-lg font-bold",
+                      },
+                      {
+                        value: totalAssets.toString(),
+                        className: "text-left text-lg font-bold",
                       },
                       {
                         value: apr.toString(),
