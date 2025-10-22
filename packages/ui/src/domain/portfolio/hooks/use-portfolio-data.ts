@@ -78,6 +78,8 @@ export function usePortfolioData(vaultId?: string) {
         Number(vaultUserPositionData.vaultData.positionRaw) + 
         Number(settledDeposits) - Number(settledRedeems);
       totalTotalAssets += totalAssets;
+      console.log("ValueRaw: ", Number(vaultUserPositionData.positionData.totalValueRaw));
+      console.log("PositionRaw: ", Number(vaultUserPositionData.vaultData.positionRaw));
       // ------------------------------------------------------------
 
       // Absolute yield earned is the difference between the position value and the total assets
