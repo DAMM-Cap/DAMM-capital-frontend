@@ -70,7 +70,6 @@ export function useVaultData(wallet: string) {
       (isAddress(wallet) || wallet === "0x") &&
       localStorage.getItem("disconnect_requested") !== "true", // Don't poll if disconnect was requested
     staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchInterval: 5000, // Poll every 5 seconds
     refetchIntervalInBackground: true,
   });
 }

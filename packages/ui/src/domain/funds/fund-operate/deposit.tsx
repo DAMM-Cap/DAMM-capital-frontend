@@ -10,20 +10,17 @@ import { useFundOperateData } from "./hooks/use-fund-operate-data";
 
 interface DepositProps {
   vaultId: string;
-  handleLoading: (isLoading: boolean) => void;
   className?: string;
   disabled?: boolean;
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 export default function Deposit({
-  vaultId,
-  handleLoading,
+  vaultId,  
   className,
   disabled,
-  isLoading,
 }: DepositProps) {
-  const { useDepositData, isLoading: vaultLoading } = useFundOperateData(vaultId);
+  const { useDepositData } = useFundOperateData(vaultId);
 
   const [amount, setAmount] = useState("");
   const [referral, setReferral] = useState("");
@@ -50,7 +47,7 @@ export default function Deposit({
     isOpen: openModal,
     open: setOpenModal,
     close: setCloseModal,
-  } = useModal(false, { onClose: () => handleLoading(false) });
+  } = useModal(false);
   const {
     isOpen: openModalInProgress,
     open: setOpenModalInProgress,
@@ -94,7 +91,6 @@ export default function Deposit({
 
   const handleDeposit = async () => {
     if (!validateForm()) return;
-    handleLoading(true);
 
     // Execute transaction
     const tx = await submitRequestDeposit(
@@ -113,11 +109,6 @@ export default function Deposit({
     setCloseModal();
     setOpenModalInProgress();
   };
-
-  // Don't render if vault is not found or still loading
-  if (vaultLoading) {
-    return null;
-  }
 
   const tokenIcon = (
     <img
@@ -143,13 +134,13 @@ export default function Deposit({
         }}
         className={clsx("w-full", className)}
         disabled={disabled}
-        isLoading={isLoading}
+        isLoading={false} // TODO: Add loading state
       >
         Deposit
       </Button>
       <DepositModal
         open={openModal}
-        onClose={() => setCloseModal()}
+        onClose={setCloseModal}
         amount={amount}
         convertedAmount={getConvertedValue(Number(amount))}
         onAmountChange={(e) => setAmount(e.target.value)}
@@ -161,8 +152,8 @@ export default function Deposit({
         invalidReferral={invalidReferral}
         validReferral={validReferral}
         onReferralCodeChange={(e) => setReferral(e.target.value)}
-        onDeposit={() => handleDeposit()}
-        isLoading={isLoading}
+        onDeposit={handleDeposit}
+        isLoading={false} // TODO: Add loading state
         isInsufficientBalance={isInsufficientBalance}
         invalidAmount={invalidAmount}
         tokenSymbol={token_symbol}

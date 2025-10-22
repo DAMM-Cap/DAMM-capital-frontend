@@ -2,13 +2,7 @@ import { Card, Label } from "@/components";
 import { usePortfolioData } from "../hooks/use-portfolio-data";
 import FundCard from "./fund-card";
 
-export default function FundsArea({
-  isLoading,
-  handleIsLoading,
-}: {
-  isLoading: boolean;
-  handleIsLoading: (isLoading: boolean) => void;
-}) {
+export default function FundsArea({ isLoading }: { isLoading: boolean }) {
   const { vaultIds } = usePortfolioData();
 
   // TODO: This is a temporary solution to check if the user has no position in any fund.
@@ -36,7 +30,6 @@ export default function FundsArea({
       {vaultIds?.map((vaultId) => (
         <FundCard
           isLoading={isLoading}
-          handleIsLoading={handleIsLoading}
           vaultId={vaultId}
           key={vaultId}
         />

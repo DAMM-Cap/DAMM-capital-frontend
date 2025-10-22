@@ -10,94 +10,65 @@ import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import Withdraw from "../withdraw";
 
 export default function ManagementCard({
-  isLoading,
-  handleLoading,
   className,
+  isLoading,
 }: {
-  isLoading: boolean;
-  handleLoading: (isLoading: boolean) => void;
   className?: string;
+  isLoading: boolean;
 }) {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
-  const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
+  const { useFundData, isLoading: isLoadingFundOperateData } = useFundOperateData(vaultId!);
   const isMobile = useIsMobile();
   const { isSignedIn } = useSession();
 
-  try {
-    const {
-      vault_name,
-      vault_icon,
-      token_symbol,
-      vault_symbol,
-      totalValueRaw,
-      walletBalance,
-      totalValueUSD,
-    } = useFundData();
+  const {
+    vault_name,
+    vault_icon,
+    token_symbol,
+    vault_symbol,
+    totalValueRaw,
+    walletBalance,
+    totalValueUSD,
+  } = useFundData();
 
-    return (
-      !vaultLoading && (
-        <div
-          className={clsx("flex-1", className, {
-            "w-full": isMobile,
-            "min-w-[300px] max-w-[360px]": !isMobile,
-          })}
-        >
-          <Card variant="fund">
-            <Label label="Manage position" className="domain-title mb-1" />
-            <Label
-              label="Deposit or withdraw from the fund"
-              className="!text-sm text-neutral font-montserrat font-normal leading-none mb-4"
-            />
-            <TitleLabel
-              title={totalValueRaw.toString() + " " + vault_symbol}
-              leftIcon={<DammStableIcon size={20} />}
-              secondaryTitle={totalValueUSD?.toString()}
-              label="My position"
-              isLoading={isLoading}
-            />
+  const isLoadingTitle = isLoading || isLoadingFundOperateData;
 
-            <TitleLabel
-              title={walletBalance.toString() + " " + token_symbol}
-              leftIcon={
-                <img
-                  src={vault_icon}
-                  alt={vault_name}
-                  className="w-5 h-5 object-cover rounded-full"
-                />
-              }
-              label="My wallet balance"
-              isLoading={isLoading}
-            />
+  return (
+    <div
+      className={clsx("flex-1", className, {
+        "w-full": isMobile,
+        "min-w-[300px] max-w-[360px]": !isMobile,
+      })}
+    >
+      <Card variant="fund">
+        <Label label="Manage position" className="domain-title mb-1" />
+        <Label
+          label="Deposit or withdraw from the fund"
+          className="!text-sm text-neutral font-montserrat font-normal leading-none mb-4"
+        />
+        <TitleLabel
+          title={totalValueRaw.toString() + " " + vault_symbol}
+          leftIcon={<DammStableIcon size={20} />}
+          secondaryTitle={totalValueUSD?.toString()}
+          label="My position"
+          isLoading={isLoadingTitle}
+        />
 
-            <div className="flex flex-row gap-4">
-              <Deposit
-                vaultId={vaultId!}
-                handleLoading={handleLoading}
-                className="w-full"
-                disabled={!isSignedIn}
-                isLoading={isLoading}
-              />
-              <Withdraw
-                vaultId={vaultId!}
-                handleLoading={handleLoading}
-                className="w-full"
-                disabled={!isSignedIn}
-                isLoading={isLoading}
-              />
-            </div>
-            {isSignedIn && (
-              <SecondaryActionCard
-                vaultId={vaultId!}
-                handleLoading={handleLoading}
-                isLoading={isLoading}
-              />
-            )}
-          </Card>
+        <TitleLabel
+          title={walletBalance.toString() + " " + token_symbol}
+          leftIcon={
+            <img src={vault_icon} alt={vault_name} className="w-5 h-5 object-cover rounded-full" />
+          }
+          label="My wallet balance"
+          isLoading={isLoadingTitle}
+        />
+
+        <div className="flex flex-row gap-4">
+          <Deposit vaultId={vaultId!} className="w-full" disabled={!isSignedIn} />
+          <Withdraw vaultId={vaultId!} className="w-full" disabled={!isSignedIn} />
         </div>
-      )
-    );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return <div>Error: {message}</div>;
-  }
+        {isSignedIn && <SecondaryActionCard vaultId={vaultId!} />}
+      </Card>
+    </div>
+  );
 }

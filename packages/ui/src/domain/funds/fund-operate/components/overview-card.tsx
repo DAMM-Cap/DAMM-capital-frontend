@@ -1,6 +1,6 @@
 import { Card, InfoLabel, Label, Skeleton } from "@/components";
 
-export default function OverviewCard({ isLoading }: { isLoading: boolean }) {
+export default function OverviewCard({ isLoading }: { isLoading?: boolean }) {
   return (
     <Card variant="fund" className="!max-w-full min-w-0 h-auto overflow-visible">
       <Label label="Overview" className="domain-title mb-2" />

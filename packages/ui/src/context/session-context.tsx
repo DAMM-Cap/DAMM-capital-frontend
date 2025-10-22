@@ -54,7 +54,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       value={{
         evmAddress,
         isSignedIn: authenticated,
-        isConnecting,
+        isConnecting: isConnecting || !ready,
         isSmartAccount,
         showMfaModal: showMfaEnrollmentModal,
         logout,

@@ -31,12 +31,10 @@ function TokenIcon({ type, tokenSymbol }: { type: VisualKind; tokenSymbol: strin
 
 export default function SecondaryActionCard({
   vaultId,
-  isLoading,
-  handleLoading,
+  isLoading = false, // TODO: Add loading state
 }: {
   vaultId: string;
-  isLoading: boolean;
-  handleLoading: (isLoading: boolean) => void;
+  isLoading?: boolean;
 }) {
   const { useWithdrawData, useDepositData } = useFundOperateData(vaultId!);
 
@@ -66,18 +64,15 @@ export default function SecondaryActionCard({
   const { submitDeposit, cancelDepositRequest } = useDeposit();
 
   const handleClaim = async () => {
-    handleLoading(true);
     try {
       const amount = String(claimableDepositRequest);
       const tx = await submitDeposit(vault_address, token_decimals, amount);
       await tx.wait();
     } finally {
-      handleLoading(false);
     }
   };
 
   const handleRedeem = async () => {
-    handleLoading(true);
     try {
       const amount = String(claimableRedeemRequest);
       const tx = await submitRedeem(
@@ -90,17 +85,14 @@ export default function SecondaryActionCard({
       );
       await tx.wait();
     } finally {
-      handleLoading(false);
     }
   };
 
   const handleCancelDeposit = async () => {
-    handleLoading(true);
     try {
       const tx = await cancelDepositRequest(vault_address);
       await tx.wait();
     } finally {
-      handleLoading(false);
     }
   };
 
@@ -155,7 +147,7 @@ export default function SecondaryActionCard({
           className="w-full"
           onClick={vm.onClick}
           disabled={vm.disabled}
-          isLoading={isLoading}
+          isLoading={isLoading || false} // TODO: Add loading state
         >
           {vm.buttonLabel}
         </Button>

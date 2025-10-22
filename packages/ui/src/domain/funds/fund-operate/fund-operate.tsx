@@ -1,8 +1,7 @@
-import { Breadcrumb, Label } from "@/components";
+import { Breadcrumb } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
 import FeesCard from "./components/fees-card";
 import FundCard from "./components/fund-card";
 import ManagementCard from "./components/management-card";
@@ -12,24 +11,21 @@ import RiskDisclosureCard from "./components/risk-disclosure-card";
 import ThesisCard from "./components/thesis-card";
 
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
+import { useVaults } from "@/context/vault-context";
+import { useSession } from "@/context/session-context";
 
 export default function FundOperate() {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isLoading: isLoadingVaults } = useVaults();
+  const { isConnecting } = useSession();
   const isMobile = useIsMobile();
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
-  try {
     const { vault_name, token_symbol } = useFundData();
 
+    const isLoading = isConnecting || isLoadingVaults || vaultLoading;
+
     return (
-      !vaultLoading && (
         <>
           <Breadcrumb vaultName={vault_name} className="-mt-6" />
           <div
@@ -45,11 +41,11 @@ export default function FundOperate() {
             >
               <FundCard isLoading={isLoading} />
 
-              {isMobile && <ManagementCard handleLoading={setIsLoading} isLoading={isLoading} />}
+              {isMobile && <ManagementCard isLoading={isLoading} />}
 
-              <ThesisCard isLoading={isLoading} />
+              <ThesisCard />
 
-              <OverviewCard isLoading={isLoading} />
+              <OverviewCard />
 
               <MetricsView
                 vaultId={vaultId!}
@@ -85,24 +81,12 @@ export default function FundOperate() {
             {!isMobile && (
               <div className="flex justify-end col-span-1">
                 <ManagementCard
-                  handleLoading={setIsLoading}
-                  isLoading={isLoading}
                   className="overflow-y-auto max-h-content-area scrollbar-visible"
+                  isLoading={isLoading}
                 />
               </div>
             )}
           </div>
         </>
-      )
     );
-  } catch (error) {
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        <div className="flex flex-col gap-4 w-full text-center">
-          <Label label="Vault Not Found" className="domain-title mb-[0.5rem]" />
-          <p className="text-textLight">The requested vault could not be found.</p>
-        </div>
-      </div>
-    );
-  }
 }

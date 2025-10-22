@@ -19,8 +19,7 @@ export function VaultProvider({ children }: VaultProviderProps) {
   const { isSignedIn, evmAddress: usersAccount } = useSession();
   const [vaults, setVaults] = useState<DataPresenter | null>(null);
 
-  const vaultDataQuery = useVaultData(isSignedIn ? usersAccount : "0x");
-  const { data, isLoading } = vaultDataQuery;
+  const { data, isLoading } = useVaultData(isSignedIn ? usersAccount : "0x");
 
   useEffect(() => {
     if (isLoading) {
@@ -35,7 +34,7 @@ export function VaultProvider({ children }: VaultProviderProps) {
       value={{
         vaults,
         setVaults,
-        isLoading: isSignedIn ? isLoading : false,
+        isLoading,
       }}
     >
       {children}

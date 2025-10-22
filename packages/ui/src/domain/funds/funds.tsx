@@ -6,13 +6,12 @@ import { useModal } from "@/hooks/use-modal";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import FundsSkeleton from "./components/funds-skeleton";
 
 export default function Funds() {
   const navigate = useNavigate();
-  const { isSignedIn, login } = useSession();
-  const [isLoadingFund, setIsLoadingFund] = useState(true);
-  const { vaults } = useVaults();
+  const { isSignedIn, login, isConnecting } = useSession();
+  const { vaults, isLoading } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
   const vaultMetrics: VaultMetricsView[] | undefined = vaults?.vaultMetrics;
   const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;
@@ -23,11 +22,15 @@ export default function Funds() {
     toggle: toggleModalTerms,
   } = useModal(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoadingFund(false);
-    }, 1000);
-  }, []);
+  const isLoadingFund = isConnecting || isLoading;
+
+  if (isLoadingFund) {
+    return (
+      <div className="flex flex-col gap-4 w-full">
+        <FundsSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -39,7 +42,7 @@ export default function Funds() {
         />
       </div>
 
-      {!noVaults && (
+      {!isLoadingFund && !noVaults && (
         <Table
           tableHeaders={[
             { label: "Name", className: "text-left" },
@@ -91,7 +94,7 @@ export default function Funds() {
         />
       )}
 
-      {noVaults && (
+      {!isLoading && noVaults && (
         <Card variant="fund" className="flex flex-col gap-4">
           <Label
             label="We currently have no active funds in this chain."

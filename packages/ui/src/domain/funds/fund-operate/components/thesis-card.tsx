@@ -1,6 +1,6 @@
 import { Card, Label, Skeleton } from "@/components";
 
-export default function ThesisCard({ isLoading }: { isLoading: boolean }) {
+export default function ThesisCard({ isLoading }: { isLoading?: boolean }) {
   return (
     <div className="flex-1 flex-col gap-4">
       <Card className="!max-w-full w-full min-w-0 !h-auto overflow-hidden" variant="fund">

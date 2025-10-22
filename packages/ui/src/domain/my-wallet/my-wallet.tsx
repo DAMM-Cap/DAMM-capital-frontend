@@ -9,6 +9,7 @@ import { LogInIcon, SendIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ReceiveTokensDialog } from "./components/receive-tokens-dialog";
 import SendTokensDialog, { Tokens } from "./components/send-tokens-dialog";
+import MyWalletSkeleton from "./components/my-wallet-skeleton";
 
 export default function MyWallet() {
   const { evmAddress, isSignedIn, isConnecting, isSmartAccount } = useSession();
@@ -24,8 +25,7 @@ export default function MyWallet() {
     open: openSendTokens,
   } = useModal(false);
 
-  const [isLoadingFund, setIsLoadingFund] = useState(true);
-  const { vaults } = useVaults();
+  const { vaults, isLoading } = useVaults();
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
   const { data: tokensBalance } = useTokensBalance();
   const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
@@ -59,11 +59,13 @@ export default function MyWallet() {
     }
   }, [vaultsData, tokensBalance]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoadingFund(false);
-    }, 1000);
-  }, []);
+  const isLoadingFund = isConnecting || isLoading;
+
+  if (isLoadingFund) {
+    return <div className="flex flex-col gap-4 w-full">
+      <MyWalletSkeleton  />
+    </div>
+  }
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -87,6 +89,7 @@ export default function MyWallet() {
           </div>
         )}
       </div>
+
       {!noVaults && tokens && (
         <Table
           tableHeaders={[
@@ -109,6 +112,7 @@ export default function MyWallet() {
           }))}
         />
       )}
+
       {noVaults && (
         <Card variant="fund" className="flex flex-col gap-4">
           <Label

@@ -9,20 +9,18 @@ import { useFundOperateData } from "./hooks/use-fund-operate-data";
 
 interface WithdrawProps {
   vaultId: string;
-  handleLoading: (isLoading: boolean) => void;
   className?: string;
   disabled?: boolean;
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 export default function Withdraw({
   vaultId,
-  handleLoading,
   className,
   disabled,
   isLoading,
 }: WithdrawProps) {
-  const { useWithdrawData, isLoading: vaultLoading } = useFundOperateData(vaultId);
+  const { useWithdrawData } = useFundOperateData(vaultId);
   const [amount, setAmount] = useState("");
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
@@ -42,7 +40,7 @@ export default function Withdraw({
     isOpen: openModalWithdraw,
     open: setOpenModalWithdraw,
     close: setCloseModalWithdraw,
-  } = useModal(false, { onClose: () => handleLoading(false) });
+  } = useModal(false);
 
   const { submitRequestWithdraw } = useWithdraw();
 
@@ -69,7 +67,6 @@ export default function Withdraw({
 
   const handleWithdraw = async () => {
     if (!validateForm()) return;
-    handleLoading(true);
 
     // Execute transaction
     const tx = await submitRequestWithdraw(vault_address, vault_decimals!, amount);
@@ -80,19 +77,6 @@ export default function Withdraw({
     setCloseModalWithdraw();
   };
 
-  // Don't render if vault is not found or still loading
-  if (vaultLoading) {
-    return null;
-  }
-
-  /* const tokenIcon = (
-    <img
-      src={getTokenLogo(token_symbol)}
-      alt={token_symbol}
-      className="w-5 h-5 object-cover rounded-full"
-    />
-  ); */
-
   return (
     <div className={className}>
       <Button
@@ -102,7 +86,7 @@ export default function Withdraw({
         variant="secondary"
         className={clsx("w-full", className)}
         disabled={disabled || max === 0}
-        isLoading={isLoading}
+        isLoading={isLoading || false} // TODO: Add loading state
       >
         Withdraw
       </Button>
@@ -119,7 +103,7 @@ export default function Withdraw({
         conversionValue={conversionValue}
         positionConverted={positionUSD.toString()}
         onWithdraw={() => handleWithdraw()}
-        isLoading={isLoading}
+        isLoading={isLoading || false} // TODO: Add loading state
         isInsufficientShares={isInsufficientBalance}
         invalidAmount={invalidAmount}
         tokenSymbol={token_symbol}
