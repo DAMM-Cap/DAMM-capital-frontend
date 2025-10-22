@@ -2,6 +2,7 @@ import { useVaults } from "@/context/vault-context";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useUserPosition } from "@/services/api/use-user-position";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
+import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useEffect, useState } from "react";
 
@@ -18,6 +19,7 @@ export function usePortfolioData(vaultId?: string) {
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
 
   const { data: userPosition } = useUserPosition();
+  const { data: tokensBalance } = useTokensBalance();
 
   const [vaultsData, setVaultsData] = useState<
     Record<string, Record<"positionValue" | "totalAssets" | "yieldEarned", number>>
@@ -50,29 +52,45 @@ export function usePortfolioData(vaultId?: string) {
     let totalPositionValue = 0;
     let totalTotalAssets = 0;
     let totalYieldEarned = 0;
-    userPosition?.forEach((vaultUserPositionData) => {
+    vaults?.vaultsData.forEach((vaultUserPositionData) => {
       const selectedVault = vaults?.vaultsData.find(
-        (v) => v.staticData.vault_id === vaultUserPositionData.vault_id,
+        (v) => v.staticData.vault_id === vaultUserPositionData.staticData.vault_id,
       );
       if (!selectedVault) return;
 
-      const positionValue =
-        (Number(vaultUserPositionData.user_total_shares) *
-          Number(vaultUserPositionData.share_price) *
-          10 ** selectedVault.staticData.token_decimals) /
-        10 ** selectedVault.staticData.vault_decimals;
+      // Position Value retrieves real time converted shares from the blockchain
+      const availableAssets = Number(
+        tokensBalance?.vaultBalances[vaultUserPositionData.staticData.vault_id]?.assets || 0,
+      );
+      const positionValue = availableAssets;
       totalPositionValue += positionValue;
+      // ------------------------------------------------------------
 
+      // Total Assets retrieves the remaining total assets of the user in the vault
+      // This is by tracking the original deposits in the original denomination
+      // Values are fetched from the db by the indexer action, so this is not real time
+      const uP = userPosition?.find(
+        (vault) => vault.vault_id === vaultUserPositionData.staticData.vault_id,
+      );
+      const settledDeposits = uP?.settled_deposits;
+      const settledRedeems =
+        vaultUserPositionData.positionData.availableToRedeemRaw *
+        Number(vaultUserPositionData.vaultData.sharePrice);
       const totalAssets =
-        Number(vaultUserPositionData.total_assets) / 10 ** selectedVault.staticData.token_decimals;
+        Number(vaultUserPositionData.positionData.totalValueRaw) +
+        Number(settledDeposits) / 10 ** selectedVault.staticData.token_decimals -
+        Number(settledRedeems);
       totalTotalAssets += totalAssets;
+      // ------------------------------------------------------------
 
+      // Absolute yield earned is the difference between the position value and the total assets
       const yieldEarned = positionValue - totalAssets;
       totalYieldEarned += yieldEarned;
+      // ------------------------------------------------------------
 
       setVaultsData((prevVaultsData) => ({
         ...prevVaultsData,
-        [vaultUserPositionData.vault_id as string]: {
+        [vaultUserPositionData.staticData.vault_id as string]: {
           positionValue: formatToMaxDefinition(positionValue),
           totalAssets: formatToMaxDefinition(totalAssets),
           yieldEarned: formatToMaxDefinition(yieldEarned),
@@ -82,7 +100,7 @@ export function usePortfolioData(vaultId?: string) {
     setTotalPositionValue(formatToMaxDefinition(totalPositionValue));
     setTotalTotalAssets(formatToMaxDefinition(totalTotalAssets));
     setTotalYieldEarned(formatToMaxDefinition(totalYieldEarned));
-  }, [userPosition, vaults]);
+  }, [userPosition, vaults, tokensBalance]);
 
   function useFundData() {
     if (!selectedVault) {
@@ -93,6 +111,7 @@ export function usePortfolioData(vaultId?: string) {
         token_symbol: "",
         positionSize: "0",
         yieldEarned: "0",
+        totalAssets: "0",
         operation: "",
         operationVariant: "outline-secondary",
         operationActive: false,
@@ -123,6 +142,7 @@ export function usePortfolioData(vaultId?: string) {
       apr: selectedVaultMetrics?.netApy ?? 0,
       positionSize: vaultsData[selectedVault.staticData.vault_id]?.positionValue ?? 0,
       yieldEarned: vaultsData[selectedVault.staticData.vault_id]?.yieldEarned ?? 0,
+      totalAssets: vaultsData[selectedVault.staticData.vault_id]?.totalAssets ?? 0,
       vault_icon: selectedVault.staticData.vault_icon,
       token_symbol: selectedVault.staticData.token_symbol,
       operation: operation,

@@ -11,16 +11,18 @@ export default function FundsArea({
 }) {
   const { vaultIds } = usePortfolioData();
 
-  const noPosition = () => {
-    if (!vaultIds) return true;
-    return vaultIds.every((vaultId) => {
-      const { useFundData } = usePortfolioData(vaultId)!;
-      const { positionSize, operationActive } = useFundData();
-      return Number(positionSize) === 0 && !operationActive;
-    });
-  };
+  // Get fund data for all vaults to check positions
+  const vaultFundData =
+    vaultIds?.map((vaultId) => {
+      const { useFundData } = usePortfolioData(vaultId);
+      return { vaultId, ...useFundData() };
+    }) || [];
 
-  const noVaults = !vaultIds || vaultIds.length === 0 || !vaultIds?.[0] || noPosition();
+  const noPosition = vaultFundData.every(({ positionSize, operationActive }) => {
+    return Number(positionSize) === 0 && !operationActive;
+  });
+
+  const noVaults = !vaultIds || vaultIds.length === 0 || !vaultIds?.[0] || noPosition;
 
   return !noVaults ? (
     <div className="justify-between items-center mb-10 gap-4 max-w-full">

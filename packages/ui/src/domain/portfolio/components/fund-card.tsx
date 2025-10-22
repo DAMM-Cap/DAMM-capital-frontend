@@ -28,6 +28,7 @@ export default function FundCard({
       apr,
       positionSize,
       yieldEarned,
+      totalAssets,
       vault_icon,
       token_symbol,
       operation,
@@ -98,6 +99,7 @@ export default function FundCard({
                   tableHeaders={[
                     { label: "Position Size", className: "text-left" },
                     { label: "Yield Earned", className: "text-left" },
+                    { label: "Total Deposited", className: "text-left" },
                     { label: "Net APY", className: "text-left" },
                     { label: "Underlying Asset", className: "text-left" },
                   ]}
@@ -111,6 +113,10 @@ export default function FundCard({
                         },
                         {
                           value: yieldEarned.toString(),
+                          className: "text-left text-primary text-lg font-bold",
+                        },
+                        {
+                          value: totalAssets.toString(),
                           className: "text-left text-primary text-lg font-bold",
                         },
                         {
