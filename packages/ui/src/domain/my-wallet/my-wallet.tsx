@@ -36,7 +36,7 @@ export default function MyWallet() {
       const tokens: Tokens = {};
       vaultsData.map(
         (fund) =>
-          (tokens[fund.staticData.vault_id.toString()] = {
+          (tokens[fund.staticData.token_address] = {
             icon: () => (
               <img
                 src={fund.staticData.vault_icon}
@@ -94,15 +94,15 @@ export default function MyWallet() {
             { label: "Amount", className: "text-right" },
           ]}
           isLoading={isLoadingFund}
-          rows={vaultsData.map((fund) => ({
+          rows={Object.values(tokens).map((token) => ({
             rowFields: [
               {
-                leftIcon: tokens[fund.staticData.vault_id.toString()].icon,
-                value: tokens[fund.staticData.vault_id.toString()].symbol,
+                leftIcon: token.icon,
+                value: token.symbol,
                 className: "text-left font-bold text-lg",
               },
               {
-                value: tokens[fund.staticData.vault_id].balance,
+                value: token.balance,
                 className: "text-right",
               },
             ],
