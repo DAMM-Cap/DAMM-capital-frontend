@@ -153,5 +153,5 @@ export function useOperationStateQuery(params: OperationStateParams[]) {
     refetchInterval: 5000,
   });
 
-  return opStates;
+  return { data: opStates };
 }
