@@ -137,7 +137,8 @@ export function useTokensBalance() {
     },
     enabled: isAddress(evmAddress) && localStorage.getItem("disconnect_requested") !== "true", // Don't poll if disconnect was requested
     staleTime: 1000 * 30, // 30 seconds
-    refetchInterval: 60 * 1000, // Poll every minute
+    //refetchInterval: 60 * 1000, // Poll every minute
+    refetchInterval: 5000, // Poll every 5 seconds
     refetchIntervalInBackground: true,
   });
 }
