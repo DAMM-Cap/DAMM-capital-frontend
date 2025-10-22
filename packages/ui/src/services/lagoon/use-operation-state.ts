@@ -89,11 +89,14 @@ function useOperationState() {
   };
 }
 
-export function useOperationStateQuery(
-  vaultAddress?: string,
-  tokenDecimals?: number,
-  vaultDecimals?: number,
-) {
+interface OperationStateParams {
+  vaultId?: string;
+  vaultAddress?: string;
+  tokenDecimals?: number;
+  vaultDecimals?: number;
+}
+
+export function useOperationStateQuery(params: OperationStateParams[]) {
   const { isSignedIn } = useSession();
   const {
     getPendingDepositRequest,
@@ -104,44 +107,51 @@ export function useOperationStateQuery(
   } = useOperationState();
 
   const {
-    data: opState = {
-      pendingDepositRequest: 0,
-      pendingRedeemRequest: 0,
-      claimableDepositRequest: 0,
-      claimableRedeemRequest: 0,
-      isWhitelisted: false,
-    },
+    data: opStates = [],
   } = useQuery({
-    queryKey: ["operationState", vaultAddress, tokenDecimals, vaultDecimals, isSignedIn],
+    queryKey: ["operationStates", params, isSignedIn],
     queryFn: async () => {
-      if (!vaultAddress) {
-        return {
-          pendingDepositRequest: 0,
-          pendingRedeemRequest: 0,
-          claimableDepositRequest: 0,
-          claimableRedeemRequest: 0,
-          isWhitelisted: false,
-        };
-      }
-      const [pendingDep, pendingRed, claimDep, claimRed, whitelisted] = (await Promise.all([
-        getPendingDepositRequest(vaultAddress, tokenDecimals!),
-        getPendingRedeemRequest(vaultAddress, vaultDecimals!),
-        getClaimableDepositRequest(vaultAddress, tokenDecimals!),
-        getClaimableRedeemRequest(vaultAddress, vaultDecimals!),
-        isWhitelisted(vaultAddress) as Promise<boolean>,
-      ])) as [string, string, string, string, boolean];
+      if (!params.length) return [];
 
-      return {
-        pendingDepositRequest: Number(pendingDep),
-        pendingRedeemRequest: Number(pendingRed),
-        claimableDepositRequest: Number(claimDep),
-        claimableRedeemRequest: Number(claimRed),
-        isWhitelisted: whitelisted as boolean,
-      };
+      const results = await Promise.all(
+        params.map(async ({ vaultId, vaultAddress, tokenDecimals, vaultDecimals }) => {
+          if (!vaultAddress) {
+            return {
+              vaultId: vaultId,
+              vaultAddress,
+              pendingDepositRequest: 0,
+              pendingRedeemRequest: 0,
+              claimableDepositRequest: 0,
+              claimableRedeemRequest: 0,
+              isWhitelisted: false,
+            };
+          }
+
+          const [pendingDep, pendingRed, claimDep, claimRed, whitelisted] = (await Promise.all([
+            getPendingDepositRequest(vaultAddress, tokenDecimals!),
+            getPendingRedeemRequest(vaultAddress, vaultDecimals!),
+            getClaimableDepositRequest(vaultAddress, tokenDecimals!),
+            getClaimableRedeemRequest(vaultAddress, vaultDecimals!),
+            isWhitelisted(vaultAddress) as Promise<boolean>,
+          ])) as [string, string, string, string, boolean];
+
+          return {
+            vaultId: vaultId,
+            vaultAddress,
+            pendingDepositRequest: Number(pendingDep),
+            pendingRedeemRequest: Number(pendingRed),
+            claimableDepositRequest: Number(claimDep),
+            claimableRedeemRequest: Number(claimRed),
+            isWhitelisted: whitelisted as boolean,
+          };
+        })
+      );
+
+      return results;
     },
-    enabled: Boolean(vaultAddress && isSignedIn),
+    enabled: Boolean(params.length && isSignedIn),
     refetchInterval: 5000,
   });
 
-  return opState;
+  return opStates;
 }
