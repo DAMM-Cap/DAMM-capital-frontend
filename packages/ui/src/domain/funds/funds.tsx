@@ -2,6 +2,7 @@ import { Button, Card, DammStableIcon, Label, Table } from "@/components";
 import AcknowledgeTermsModal from "@/components/layout/acknowledge-terms-modal";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
+import envParsed from "@/envParsed";
 import { useModal } from "@/hooks/use-modal";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useNavigate } from "@tanstack/react-router";
@@ -9,6 +10,7 @@ import { LogInIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Funds() {
+  const {BLOCK_VAULT} = envParsed();
   const navigate = useNavigate();
   const { isSignedIn, login } = useSession();
   const [isLoadingFund, setIsLoadingFund] = useState(true);
@@ -53,7 +55,11 @@ export default function Funds() {
             const metrics = vaultMetrics?.find((v) => v.vaultId === fund.staticData.vault_id);
             return {
               onClick: () => {
-                navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
+                if (BLOCK_VAULT === fund.staticData.vault_address) {
+                  return;
+                } else {
+                  navigate({ to: "/fund-operate", search: { vaultId: fund.staticData.vault_id } });
+                }
               },
               rowFields: [
                 {

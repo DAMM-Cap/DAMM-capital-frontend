@@ -43,10 +43,14 @@ export function usePortfolioData(vaultId?: string) {
     }
   }, [vaultId, vaults]);
 
-  const opState = useOperationStateQuery(
-    selectedVault?.staticData.vault_address,
-    selectedVault?.staticData.token_decimals,
-  );
+  const opState = useOperationStateQuery(vaults?.vaultsData.map(vault => {
+    return {
+      vaultId: vault.staticData.vault_id,
+      vaultAddress: vault.staticData.vault_address,
+      tokenDecimals: vault.staticData.token_decimals,
+      vaultDecimals: vault.staticData.vault_decimals,
+    }
+  }) || []);
 
   useEffect(() => {
     let totalPositionValue = 0;
@@ -68,19 +72,17 @@ export function usePortfolioData(vaultId?: string) {
 
       // Total Assets retrieves the remaining total assets of the user in the vault
       // This is by tracking the original deposits in the original denomination
-      // Values are fetched from the db by the indexer action, so this is not real time
-      const uP = userPosition?.find(
-        (vault) => vault.vault_id === vaultUserPositionData.staticData.vault_id,
-      );
-      const settledDeposits = uP?.settled_deposits;
-      const settledRedeems =
-        vaultUserPositionData.positionData.availableToRedeemRaw *
-        Number(vaultUserPositionData.vaultData.sharePrice);
+      // Deposit values are fetched from the db by the indexer action, so this is not real time
+      const thisOpState = opState.find((o) => o.vaultId === vaultUserPositionData.staticData.vault_id);
+      const settledDeposits = thisOpState?.claimableDepositRequest;
+      const settledRedeems = thisOpState?.claimableRedeemRequest;
       const totalAssets =
-        Number(vaultUserPositionData.positionData.totalValueRaw) +
-        Number(settledDeposits) / 10 ** selectedVault.staticData.token_decimals -
-        Number(settledRedeems);
+        //Number(vaultUserPositionData.positionData.totalValueRaw) +
+        Number(vaultUserPositionData.vaultData.positionRaw) + 
+        Number(settledDeposits) - Number(settledRedeems);
       totalTotalAssets += totalAssets;
+      console.log("ValueRaw: ", Number(vaultUserPositionData.positionData.totalValueRaw));
+      console.log("PositionRaw: ", Number(vaultUserPositionData.vaultData.positionRaw));
       // ------------------------------------------------------------
 
       // Absolute yield earned is the difference between the position value and the total assets
@@ -100,10 +102,11 @@ export function usePortfolioData(vaultId?: string) {
     setTotalPositionValue(formatToMaxDefinition(totalPositionValue));
     setTotalTotalAssets(formatToMaxDefinition(totalTotalAssets));
     setTotalYieldEarned(formatToMaxDefinition(totalYieldEarned));
-  }, [userPosition, vaults, tokensBalance]);
+  }, [userPosition, vaults, tokensBalance, opState]);
 
   function useFundData() {
-    if (!selectedVault) {
+    const thisOpState = opState.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
+    if (!selectedVault || !thisOpState) {
       return {
         vault_name: "",
         apr: "0",
@@ -118,21 +121,22 @@ export function usePortfolioData(vaultId?: string) {
       };
     }
 
+    
     let operation = OperationStatus.CONFIRMED;
     let operationVariant = "outline-secondary";
-    if (opState.pendingDepositRequest > 0) {
+    if (thisOpState.pendingDepositRequest > 0) {
       operation = OperationStatus.DEPOSIT_PENDING;
       operationVariant = "outline-secondary";
     }
-    if (opState.pendingRedeemRequest > 0) {
+    if (thisOpState.pendingRedeemRequest > 0) {
       operation = OperationStatus.WITHDRAW_PENDING;
       operationVariant = "outline-secondary";
     }
-    if (opState.claimableDepositRequest > 0) {
+    if (thisOpState.claimableDepositRequest > 0) {
       operation = OperationStatus.SHARES_CLAIMABLE;
       operationVariant = "outline";
     }
-    if (opState.claimableRedeemRequest > 0) {
+    if (thisOpState.claimableRedeemRequest > 0) {
       operation = OperationStatus.ASSETS_CLAIMABLE;
       operationVariant = "outline";
     }

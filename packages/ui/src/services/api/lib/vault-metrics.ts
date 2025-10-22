@@ -14,7 +14,7 @@ function computeVaultMetrics(snapshots: any[]) {
   const netApy = totalHours > 0 ? totalWeightedApy / totalHours : 0;
 
   // ---- 2) 30-day Net APY (compounded from share_price) ----
-  const latest = sorted.at(-1)!;
+  const latest = sorted[sorted.length - 1];
   const thirtyDaysAgo = new Date(latest.event_timestamp).getTime() - 30 * 24 * 3600 * 1000;
   const snapshot30 =
     sorted.find((s) => new Date(s.event_timestamp).getTime() >= thirtyDaysAgo) || sorted[0];
