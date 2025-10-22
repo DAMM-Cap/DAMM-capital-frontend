@@ -5,6 +5,7 @@ import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
 import SecondaryActionCard from "./secondary-action-card";
 
+import envParsed from "@/envParsed";
 import Deposit from "../deposit";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import Withdraw from "../withdraw";
@@ -19,22 +20,21 @@ export default function ManagementCard({
   isLoading: boolean;
   vault: Vault;
 }) {
-  const { vaultId } = useSearch({ from: "/fund-operate/" });
-  const { useFundData, isLoading: isLoadingFundOperateData } = useFundOperateData(vaultId!);
+  const {BLOCK_VAULT} = envParsed();
+  const { useFundData, isLoading: isLoadingFundOperateData } = useFundOperateData(vault.id);
   const isMobile = useIsMobile();
   const { isSignedIn } = useSession();
 
   const {
-    vault_name,
-    vault_icon,
-    token_symbol,
-    vault_symbol,
     totalValueRaw,
     walletBalance,
     totalValueUSD,
   } = useFundData();
 
   const isLoadingTitle = isLoading || isLoadingFundOperateData;
+
+  const isBlocked = BLOCK_VAULT === vault.address;
+
 
   return (
     <div
@@ -50,7 +50,7 @@ export default function ManagementCard({
           className="!text-sm text-neutral font-montserrat font-normal leading-none mb-4"
         />
         <TitleLabel
-          title={totalValueRaw.toString() + " " + vault_symbol}
+          title={totalValueRaw.toString() + " " + vault.symbol}
           leftIcon={<DammStableIcon size={20} />}
           secondaryTitle={totalValueUSD?.toString()}
           label="My position"
@@ -58,19 +58,19 @@ export default function ManagementCard({
         />
 
         <TitleLabel
-          title={walletBalance.toString() + " " + token_symbol}
+          title={walletBalance.toString() + " " + vault.tokenSymbol}
           leftIcon={
-            <img src={vault_icon} alt={vault_name} className="w-5 h-5 object-cover rounded-full" />
+            <img src={vault.icon} alt={vault.name} className="w-5 h-5 object-cover rounded-full" />
           }
           label="My wallet balance"
           isLoading={isLoadingTitle}
         />
 
         <div className="flex flex-row gap-4">
-          <Deposit vault={vault} className="w-full" disabled={!isSignedIn} />
-          <Withdraw vault={vault} className="w-full" disabled={!isSignedIn} />
+          <Deposit vault={vault} className="w-full" disabled={!isSignedIn || isBlocked} />
+          <Withdraw vault={vault} className="w-full" disabled={!isSignedIn || isBlocked} />
         </div>
-        {isSignedIn && <SecondaryActionCard vaultId={vaultId!} />}
+        {isSignedIn && !isBlocked && <SecondaryActionCard vaultId={vault.id} />}
       </Card>
     </div>
   );

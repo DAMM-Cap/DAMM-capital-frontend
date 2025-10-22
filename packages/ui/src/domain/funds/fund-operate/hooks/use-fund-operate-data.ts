@@ -26,7 +26,7 @@ export function useFundOperateData(vaultId: string) {
     }
   }, [vaultId, vaults]);
 
-  const opState = useOperationStateQuery([{
+  const { data: opState } = useOperationStateQuery([{
     vaultId: selectedVault?.staticData.vault_id,
     vaultAddress: selectedVault?.staticData.vault_address,
     tokenDecimals: selectedVault?.staticData.token_decimals,

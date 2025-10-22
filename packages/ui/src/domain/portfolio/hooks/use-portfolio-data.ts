@@ -1,6 +1,5 @@
 import { useVaults } from "@/context/vault-context";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
-import { useUserPosition } from "@/services/api/use-user-position";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
 import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { formatToMaxDefinition } from "@/shared/utils";
@@ -17,10 +16,7 @@ export enum OperationStatus {
 export function usePortfolioData(vaultId?: string) {
   const { vaults, isLoading } = useVaults();
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-
-  const { data: userPosition } = useUserPosition();
   const { data: tokensBalance } = useTokensBalance();
-
   const [vaultsData, setVaultsData] = useState<
     Record<string, Record<"positionValue" | "totalAssets" | "yieldEarned", number>>
   >({});
@@ -43,16 +39,18 @@ export function usePortfolioData(vaultId?: string) {
     }
   }, [vaultId, vaults]);
 
-  const opState = useOperationStateQuery(vaults?.vaultsData.map(vault => {
+  const { data: opState } = useOperationStateQuery(vaults?.vaultsData.map(vault => {
     return {
       vaultId: vault.staticData.vault_id,
       vaultAddress: vault.staticData.vault_address,
       tokenDecimals: vault.staticData.token_decimals,
       vaultDecimals: vault.staticData.vault_decimals,
     }
-  }) || []);
+  }) ?? []);
 
   useEffect(() => {
+    if (isLoading) return;
+
     let totalPositionValue = 0;
     let totalTotalAssets = 0;
     let totalYieldEarned = 0;
@@ -77,7 +75,6 @@ export function usePortfolioData(vaultId?: string) {
       const settledDeposits = thisOpState?.claimableDepositRequest;
       const settledRedeems = thisOpState?.claimableRedeemRequest;
       const totalAssets =
-        //Number(vaultUserPositionData.positionData.totalValueRaw) +
         Number(vaultUserPositionData.vaultData.positionRaw) + 
         Number(settledDeposits) - Number(settledRedeems);
       totalTotalAssets += totalAssets;
@@ -102,7 +99,7 @@ export function usePortfolioData(vaultId?: string) {
     setTotalPositionValue(formatToMaxDefinition(totalPositionValue));
     setTotalTotalAssets(formatToMaxDefinition(totalTotalAssets));
     setTotalYieldEarned(formatToMaxDefinition(totalYieldEarned));
-  }, [userPosition, vaults, tokensBalance, opState]);
+  }, [vaults, tokensBalance, isLoading]);
 
   function useFundData() {
     const thisOpState = opState.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
