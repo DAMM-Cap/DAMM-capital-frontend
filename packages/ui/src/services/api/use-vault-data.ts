@@ -8,6 +8,7 @@ import { IntegratedDataResponse, VaultDataResponse } from "@/services/api/types/
 import { getNetworkConfig } from "@/shared/config/network";
 import { useQuery } from "@tanstack/react-query";
 import { isAddress } from "viem";
+import { tokenSymbolsWithSuffix } from "./lib/utils";
 import { computeVaultMetricsByVaultId } from "./lib/vault-metrics";
 
 export function useVaultData(wallet: string) {
@@ -30,9 +31,13 @@ export function useVaultData(wallet: string) {
         if (!integratedPositionResponse.ok) throw new Error("Failed to fetch vault data");
 
         let vaultData = await integratedPositionResponse.json();
-        vaultData.positions.forEach((p: IntegratedPosition, i: number) => {
-          p.token_symbol = `${p.token_symbol}(${i + 1})`;
-        });
+        
+        // Here we modify the token symbols in case we have several vaults with the same underlying token
+        tokenSymbolsWithSuffix(vaultData.positions); 
+
+        if (vaultData.positions.length === 0) {
+          console.warn("No positions found");
+        }
 
         const integratedPositionData: IntegratedDataResponse[] =
           convertIntegratedPosition(vaultData);

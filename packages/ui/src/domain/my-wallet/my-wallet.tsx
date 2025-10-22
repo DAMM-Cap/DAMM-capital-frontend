@@ -33,7 +33,7 @@ export default function MyWallet() {
       const tokens: Tokens = {};
       vaults.map(
         (fund) =>
-          (tokens[fund.id.toString()] = {
+          (tokens[fund.address] = {
             icon: () => (
               <img
                 src={fund.icon}
