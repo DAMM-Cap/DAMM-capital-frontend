@@ -81,15 +81,17 @@ export function useDeposit() {
     const depositAmount = BigNumber.from(amountInWei).sub(fee);
 
     // Transfer entrance_fee from smartAccount to fee_receiver
-    const transferFeeTx: EvmCall = {
-      to: underlyingTokenAddress as `0x${string}`,
-      value: 0n,
-      abi: IERC20ABI,
-      functionName: "transfer",
-      args: [feeReceiverAddress, fee.toBigInt()],
-    };
+    if (fee.gt(0)) {
+      const transferFeeTx: EvmCall = {
+        to: underlyingTokenAddress as `0x${string}`,
+        value: 0n,
+        abi: IERC20ABI,
+        functionName: "transfer",
+        args: [feeReceiverAddress, fee.toBigInt()],
+      };
+      if (transferFeeTx) txs.push(transferFeeTx);
+    }
 
-    if (transferFeeTx) txs.push(transferFeeTx);
 
     // Request deposit with referral (4 parameters)
     let encodedReferral = usersAccount;
@@ -99,11 +101,13 @@ export function useDeposit() {
         namespace: "DAMM-Capital",
       });
     }
+
     const requestDepositCall = {
       to: vaultAddress as `0x${string}`,
       value: 0n,
       abi: RequestDepositABI,
       functionName: "requestDeposit",
+      gasLimit: 500000, // TODO: Estimate gas limit properly
       args: [depositAmount, usersAccount, usersAccount, encodedReferral],
     };
     txs.push(requestDepositCall);
@@ -112,7 +116,7 @@ export function useDeposit() {
       const txResponse = await executePrivyTransactions(txs);
       return txResponse as unknown as TransactionResponse;
     } catch (error) {
-      console.error("Error executing smart account transaction:", error);
+      console.error("Error executing transaction:", error);
       throw new Error("Cannot execute deposit request");
     }
   };

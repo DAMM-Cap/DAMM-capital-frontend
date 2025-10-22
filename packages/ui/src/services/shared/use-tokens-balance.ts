@@ -38,99 +38,63 @@ export function useTokensBalance() {
           vaultBalances: {},
         };
 
-        /* if (isUnderlyingWrapNative) {
-          const balanceNative = await getEthersProvider().getBalance(safeAddress);
-          result.nativeBalance = formatUnits(balanceNative.toBigInt(), 18).substring(0, 8);
-        } */
+        const queryLength = 4; // Number of queries per vault
 
-        const queryArray = [
+        const contracts: MulticallParameters["contracts"] = vaults.vaultsData.flatMap((vault) => [
           {
-            address: "0x" as Address,
+            address: vault.staticData.token_address as Address,
             abi: IERC20ABI as Abi,
             functionName: "balanceOf",
             args: [evmAddress as Address],
           },
           {
-            address: "0x" as Address,
+            address: vault.staticData.vault_address as Address,
             abi: VaultABI as Abi,
             functionName: "balanceOf",
             args: [evmAddress as Address],
           },
           {
-            address: "0x" as Address,
+            address: vault.staticData.vault_address as Address,
             abi: VaultABI as Abi,
             functionName: "claimableDepositRequest",
             args: [0, evmAddress as Address],
           },
           {
-            address: "0x" as Address,
+            address: vault.staticData.vault_address as Address,
             abi: VaultABI as Abi,
             functionName: "pendingRedeemRequest",
             args: [0, evmAddress as Address],
           },
-          /* {
-            address: "0x" as Address,
-            abi: VaultABI as Abi,
-            functionName: "maxMint",
-            args: [evmAddress as Address],
-          },
-          {
-            address: "0x" as Address,
-            abi: VaultABI as Abi,
-            functionName: "maxRedeem",
-            args: [evmAddress as Address],
-          }, */
-        ];
-
-        const queryLength = queryArray.length;
-
-        const contracts: MulticallParameters["contracts"] = vaults.vaultsData.flatMap((vault) => {
-          queryArray[0].address = vault.staticData.token_address as Address;
-          queryArray[1].address = vault.staticData.vault_address as Address;
-          queryArray[2].address = vault.staticData.vault_address as Address;
-          queryArray[3].address = vault.staticData.vault_address as Address;
-          /* queryArray[4].address = vault.staticData.vault_address as Address;
-          queryArray[5].address = vault.staticData.vault_address as Address; */
-          return queryArray;
-        });
+        ]);
 
         const results = await publicClient.multicall({
           contracts,
           allowFailure: false,
         });
 
-        const conversionArray = [
-          {
-            address: "0x" as Address,
-            abi: VaultABI as Abi,
-            functionName: "convertToAssets",
-            args: [0n],
-          },
-          {
-            address: "0x" as Address,
-            abi: VaultABI as Abi,
-            functionName: "convertToShares",
-            args: [0n],
-          },
-          {
-            address: "0x" as Address,
-            abi: VaultABI as Abi,
-            functionName: "convertToAssets",
-            args: [0n],
-          },
-        ];
-        const conversionArrayLength = conversionArray.length;
+        const conversionArrayLength = 3; // Number of conversion queries per vault
 
         const resultsAssets = await publicClient.multicall({
-          contracts: vaults.vaultsData.flatMap((vault, i) => {
-            conversionArray[0].address = vault.staticData.vault_address as Address;
-            conversionArray[0].args = [results[i * queryLength + 1] as bigint];
-            conversionArray[1].address = vault.staticData.vault_address as Address;
-            conversionArray[1].args = [results[i * queryLength + 2] as bigint];
-            conversionArray[2].address = vault.staticData.vault_address as Address;
-            conversionArray[2].args = [results[i * queryLength + 3] as bigint];
-            return conversionArray;
-          }) as MulticallParameters["contracts"],
+          contracts: vaults.vaultsData.flatMap((vault, i) => [
+            {
+              address: vault.staticData.vault_address as Address,
+              abi: VaultABI as Abi,
+              functionName: "convertToAssets",
+              args: [results[i * queryLength + 1] as bigint],
+            },
+            {
+              address: vault.staticData.vault_address as Address,
+              abi: VaultABI as Abi,
+              functionName: "convertToShares",
+              args: [results[i * queryLength + 2] as bigint],
+            },
+            {
+              address: vault.staticData.vault_address as Address,
+              abi: VaultABI as Abi,
+              functionName: "convertToAssets",
+              args: [results[i * queryLength + 3] as bigint],
+            },
+          ]) as MulticallParameters["contracts"],
           allowFailure: false,
         });
 
@@ -144,9 +108,9 @@ export function useTokensBalance() {
             BigInt(resultsAssets[i * conversionArrayLength] as bigint) +
             BigInt(results[i * queryLength + 2] as bigint) +
             BigInt(resultsAssets[i * conversionArrayLength + 2] as bigint);
-          const sharePrice =
-            Number(formatUnits(assets, v.staticData.token_decimals)) /
-            Number(formatUnits(shares, v.staticData.vault_decimals));
+          const sharePrice = shares > 0n 
+            ? (assets * BigInt(10 ** v.staticData.vault_decimals)) / shares
+            : 0n;
 
           result.vaultBalances[v.staticData.vault_id.toString()] = {
             availableSupply: formatToMaxDefinition(
@@ -158,7 +122,7 @@ export function useTokensBalance() {
             assets: formatToMaxDefinition(
               Number(formatUnits(assets, v.staticData.token_decimals)),
             ).toString(),
-            sharePrice: (sharePrice / 10 ** v.staticData.token_decimals).toString(),
+            sharePrice: formatUnits(sharePrice, v.staticData.token_decimals),
           };
         });
 
@@ -173,7 +137,7 @@ export function useTokensBalance() {
     },
     enabled: isAddress(evmAddress) && localStorage.getItem("disconnect_requested") !== "true", // Don't poll if disconnect was requested
     staleTime: 1000 * 30, // 30 seconds
-    refetchInterval: 5000, // Poll every 5 seconds
+    refetchInterval: 60 * 1000, // Poll every minute
     refetchIntervalInBackground: true,
   });
 }
