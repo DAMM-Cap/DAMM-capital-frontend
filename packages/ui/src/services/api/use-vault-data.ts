@@ -1,7 +1,7 @@
 import envParsed from "@/envParsed";
 import {
-  convertIntegratedPosition,
-  getNullMockedIntegratedPosition,
+    convertIntegratedPosition,
+    getNullMockedIntegratedPosition,
 } from "@/services/api/lib/integrated-position-converter";
 import { getNullMockedVaultData } from "@/services/api/lib/mock-data/mocks";
 import { IntegratedDataResponse, VaultDataResponse } from "@/services/api/types/vault-data";
