@@ -71,7 +71,7 @@ export default function Funds() {
                   className: "text-left",
                 },
                 {
-                  value: fund.vaultData.aum.toString(),
+                  value: metrics?.aum.toString() || "0",
                   className: "text-left",
                 },
                 {

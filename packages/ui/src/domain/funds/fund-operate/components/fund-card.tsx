@@ -14,7 +14,7 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
   const isMobile = useIsMobile();
 
   try {
-    const { vault_name, tvl, sharpe, netApy, netApy30d, aum } = useFundData();
+    const { vault_name, sharpe, netApy, netApy30d, aum, nav } = useFundData();
     return (
       !vaultLoading && (
         <div className="flex-1 flex-col gap-4">
@@ -83,7 +83,7 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                       className: "text-left",
                     },
                     {
-                      value: tvl.toString(),
+                      value: nav.toString(),
                       className: "text-left",
                     },
                   ],

@@ -196,6 +196,7 @@ export function useFundOperateData(vaultId: string) {
         netApy: 0,
         netApy30d: 0,
         aum: 0,
+        nav: 0,
       };
     }
 
@@ -223,7 +224,9 @@ export function useFundOperateData(vaultId: string) {
       sharpe: selectedVaultMetrics?.sharpe || 0,
       netApy: selectedVaultMetrics?.netApy || 0,
       netApy30d: selectedVaultMetrics?.netApy30d || 0,
-      aum: selectedVault.vaultData.aum,
+      aum: selectedVaultMetrics?.aum || 0,
+      nav: selectedVaultMetrics?.nav || 0,
+      //aum: selectedVault.vaultData.aum,
     };
   }
 

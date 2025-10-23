@@ -41,7 +41,7 @@ export default function MetricsView({
         const totalAssetsValue = Number(
           formatUnits(BigInt(vaultData.total_assets), vaultData.deposit_token_decimals),
         );
-        const sharePiceValue = vaultData.share_price;
+        const sharePiceValue = vaultData.share_price * Math.pow(10, vaultData.vault_token_decimals - vaultData.deposit_token_decimals);
         const apyValue = vaultData.apy;
         const vaultId = vaultData.vault_id;
 

@@ -3,7 +3,7 @@ import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-pres
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
 import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { formatToMaxDefinition } from "@/shared/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export enum OperationStatus {
   CONFIRMED = "Confirmed",
@@ -39,14 +39,22 @@ export function usePortfolioData(vaultId?: string) {
     }
   }, [vaultId, vaults]);
 
-  const { data: opState } = useOperationStateQuery(vaults?.vaultsData.map(vault => {
-    return {
+  const operationStateParams = useMemo(() => {
+    return vaults?.vaultsData.map(vault => ({
       vaultId: vault.staticData.vault_id,
       vaultAddress: vault.staticData.vault_address,
       tokenDecimals: vault.staticData.token_decimals,
       vaultDecimals: vault.staticData.vault_decimals,
-    }
-  }) ?? []);
+    })) ?? [];
+  }, [vaults?.vaultsData]);
+
+  const { data: opState } = useOperationStateQuery(operationStateParams);
+  const opStateRef = useRef(opState);
+
+  // Update ref when opState changes
+  useEffect(() => {
+    opStateRef.current = opState;
+  }, [opState]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -54,6 +62,8 @@ export function usePortfolioData(vaultId?: string) {
     let totalPositionValue = 0;
     let totalTotalAssets = 0;
     let totalYieldEarned = 0;
+    const newVaultsData: Record<string, Record<"positionValue" | "totalAssets" | "yieldEarned", number>> = {};
+    
     vaults?.vaultsData.forEach((vaultUserPositionData) => {
       const selectedVault = vaults?.vaultsData.find(
         (v) => v.staticData.vault_id === vaultUserPositionData.staticData.vault_id,
@@ -71,9 +81,9 @@ export function usePortfolioData(vaultId?: string) {
       // Total Assets retrieves the remaining total assets of the user in the vault
       // This is by tracking the original deposits in the original denomination
       // Deposit values are fetched from the db by the indexer action, so this is not real time
-      const thisOpState = opState.find((o) => o.vaultId === vaultUserPositionData.staticData.vault_id);
-      const settledDeposits = thisOpState?.claimableDepositRequest;
-      const settledRedeems = thisOpState?.claimableRedeemRequest;
+      const thisOpState = opStateRef.current?.find((o) => o.vaultId === vaultUserPositionData.staticData.vault_id);
+      const settledDeposits = thisOpState?.claimableDepositRequest || 0;
+      const settledRedeems = thisOpState?.claimableRedeemRequest || 0;
       const totalAssets =
         Number(vaultUserPositionData.vaultData.positionRaw) + 
         Number(settledDeposits) - Number(settledRedeems);
@@ -85,15 +95,14 @@ export function usePortfolioData(vaultId?: string) {
       totalYieldEarned += yieldEarned;
       // ------------------------------------------------------------
 
-      setVaultsData((prevVaultsData) => ({
-        ...prevVaultsData,
-        [vaultUserPositionData.staticData.vault_id as string]: {
-          positionValue: formatToMaxDefinition(positionValue),
-          totalAssets: formatToMaxDefinition(totalAssets),
-          yieldEarned: formatToMaxDefinition(yieldEarned),
-        },
-      }));
+      newVaultsData[vaultUserPositionData.staticData.vault_id as string] = {
+        positionValue: formatToMaxDefinition(positionValue),
+        totalAssets: formatToMaxDefinition(totalAssets),
+        yieldEarned: formatToMaxDefinition(yieldEarned),
+      };
     });
+    
+    setVaultsData(newVaultsData);
     setTotalPositionValue(formatToMaxDefinition(totalPositionValue));
     setTotalTotalAssets(formatToMaxDefinition(totalTotalAssets));
     setTotalYieldEarned(formatToMaxDefinition(totalYieldEarned));
