@@ -24,7 +24,7 @@ export default function MyWallet() {
     open: openSendTokens,
   } = useModal(false);
 
-  const { vaults = [], hasVaults, isLoading } = useGetVaults(evmAddress);
+  const { vaults = [], hasVaults, isLoading } = useGetVaults();
   const { data: tokensBalance } = useTokensBalance(vaults);
   const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
 

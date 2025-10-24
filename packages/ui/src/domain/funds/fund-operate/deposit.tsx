@@ -31,7 +31,12 @@ export default function Deposit({
   const [validReferral, setValidReferral] = useState(false);
 
   const { data: tokensBalance } = useTokensBalance([vault]);
-  const { isWhitelisted: isUserWhitelisted } = useOperationStateQuery(vault.address);
+  const { data: opState } = useOperationStateQuery([{
+    vaultId: vault.id,
+    vaultAddress: vault.address,
+    tokenDecimals: vault.tokenDecimals,
+    vaultDecimals: vault.decimals,
+  }]);
   const max = Number(tokensBalance?.vaultBalances[vault.id]?.availableSupply || 0);
 
   const {
@@ -113,6 +118,7 @@ export default function Deposit({
     <div className={className}>
       <Button
         onClick={() => {
+          const isUserWhitelisted = opState?.find((o) => o.vaultId === vault.id)?.isWhitelisted;
           if (max === 0) {
             setOpenModalInsufficientBalance();
           } else {

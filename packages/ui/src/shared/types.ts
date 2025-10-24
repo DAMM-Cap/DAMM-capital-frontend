@@ -1,4 +1,4 @@
-export type Vault = {
+export interface Vault {
   id: string;
   icon: string;
   name: string;
@@ -14,3 +14,10 @@ export type Vault = {
   sharePrice: number;
   entranceRate: number;
 };
+
+export interface VaultMetrics {
+  vaultId: string;
+  netApy: number;
+  netApy30d: number;
+  sharpe: number;
+}

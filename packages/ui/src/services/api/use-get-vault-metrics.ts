@@ -3,6 +3,7 @@ import { getNetworkConfig } from "@/shared/config/network";
 import { useQuery } from "@tanstack/react-query";
 import { computeVaultMetricsByVaultId } from "./lib/vault-metrics";
 import { VaultMetricsResponse } from "./types/vault-data";
+import { VaultMetrics } from "@/shared/types";
 
 
 async function getVaultMetrics() {
@@ -21,13 +22,6 @@ async function getVaultMetrics() {
   return vaultMetrics;
 }
 
-type VaultMetrics = {
-  id: string;
-  netApy: number;
-  netApy30d: number;
-  sharpe: number;
-};
-
 
 function convertToVaultMetricsData(
   initialVaultMetricsData: VaultMetricsResponse[]
@@ -35,7 +29,7 @@ function convertToVaultMetricsData(
 
   return initialVaultMetricsData.map((vaultMetrics) => {
     return {
-      id: vaultMetrics.vaultId,
+      vaultId: vaultMetrics.vaultId,
       netApy: vaultMetrics.netApy || 0,
       netApy30d: vaultMetrics.netApy30d || 0,
       sharpe: vaultMetrics.sharpe || 0,

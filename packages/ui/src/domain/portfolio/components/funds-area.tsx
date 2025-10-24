@@ -1,24 +1,18 @@
 import { Card, Label } from "@/components";
-import { usePortfolioData } from "../hooks/use-portfolio-data";
 import FundCard from "./fund-card";
+import { FundData } from "../utils/fund-data-utils";
+import { Vault } from "@/shared/types";
 
-export default function FundsArea({ isLoading }: { isLoading: boolean }) {
-  const { vaultIds } = usePortfolioData();
+export default function FundsArea({
+  isLoading,
+  vaultsWithPositions,
+}: {
+  isLoading: boolean;
+  vaultsWithPositions: { vault: Vault, fundData: FundData }[];
+}) {
+  const hasPositions = vaultsWithPositions.length > 0;
 
-  // Get fund data for all vaults to check positions
-  const vaultFundData =
-    vaultIds?.map((vaultId) => {
-      const { useFundData } = usePortfolioData(vaultId);
-      return { vaultId, ...useFundData() };
-    }) || [];
-
-  const noPosition = vaultFundData.every(({ positionSize, operationActive }) => {
-    return Number(positionSize) === 0 && !operationActive;
-  });
-
-  const noVaults = !vaultIds || vaultIds.length === 0 || !vaultIds?.[0] || noPosition;
-
-  if (noVaults) {
+  if (!hasPositions) {
     return (
       <Card variant="fund" className="flex flex-col gap-4">
         <Label label="You currently hold no assets in any Fund." className="domain-subtitle" />
@@ -28,13 +22,9 @@ export default function FundsArea({ isLoading }: { isLoading: boolean }) {
 
   return (
     <div className="justify-between items-center mb-10 gap-4 max-w-full">
-      {vaultIds?.map((vaultId) => (
-        <FundCard
-          isLoading={isLoading}
-          vaultId={vaultId}
-          key={vaultId}
-        />
-      ))}
+      {vaultsWithPositions.map((vault) => {
+        return <FundCard isLoading={isLoading} fundData={vault.fundData} vault={vault.vault} key={vault.vault.id} />;
+      })}
     </div>
   );
 }

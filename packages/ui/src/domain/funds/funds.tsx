@@ -1,7 +1,6 @@
 import { Button, Card, DammStableIcon, Label, Table } from "@/components";
 import AcknowledgeTermsModal from "@/components/layout/acknowledge-terms-modal";
 import { useSession } from "@/context/session-context";
-import { useVaults } from "@/context/vault-context";
 import { useModal } from "@/hooks/use-modal";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
@@ -11,8 +10,8 @@ import { useGetVaultMetrics } from "@/services/api/use-get-vault-metrics";
 
 export default function Funds() {
   const navigate = useNavigate();
-  const { isSignedIn, login, isConnecting, evmAddress: usersAccount } = useSession();
-  const { vaults: vaultsData, isLoading: isLoadingVaults, hasVaults } = useGetVaults(isSignedIn ? usersAccount : "0x");
+  const { isSignedIn, login, isConnecting} = useSession();
+  const { vaults: vaultsData, isLoading: isLoadingVaults, hasVaults } = useGetVaults();
   const { vaultMetricsData: vaultMetrics, isLoading: isLoadingVaultMetrics } = useGetVaultMetrics();
 
   const {
@@ -52,7 +51,7 @@ export default function Funds() {
           ]}
           isLoading={isLoadingFund}
           rows={vaultsData?.map((fund) => {
-            const metrics = vaultMetrics?.find((v) => v.id === fund.id);
+            const metrics = vaultMetrics?.find((v) => v.vaultId === fund.id);
             return {
               onClick: () => {
                 navigate({ to: "/fund-operate", search: { vaultId: fund.id } });

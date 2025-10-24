@@ -94,7 +94,7 @@ export default function Withdraw({
         max={max}
         position={max}
         conversionValue={getConvertedValue(Number(amount), vault)}
-        positionConverted={positionUSD.toString()}
+        positionConverted={"0"} // TODO: Add positionUSD
         onWithdraw={handleWithdraw}
         isLoading={isLoading || false} // TODO: Add loading state
         isInsufficientShares={isInsufficientBalance}

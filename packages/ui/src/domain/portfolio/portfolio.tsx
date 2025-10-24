@@ -1,30 +1,29 @@
 import { Label } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import FundsArea from "./components/funds-area";
 import SingleValueCard from "./components/single-value-card";
 import { usePortfolioData } from "./hooks/use-portfolio-data";
+import { useGetVaultMetrics } from "@/services/api/use-get-vault-metrics";
+import { useGetVaults } from "@/services/api/use-get-vaults";
 
 export default function Portfolio() {
   const navigate = useNavigate();
   const { isSignedIn } = useSession();
-  const [isLoadingFund, setIsLoadingFund] = useState(true);
-  const { usePortfolioSingleValuesData } = usePortfolioData();
+  const { vaults = [], isLoading: isLoadingVaults } = useGetVaults();
+  const { vaultMetricsData = [], isLoading: isLoadingVaultMetrics } = useGetVaultMetrics();
+  const { portfolioTotals, vaultsWithPositions } = usePortfolioData(vaults, vaultMetricsData);
 
-  const { tvl, yieldEarned, deposited } = usePortfolioSingleValuesData();
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoadingFund(false);
-    }, 1000);
-  }, []);
+  const { tvl, yieldEarned, deposited } = portfolioTotals;
 
   useEffect(() => {
     if (!isSignedIn) {
       navigate({ to: "/funds" });
     }
   }, [isSignedIn]);
+
+  const isLoading = isLoadingVaults || isLoadingVaultMetrics;
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -41,22 +40,25 @@ export default function Portfolio() {
           <SingleValueCard
             label="Total Portfolio Value"
             value={tvl.toString()}
-            isLoading={isLoadingFund}
+            isLoading={isLoading}
           />
           <SingleValueCard
             label="Total Yield Earned"
             value={yieldEarned.toString()}
-            isLoading={isLoadingFund}
+            isLoading={isLoading}
             className="!text-primary"
           />
           <SingleValueCard
             label="Total Deposited"
             value={deposited.toString()}
-            isLoading={isLoadingFund}
+            isLoading={isLoading}
           />
         </div>
 
-        <FundsArea isLoading={isLoadingFund} />
+        <FundsArea
+          isLoading={isLoading}
+          vaultsWithPositions={vaultsWithPositions}
+        />
       </div>
     </div>
   );

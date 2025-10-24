@@ -1,167 +1,44 @@
-import { useVaults } from "@/context/vault-context";
-import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
-import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
-import { useTokensBalance } from "@/services/shared/use-tokens-balance";
-import { formatToMaxDefinition } from "@/shared/utils";
-import { useEffect, useState } from "react";
+import { FundData, getFundData } from "../utils/fund-data-utils";
+import { useOperationStatus } from "./use-operation-status";
+import { usePortfolioTotals } from "./use-portfolio-totals";
+import { useVaultCalculations } from "@/domain/portfolio/hooks/use-vault-calculations";
+import { Vault, VaultMetrics } from "@/shared/types";
 
-export enum OperationStatus {
-  CONFIRMED = "Confirmed",
-  DEPOSIT_PENDING = "Deposit Pending",
-  WITHDRAW_PENDING = "Withdraw Pending",
-  SHARES_CLAIMABLE = "Shares Claimable",
-  ASSETS_CLAIMABLE = "Assets Claimable",
-}
+export { OperationStatus } from "./use-operation-status";
 
-export function usePortfolioData(vaultId?: string) {
-  const { vaults, isLoading } = useVaults();
-  const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-  const { data: tokensBalance } = useTokensBalance();
-  const [vaultsData, setVaultsData] = useState<
-    Record<string, Record<"positionValue" | "totalAssets" | "yieldEarned", number>>
-  >({});
+export function usePortfolioData(vaults: Vault[], metrics: VaultMetrics[]) {
+  // Use specialized hooks for different concerns
+  const vaultCalculations = useVaultCalculations(vaults);
+  const { operationStates } = useOperationStatus(vaults);
+  const portfolioTotals = usePortfolioTotals(vaultCalculations);
+  
+  // Create fund data function for specific vault
+  const getFundDataForVault = (targetVaultId?: string) => {
+    return getFundData(
+      targetVaultId,
+      vaults,
+      metrics,
+      vaultCalculations.vaultsData,
+      operationStates
+    );
+  };
 
-  const [totalPositionValue, setTotalPositionValue] = useState<number>(0);
-  const [totalTotalAssets, setTotalTotalAssets] = useState<number>(0);
-  const [totalYieldEarned, setTotalYieldEarned] = useState<number>(0);
-
-  const [selectedVaultMetrics, setSelectedVaultMetrics] = useState<VaultMetricsView | undefined>(
-    undefined,
-  );
-
-  useEffect(() => {
-    if (vaultId && vaults?.vaultsData && vaults?.vaultMetrics) {
-      const foundVault = vaults.vaultsData.find((v) => v.staticData.vault_id === vaultId);
-      setSelectedVault(foundVault);
-
-      const foundVaultMetrics = vaults.vaultMetrics.find((v) => v.vaultId === vaultId);
-      setSelectedVaultMetrics(foundVaultMetrics);
+  const vaultsWithPositions = (vaults || []).reduce((acc, vault) => {
+    const data = getFundData(vault.id, vaults, metrics, vaultCalculations.vaultsData, operationStates);
+    if (Number(data.positionSize) > 0 || data.operationActive) {
+      acc.push({
+        vault,
+        fundData: data,
+      });
     }
-  }, [vaultId, vaults]);
-
-  const { data: opState } = useOperationStateQuery(vaults?.vaultsData.map(vault => {
-    return {
-      vaultId: vault.staticData.vault_id,
-      vaultAddress: vault.staticData.vault_address,
-      tokenDecimals: vault.staticData.token_decimals,
-      vaultDecimals: vault.staticData.vault_decimals,
-    }
-  }) ?? []);
-
-  useEffect(() => {
-    if (isLoading) return;
-
-    let totalPositionValue = 0;
-    let totalTotalAssets = 0;
-    let totalYieldEarned = 0;
-    vaults?.vaultsData.forEach((vaultUserPositionData) => {
-      const selectedVault = vaults?.vaultsData.find(
-        (v) => v.staticData.vault_id === vaultUserPositionData.staticData.vault_id,
-      );
-      if (!selectedVault) return;
-
-      // Position Value retrieves real time converted shares from the blockchain
-      const availableAssets = Number(
-        tokensBalance?.vaultBalances[vaultUserPositionData.staticData.vault_id]?.assets || 0,
-      );
-      const positionValue = availableAssets;
-      totalPositionValue += positionValue;
-      // ------------------------------------------------------------
-
-      // Total Assets retrieves the remaining total assets of the user in the vault
-      // This is by tracking the original deposits in the original denomination
-      // Deposit values are fetched from the db by the indexer action, so this is not real time
-      const thisOpState = opState.find((o) => o.vaultId === vaultUserPositionData.staticData.vault_id);
-      const settledDeposits = thisOpState?.claimableDepositRequest;
-      const settledRedeems = thisOpState?.claimableRedeemRequest;
-      const totalAssets =
-        Number(vaultUserPositionData.vaultData.positionRaw) + 
-        Number(settledDeposits) - Number(settledRedeems);
-      totalTotalAssets += totalAssets;
-      // ------------------------------------------------------------
-
-      // Absolute yield earned is the difference between the position value and the total assets
-      const yieldEarned = positionValue - totalAssets;
-      totalYieldEarned += yieldEarned;
-      // ------------------------------------------------------------
-
-      setVaultsData((prevVaultsData) => ({
-        ...prevVaultsData,
-        [vaultUserPositionData.staticData.vault_id as string]: {
-          positionValue: formatToMaxDefinition(positionValue),
-          totalAssets: formatToMaxDefinition(totalAssets),
-          yieldEarned: formatToMaxDefinition(yieldEarned),
-        },
-      }));
-    });
-    setTotalPositionValue(formatToMaxDefinition(totalPositionValue));
-    setTotalTotalAssets(formatToMaxDefinition(totalTotalAssets));
-    setTotalYieldEarned(formatToMaxDefinition(totalYieldEarned));
-  }, [vaults, tokensBalance, isLoading]);
-
-  function useFundData() {
-    const thisOpState = opState.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
-    if (!selectedVault || !thisOpState) {
-      return {
-        vault_name: "",
-        apr: "0",
-        vault_icon: "",
-        token_symbol: "",
-        positionSize: "0",
-        yieldEarned: "0",
-        totalAssets: "0",
-        operation: "",
-        operationVariant: "outline-secondary",
-        operationActive: false,
-      };
-    }
-
-    
-    let operation = OperationStatus.CONFIRMED;
-    let operationVariant = "outline-secondary";
-    if (thisOpState.pendingDepositRequest > 0) {
-      operation = OperationStatus.DEPOSIT_PENDING;
-      operationVariant = "outline-secondary";
-    }
-    if (thisOpState.pendingRedeemRequest > 0) {
-      operation = OperationStatus.WITHDRAW_PENDING;
-      operationVariant = "outline-secondary";
-    }
-    if (thisOpState.claimableDepositRequest > 0) {
-      operation = OperationStatus.SHARES_CLAIMABLE;
-      operationVariant = "outline";
-    }
-    if (thisOpState.claimableRedeemRequest > 0) {
-      operation = OperationStatus.ASSETS_CLAIMABLE;
-      operationVariant = "outline";
-    }
-
-    return {
-      vault_name: selectedVault.staticData.vault_name,
-      apr: selectedVaultMetrics?.netApy ?? 0,
-      positionSize: vaultsData[selectedVault.staticData.vault_id]?.positionValue ?? 0,
-      yieldEarned: vaultsData[selectedVault.staticData.vault_id]?.yieldEarned ?? 0,
-      totalAssets: vaultsData[selectedVault.staticData.vault_id]?.totalAssets ?? 0,
-      vault_icon: selectedVault.staticData.vault_icon,
-      token_symbol: selectedVault.staticData.token_symbol,
-      operation: operation,
-      operationVariant: operationVariant,
-      operationActive: operation !== OperationStatus.CONFIRMED,
-    };
-  }
-
-  function usePortfolioSingleValuesData() {
-    return {
-      tvl: totalPositionValue,
-      yieldEarned: totalYieldEarned,
-      deposited: totalTotalAssets,
-    };
-  }
+    return acc;
+  }, [] as { vault: Vault, fundData: FundData }[]);
 
   return {
-    useFundData,
-    usePortfolioSingleValuesData,
-    vaultIds: vaults?.vaultsData?.map((fund) => fund.staticData.vault_id),
-    isLoading: isLoading,
+    getFundData: getFundDataForVault,
+    portfolioTotals,
+    vaultCalculations,
+    operationStates,
+    vaultsWithPositions,
   };
 }
