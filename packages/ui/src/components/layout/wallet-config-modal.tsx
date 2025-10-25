@@ -1,6 +1,7 @@
 import { Button, Label, Modal } from "@/components";
 import ConfigIcon from "@/components/icons/config-icon";
 import { useSession } from "@/context/session-context";
+import { useNavigate } from "@tanstack/react-router";
 import { CopyIcon, LogOutIcon } from "lucide-react";
 
 export default function WalletConfigModal({
@@ -11,6 +12,7 @@ export default function WalletConfigModal({
   setCloseModal: () => void;
 }) {
   const { evmAddress, isSignedIn, showMfaModal, logout } = useSession();
+  const navigate = useNavigate();
   return (
     <Modal
       open={openModal}
@@ -47,6 +49,7 @@ export default function WalletConfigModal({
           <Button
             onClick={() => {
               logout();
+              navigate({ to: "/funds" });
               setCloseModal();
             }}
             variant="secondary"

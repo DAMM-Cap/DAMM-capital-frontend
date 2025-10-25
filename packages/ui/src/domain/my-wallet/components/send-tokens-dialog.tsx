@@ -1,23 +1,10 @@
 import { Button, Input, Label, Modal, TokenAmountInput } from "@/components";
+import { TokenType, Tokens } from "@/domain/types/token";
+import { useSelector } from "@/hooks/use-selector";
 import { useSendTokens } from "@/services/shared/use-send-tokens";
 import { getNetworkConfig } from "@/shared/config/network";
 import React, { useEffect, useState } from "react";
 import { isAddress } from "viem";
-
-export interface TokenType {
-  icon?: React.ComponentType<{ size?: number }>;
-  symbol: string;
-  name: string;
-  balance: string;
-  metadata: {
-    address: string;
-    decimals: number;
-  };
-}
-
-export interface Tokens {
-  [vaultId: string]: TokenType;
-}
 
 interface SendTokensDialogProps {
   isOpen: boolean;
@@ -25,22 +12,35 @@ interface SendTokensDialogProps {
   tokens: Tokens;
 }
 
-export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendTokensDialogProps) {
+export function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendTokensDialogProps) {
   const chainName = getNetworkConfig().chain.name;
-  const [amount, setAmount] = useState("");
 
-  const defaultSelection = tokens[Object.keys(tokens)[0]];
-  const [selectedRow, setSelectedRow] = useState<TokenType>(defaultSelection);
-  const [tokenLabel, setTokenLabel] = useState(selectedRow.symbol);
-  const [tokenIconElement, setTokenIconElement] = useState<
-    React.ComponentType<{ size?: number }> | undefined
-  >(selectedRow.icon);
-  const [max, setMax] = useState(Number(selectedRow.balance));
+  const handleReset = () => {
+    setAmount("");
+    setAddress("");
+    setIsInsufficientBalance(false);
+    setInvalidAmount(false);
+    setInvalidAddress(false);
+  };
+
+  const {
+    selectedRow,
+    reset: resetTokenSelector,
+    change: changeTokenSelection,
+  } = useSelector<TokenType>(tokens, 0, {
+    onReset: handleReset,
+    onChange: handleReset,
+  });
+
+  const [amount, setAmount] = useState("");
+  
   const [address, setAddress] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
   const [invalidAddress, setInvalidAddress] = useState(false);
+
+  
   const { sendTokens } = useSendTokens();
 
   const validateForm = () => {
@@ -82,36 +82,22 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
   };
 
   useEffect(() => {
+    if (!selectedRow) return;
     const numericAmount = Number(amount);
     if (isNaN(numericAmount)) {
       setInvalidAmount(true);
       setIsInsufficientBalance(false);
     } else {
       setInvalidAmount(false);
-      const isInsufficientBalance = numericAmount > max;
+      const isInsufficientBalance = numericAmount > selectedRow.balance;
       setIsInsufficientBalance(isInsufficientBalance);
     }
   }, [amount]);
 
-  useEffect(() => {
-    if (!!selectedRow) {
-      setMax(Number(selectedRow.balance));
-      setTokenIconElement(selectedRow.icon);
-      setTokenLabel(selectedRow.symbol);
-    }
-  }, [selectedRow]);
-
   // Reset to default selection when dialog opens
   useEffect(() => {
-    if (isOpen && defaultSelection) {
-      setSelectedRow(defaultSelection);
-      setAmount("");
-      setAddress("");
-      setIsInsufficientBalance(false);
-      setInvalidAmount(false);
-      setInvalidAddress(false);
-    }
-  }, [isOpen, defaultSelection]);
+    if (isOpen) resetTokenSelector();
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -142,25 +128,21 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
 
           <div className="flex flex-col w-full items-left gap-4 mt-8 mb-4">
             <TokenAmountInput
-              tokenLabel={tokenLabel}
+              tokenLabel={selectedRow.symbol}
               tokenIcon={
-                tokenIconElement ? React.createElement(selectedRow.icon!, { size: 20 }) : undefined
+                selectedRow.icon ? React.createElement(selectedRow.icon, { size: 20 }) : undefined
               }
-              tokenSecondaryLabel={`Available: $${max}`}
+              tokenSecondaryLabel={`Available: $${selectedRow.balance}`}
               noEdit={isLoading}
               amount={amount}
               onAmountChange={(e) => setAmount(e.target.value)}
-              onMaxClick={() => setAmount(max.toString())}
-              max={max}
+              onMaxClick={() => setAmount(selectedRow.balance.toString())}
+              max={selectedRow.balance}
               validation={invalidAmount ? "invalid" : undefined}
               validationMessage="Invalid amount"
               selector={{
                 onOptionSelected: (e) => {
-                  setSelectedRow(tokens[e.target.value]);
-                  setAmount("");
-                  setInvalidAmount(false);
-                  setAddress("");
-                  setInvalidAddress(false);
+                  changeTokenSelection(e.target.value);
                 },
                 options: Object.keys(tokens).map((token) => ({
                   label: tokens[token].symbol,

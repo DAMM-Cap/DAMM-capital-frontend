@@ -55,6 +55,7 @@ export function useFundOperateData(vaultId: string) {
         isPendingDepositRequest: false,
         pendingDepositRequest: 0,
         getConvertedValue: (amount: number) => useConversionValue(amount),
+        isLoading: true,
       };
     }
 
@@ -99,6 +100,7 @@ export function useFundOperateData(vaultId: string) {
       pendingDepositRequest,
       isPendingDepositRequest: pendingDepositRequest > 0,
       getConvertedValue: (amount: number) => useConversionValue(amount),
+      isLoading: false,
     };
   }
 
@@ -108,6 +110,7 @@ export function useFundOperateData(vaultId: string) {
       return {
         position: 0,
         positionUSD: 0,
+        positionUSDRaw: 0,
         conversionValue: 0,
         vault_address: "",
         vault_symbol: "",
@@ -124,6 +127,7 @@ export function useFundOperateData(vaultId: string) {
         isPendingRedeemRequest: false,
         pendingRedeemRequest: 0,
         getConvertedValue: (amount: number) => useConversionValue(amount),
+        isLoading: true,
       };
     }
     const claimableRedeemRequest = thisOpState.claimableRedeemRequest;
@@ -150,10 +154,12 @@ export function useFundOperateData(vaultId: string) {
     return {
       position: availableShares,
       positionUSD: `≈ $${availableAssets}`,
+      positionUSDRaw: availableAssets,
       conversionValue,
       vault_address: selectedVault.staticData.vault_address,
       vault_symbol: selectedVault.staticData.vault_symbol,
       token_address: selectedVault.staticData.token_address,
+      token_decimals: tokenDecimals,
       fee_receiver_address: selectedVault.staticData.fee_receiver_address,
       vault_decimals: vaultDecimals,
       exitRate: selectedVault.vaultData.exitRate,
@@ -165,6 +171,7 @@ export function useFundOperateData(vaultId: string) {
       isPendingRedeemRequest: pendingRedeemRequest > 0,
       pendingRedeemRequest,
       getConvertedValue: (amount: number) => useConversionValue(amount),
+      isLoading: false,
     };
   }
 

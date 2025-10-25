@@ -2,6 +2,7 @@ import { Button, ConnectedIcon } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useModal } from "@/hooks/use-modal";
 import { getShortAddress } from "@/shared/config/network";
+import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import React from "react";
 import AcknowledgeTermsModal from "./acknowledge-terms-modal";
@@ -12,18 +13,19 @@ interface WalletProps {
 }
 
 const Wallet: React.FC<WalletProps> = ({ onClick }) => {
+  const { evmAddress, isSignedIn, isConnecting, login } = useSession();
+  const navigate = useNavigate();
   const {
     isOpen: openModal,
     open: setOpenModal,
     close: setCloseModal,
   } = useModal(false, { onClose: () => onClick?.() });
-
-  const { evmAddress, isSignedIn, isConnecting, login } = useSession();
+  
   const {
     isOpen: openModalTerms,
     open: setOpenModalTerms,
     toggle: toggleModalTerms,
-  } = useModal(false);
+  } = useModal(false, { onOpen: () => navigate({ to: "/funds" })});
 
   if (isConnecting) {
     return (

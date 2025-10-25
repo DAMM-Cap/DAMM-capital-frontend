@@ -1,4 +1,4 @@
-import { Button, DammStableIcon, Label, Modal, TitleLabel, TokenAmountInput } from "@/components";
+import { Button, Label, Modal, TitleLabel, TokenAmountInput } from "@/components";
 import React from "react";
 
 interface WithdrawModalProps {
@@ -14,11 +14,23 @@ interface WithdrawModalProps {
   isLoading: boolean;
   isInsufficientShares: boolean;
   invalidAmount: boolean;
-  tokenSymbol: string;
+  //tokenSymbol: string;
   vaultSymbol: string;
   //tokenIcon: React.ReactNode;
+  vaultIcon: React.ReactNode;
+  selectedTokenSymbol: string;
+  selectedTokenIcon: React.ReactNode;
+  secondaryTokenSymbol: string;
+  //secondaryTokenIcon: React.ReactNode;
   conversionValue: number;
   convertedAmount: number;
+  selector?: {
+    onOptionSelected: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    options: {
+      label: string;
+      value: string;
+    }[];
+  };
 }
 
 const WithdrawModal: React.FC<WithdrawModalProps> = ({
@@ -34,11 +46,17 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
   isLoading,
   isInsufficientShares,
   invalidAmount,
-  tokenSymbol,
+  //tokenSymbol,
   vaultSymbol,
-  //tokenIcon: TokenIcon,
+  vaultIcon,
+  selectedTokenSymbol,
+  selectedTokenIcon,
+  secondaryTokenSymbol,
+  //secondaryTokenIcon,
+  //tokenIcon,
   conversionValue,
   convertedAmount,
+  selector,
 }) => {
   return (
     <Modal
@@ -61,19 +79,19 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
       <TitleLabel
         label="My claimable shares"
         title={`${position} ${vaultSymbol}`}
-        leftIcon={<DammStableIcon />}
-        //leftIcon={TokenIcon}
+        leftIcon={vaultIcon}
         secondaryTitle={positionConverted}
       />
       <TokenAmountInput
-        tokenLabel={vaultSymbol}
-        tokenIcon={<DammStableIcon />}
+        tokenLabel={selectedTokenSymbol}
+        //tokenIcon={<DammStableIcon />}
+        tokenIcon={selectedTokenIcon}
         /* tokenLabel={tokenSymbol}
         tokenIcon={TokenIcon} */
-        tokenSecondaryLabel={`$${convertedAmount} ${tokenSymbol}`}
+        tokenSecondaryLabel={`$${convertedAmount} ${secondaryTokenSymbol}`}
         //tokenSecondaryLabel={`$${max}`}
-        conversionLeftText={`1 ${vaultSymbol}`}
-        conversionRightText={`${conversionValue} ${tokenSymbol}`}
+        conversionLeftText={`1 ${selectedTokenSymbol}`}
+        conversionRightText={`${conversionValue} ${secondaryTokenSymbol}`}
         amount={amount}
         onAmountChange={onAmountChange}
         onMaxClick={onMaxClick}
@@ -81,6 +99,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
         noEdit={isLoading}
         validation={invalidAmount ? "invalid" : undefined}
         validationMessage="Invalid amount"
+        selector={selector}
       />
       <div className="flex flex-col gap-2 pt-0 pb-4">
         <Label label="Completion time" secondaryLabel="~ 48 hours" />
