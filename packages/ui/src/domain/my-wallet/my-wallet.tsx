@@ -1,14 +1,14 @@
 import { Button, Card, Label, Table } from "@/components";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
+import { Tokens } from "@/domain/types/token";
 import { useModal } from "@/hooks/use-modal";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
 import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { getNetworkConfig } from "@/shared/config/network";
 import { LogInIcon, SendIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ReceiveTokensDialog } from "./components/receive-tokens-dialog";
-import SendTokensDialog, { Tokens } from "./components/send-tokens-dialog";
+import { ReceiveTokensDialog, SendTokensDialog } from "./components";
 
 export default function MyWallet() {
   const { evmAddress, isSignedIn, isConnecting, isSmartAccount } = useSession();
@@ -47,8 +47,8 @@ export default function MyWallet() {
             name: fund.staticData.vault_name,
             symbol: fund.staticData.token_symbol,
             balance:
-              tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]?.availableSupply ||
-              "0",
+              Number(tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]?.availableSupply) ||
+              0,
             metadata: {
               address: fund.staticData.token_address,
               decimals: fund.staticData.token_decimals,
@@ -102,7 +102,7 @@ export default function MyWallet() {
                 className: "text-left font-bold text-lg",
               },
               {
-                value: token.balance,
+                value: token.balance.toString(),
                 className: "text-right",
               },
             ],
