@@ -6,7 +6,7 @@ import { useSelector } from "@/hooks/use-selector";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { WithdrawModal } from "./components";
+import { WithdrawInProgressModal, WithdrawModal } from "./components";
 import { useFundOperateData } from "./hooks/use-fund-operate-data";
 
 interface WithdrawProps {
@@ -26,6 +26,7 @@ export default function Withdraw({
 }: WithdrawProps) {
   const { useWithdrawData, useDepositData, isLoading: vaultLoading } = useFundOperateData(vaultId);
   const [amount, setAmount] = useState("");
+  const [txHash, setTxHash] = useState("");
   const [convertedAmount, setConvertedAmount] = useState("");
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
@@ -40,15 +41,21 @@ export default function Withdraw({
     vault_symbol,
     vault_decimals,
     positionUSD,
-    getConvertedValue,
+    convertSharesAmountToAssets,
     isLoading: isWithdrawDataLoading,
   } = useWithdrawData();
 
   const {
     conversionValue: inversedConversionValue,
-    getConvertedValue: getInversedConvertedValue,
+    convertAssetsAmountToShares,
     isLoading: isDepositDataLoading,
   } = useDepositData();
+
+  const {
+    isOpen: openModalInProgress,
+    open: setOpenModalInProgress,
+    toggle: toggleModalInProgress,
+  } = useModal(false);
 
   const [tokens, setTokens] = useState<Tokens>({});
   
@@ -61,7 +68,7 @@ export default function Withdraw({
         symbol: vault_symbol,
         balance: position,
         conversionValue: conversionValue,
-        getConvertedValue: getConvertedValue,
+        getConvertedValue: convertSharesAmountToAssets,
         metadata: {
           address: vault_address,
           decimals: vault_decimals,
@@ -77,7 +84,7 @@ export default function Withdraw({
         symbol: token_symbol,
         balance: positionUSDRaw,
         conversionValue: inversedConversionValue,
-        getConvertedValue: getInversedConvertedValue,
+        getConvertedValue: convertAssetsAmountToShares,
         metadata: {
           address: token_address,
           decimals: token_decimals,
@@ -151,6 +158,8 @@ export default function Withdraw({
     await tx.wait();
 
     setCloseModalWithdraw();
+    setTxHash(tx.hash ?? "");
+    setOpenModalInProgress();
   };
 
   // Don't render if vault is not found or still loading
@@ -199,6 +208,12 @@ export default function Withdraw({
             value: token,
           })),
         }}
+      />
+
+      <WithdrawInProgressModal
+        openModalInProgress={openModalInProgress}
+        setOpenModalInProgress={toggleModalInProgress}
+        txHash={txHash}
       />
     </div>
   );

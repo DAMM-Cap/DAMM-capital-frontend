@@ -54,7 +54,7 @@ export function useFundOperateData(vaultId: string) {
         isClaimableDeposit: false,
         isPendingDepositRequest: false,
         pendingDepositRequest: 0,
-        getConvertedValue: (amount: number) => useConversionValue(amount),
+        convertAssetsAmountToShares,
         isLoading: true,
       };
     }
@@ -69,7 +69,7 @@ export function useFundOperateData(vaultId: string) {
       1 / ((sharePrice * 10 ** vaultDecimals) / 10 ** tokenDecimals),
     );
 
-    function useConversionValue(amount: number) {
+    function convertAssetsAmountToShares(amount: number) {
       if (!selectedVault) {
         return 0;
       }
@@ -99,7 +99,7 @@ export function useFundOperateData(vaultId: string) {
       isClaimableDeposit: claimableDepositRequest > 0,
       pendingDepositRequest,
       isPendingDepositRequest: pendingDepositRequest > 0,
-      getConvertedValue: (amount: number) => useConversionValue(amount),
+      convertAssetsAmountToShares,
       isLoading: false,
     };
   }
@@ -126,7 +126,7 @@ export function useFundOperateData(vaultId: string) {
         claimableRedeemRequest: 0,
         isPendingRedeemRequest: false,
         pendingRedeemRequest: 0,
-        getConvertedValue: (amount: number) => useConversionValue(amount),
+        convertSharesAmountToAssets,
         isLoading: true,
       };
     }
@@ -139,7 +139,7 @@ export function useFundOperateData(vaultId: string) {
       (sharePrice * 10 ** vaultDecimals) / 10 ** tokenDecimals,
     );
 
-    function useConversionValue(amount: number) {
+    function convertSharesAmountToAssets(amount: number) {
       if (!selectedVault) {
         return 0;
       }
@@ -170,7 +170,7 @@ export function useFundOperateData(vaultId: string) {
       claimableRedeemRequest,
       isPendingRedeemRequest: pendingRedeemRequest > 0,
       pendingRedeemRequest,
-      getConvertedValue: (amount: number) => useConversionValue(amount),
+      convertSharesAmountToAssets,
       isLoading: false,
     };
   }
