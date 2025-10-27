@@ -29,14 +29,14 @@ export default function FundOperate() {
         <>
           <Breadcrumb vaultName={vault_name} className="-mt-6" />
           <div
-            className={clsx("grid gap-8 max-w-full", {
-              "grid-cols-[2fr_1fr]": !isMobile,
+            className={clsx("grid max-w-full", {
               "grid-cols-1": isMobile,
+              "grid-cols-[minmax(0,1fr)_clamp(360px,32vw,380px)] gap-x-[clamp(0.5rem,2vw,1.25rem)]": !isMobile,
             })}
           >
             <div
               className={clsx(
-                "flex flex-col justify-start gap-4 overflow-y-auto max-h-content-area scrollbar-visible col-span-1",
+                "flex flex-col justify-start gap-4 col-span-1",
               )}
             >
               <FundCard isLoading={isLoading} />
@@ -79,7 +79,7 @@ export default function FundOperate() {
               <RiskDisclosureCard isLoading={isLoading} />
             </div>
             {!isMobile && (
-              <div className="flex justify-end col-span-1">
+              <div className="flex justify-end col-span-1 max-w-full max-h-full">
                 <ManagementCard
                   className="overflow-y-auto max-h-content-area scrollbar-visible"
                   isLoading={isLoading}
