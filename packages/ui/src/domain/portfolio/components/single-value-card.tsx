@@ -13,7 +13,7 @@ export default function SingleValueCard({
   className?: string;
 }) {
   return (
-    <Card variant="fund" className="flex-1 max-w-full min-w-[320px] !my-2">
+    <Card variant="fund" className="flex-1 max-w-full min-w-[300px] !my-2">
       <Label label={label} className="domain-subtitle !justify-center" />
       {isLoading ? (
         <div className="flex justify-center mt-4 mb-1">

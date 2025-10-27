@@ -1,8 +1,10 @@
 import { Button, Label, Modal } from "@/components";
 import ConfigIcon from "@/components/icons/config-icon";
 import { useSession } from "@/context/session-context";
+import { getShortAddress } from "@/shared/config/network";
 import { useNavigate } from "@tanstack/react-router";
 import { CopyIcon, LogOutIcon } from "lucide-react";
+import { useIsMobile } from "../hooks/use-is-mobile";
 
 export default function WalletConfigModal({
   openModal,
@@ -13,6 +15,9 @@ export default function WalletConfigModal({
 }) {
   const { evmAddress, isSignedIn, showMfaModal, logout } = useSession();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const shortAddress = getShortAddress(evmAddress);
+
   return (
     <Modal
       open={openModal}
@@ -30,7 +35,7 @@ export default function WalletConfigModal({
             className="text-sm w-full"
             disabled={true}
           >
-            <span className="text-textLight">{evmAddress}</span>
+            <span className="text-textLight">{isMobile ? shortAddress : evmAddress}</span>
           </Button>
           <Button
             onClick={() => {

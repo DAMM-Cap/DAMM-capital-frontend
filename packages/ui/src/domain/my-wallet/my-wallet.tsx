@@ -1,4 +1,5 @@
 import { Button, Card, Label, Table } from "@/components";
+import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { Tokens } from "@/domain/types/token";
@@ -6,12 +7,14 @@ import { useModal } from "@/hooks/use-modal";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
 import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { getNetworkConfig } from "@/shared/config/network";
+import clsx from "clsx";
 import { LogInIcon, SendIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ReceiveTokensDialog, SendTokensDialog } from "./components";
 
 export default function MyWallet() {
   const { evmAddress, isSignedIn, isConnecting, isSmartAccount } = useSession();
+  const isMobile = useIsMobile();
   const network = getNetworkConfig();
   const {
     isOpen: isOpenReceiveTokens,
@@ -68,21 +71,21 @@ export default function MyWallet() {
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex flex-row justify-between mb-10">
-        <Label label="Wallet Overview" className="domain-title" />
-
+        <Label label={clsx(isMobile?"Wallet": "Wallet Overview")} className="domain-title" />
         {isSmartAccount && !noVaults && (
           <div className="flex flex-row gap-4">
-            <Button onClick={openReceiveTokens} disabled={!isSignedIn || isConnecting}>
-              <LogInIcon className="rotate-90" />
-              Receive
+            <Button onClick={openReceiveTokens} disabled={!isSignedIn || isConnecting} className={clsx(isMobile && "h-8 w-12")}>
+              <LogInIcon className={clsx("rotate-90", isMobile && "size-4")} />
+              {isMobile? "" : "Receive"}
             </Button>
             <Button
               onClick={openSendTokens}
               disabled={!isSignedIn || isConnecting}
               variant="secondary"
+              className={clsx(isMobile && "h-8 w-12")}
             >
-              <SendIcon />
-              Send
+              <SendIcon className={clsx(isMobile && "size-4")}/>
+              {isMobile? "" : "Send"}
             </Button>
           </div>
         )}

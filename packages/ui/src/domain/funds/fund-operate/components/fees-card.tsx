@@ -1,11 +1,13 @@
 import { Card, Label, Table } from "@/components";
+import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSearch } from "@tanstack/react-router";
+import clsx from "clsx";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
 
 export default function FeesCard({ isLoading }: { isLoading: boolean }) {
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
-
+  const isMobile = useIsMobile();
   try {
     const { token_symbol, managementFee, performanceFee, entranceRate, exitRate } = useFundData();
 
@@ -18,8 +20,8 @@ export default function FeesCard({ isLoading }: { isLoading: boolean }) {
               initialCol2X={false}
               noColor
               tableHeaders={[
-                { label: "Management Fee", className: "text-center" },
-                { label: "Performance Fee", className: "text-center" },
+                { label: clsx(isMobile ? "Mgmt. Fee": "Management Fee"), className: "text-center" },
+                { label: clsx(isMobile ? "Perf. Fee": "Performance Fee"), className: "text-center" },
                 { label: "Entry Rate", className: "text-center" },
                 { label: "Exit Rate", className: "text-center" },
               ]}
