@@ -23,6 +23,7 @@ export default function Deposit({
   const { useDepositData } = useFundOperateData(vaultId);
 
   const [amount, setAmount] = useState("");
+  const [txHash, setTxHash] = useState("");
   const [referral, setReferral] = useState("");
   const [isInsufficientBalance, setIsInsufficientBalance] = useState(false);
   const [invalidAmount, setInvalidAmount] = useState(false);
@@ -40,7 +41,7 @@ export default function Deposit({
     entranceRate,
     walletBalance: max,
     isUserWhitelisted,
-    getConvertedValue,
+    convertAssetsAmountToShares,
   } = useDepositData();
 
   const {
@@ -107,6 +108,7 @@ export default function Deposit({
     await tx.wait();
 
     setCloseModal();
+    setTxHash(tx.hash ?? "");
     setOpenModalInProgress();
   };
 
@@ -142,7 +144,7 @@ export default function Deposit({
         open={openModal}
         onClose={setCloseModal}
         amount={amount}
-        convertedAmount={getConvertedValue(Number(amount))}
+        convertedAmount={convertAssetsAmountToShares(Number(amount))}
         onAmountChange={(e) => setAmount(e.target.value)}
         onMaxClick={() => setAmount(max.toString())}
         max={max}
@@ -164,6 +166,7 @@ export default function Deposit({
       <DepositInProgressModal
         openModalInProgress={openModalInProgress}
         setOpenModalInProgress={toggleModalInProgress}
+        txHash={txHash}
       />
 
       <WhitelistingModal

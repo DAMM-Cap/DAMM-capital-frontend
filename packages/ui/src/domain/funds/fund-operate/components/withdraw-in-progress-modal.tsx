@@ -2,17 +2,17 @@ import { Button, InfoModal } from "@/components";
 import { getNetworkConfig } from "@/shared/config/network";
 import { useNavigate } from "@tanstack/react-router";
 
-interface DepositInProgressModalProps {
+interface WithdrawInProgressModalProps {
   openModalInProgress: boolean;
   setOpenModalInProgress: (openModalInProgress: boolean) => void;
   txHash: string;
 }
 
-export default function DepositInProgressModal({
+export default function WithdrawInProgressModal({
   openModalInProgress,
   setOpenModalInProgress,
   txHash,
-}: DepositInProgressModalProps) {
+}: WithdrawInProgressModalProps) {
   const navigate = useNavigate();
   const networkConfig = getNetworkConfig();
   const explorerUrl = networkConfig.explorerUrl;
@@ -22,7 +22,7 @@ export default function DepositInProgressModal({
     <InfoModal
       open={openModalInProgress}
       onClose={() => setOpenModalInProgress(false)}
-      title="Deposit in Progress"
+      title="Withdraw in Progress"
       actions={() => (
         <>
           <Button
@@ -45,8 +45,9 @@ export default function DepositInProgressModal({
         </>
       )}
     >
-      Your deposit has been successfully submitted and is now awaiting confirmation. Processing may
-      take up to 48 hours. To check the status of your deposit, you can track the transaction on{" "}
+      Your withdrawal has been successfully submitted and is now awaiting confirmation. Processing
+      may take up to 48 hours. To check the status of your withdraw, you can track the transaction
+      on{" "}
       <a className="underline" href={`${explorerUrl}/tx/${txHash}`}>
         Etherscan
       </a>{" "}

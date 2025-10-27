@@ -5,6 +5,7 @@ import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
 import SecondaryActionCard from "./secondary-action-card";
 
+import envParsed from "@/envParsed";
 import Deposit from "../deposit";
 import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import Withdraw from "../withdraw";
@@ -16,6 +17,7 @@ export default function ManagementCard({
   className?: string;
   isLoading: boolean;
 }) {
+  const {BLOCK_VAULT} = envParsed();
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { useFundData, isLoading: isLoadingFundOperateData } = useFundOperateData(vaultId!);
   const isMobile = useIsMobile();
@@ -29,9 +31,11 @@ export default function ManagementCard({
     totalValueRaw,
     walletBalance,
     totalValueUSD,
+    vault_address
   } = useFundData();
 
   const isLoadingTitle = isLoading || isLoadingFundOperateData;
+  const isBlocked = BLOCK_VAULT === vault_address;
 
   return (
     <div
@@ -64,10 +68,10 @@ export default function ManagementCard({
         />
 
         <div className="flex flex-row gap-4">
-          <Deposit vaultId={vaultId!} className="w-full" disabled={!isSignedIn} />
-          <Withdraw vaultId={vaultId!} className="w-full" disabled={!isSignedIn} />
+          <Deposit vaultId={vaultId!} className="w-full" disabled={!isSignedIn || isBlocked} />
+          <Withdraw vaultId={vaultId!} className="w-full" disabled={!isSignedIn || isBlocked} />
         </div>
-        {isSignedIn && <SecondaryActionCard vaultId={vaultId!} />}
+        {isSignedIn && !isBlocked && <SecondaryActionCard vaultId={vaultId!} />}
       </Card>
     </div>
   );

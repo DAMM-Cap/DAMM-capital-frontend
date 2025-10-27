@@ -1,4 +1,5 @@
-import { Card, Label, LoadingField } from "@/components";
+import { Card, Label, LoadingField, Select } from "@/components";
+import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { ChartDataType, ChartRangeTypes } from "@/services/api/types/snapshot";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -67,10 +68,27 @@ const VaultAreaChart = ({
   setRange: (range: ChartRangeTypes) => void;
   isLoading: boolean;
 }) => {
+  const isMobile = useIsMobile();
   return (
     <Card variant="fund" className="!max-w-full min-w-0">
+      <div className="flex flex-col">
       <Label label={label} className="domain-title mb-2" />
-      {!isLoading && (
+      {!isLoading && isMobile && (
+        <Select 
+          label="" 
+          value={range} 
+          onChange={(value) => setRange(value.target.value as ChartRangeTypes)} 
+          className="mb-2"
+        >
+          {viewOptions.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      )}
+      </div>
+      {!isLoading && !isMobile && (
         <ViewToggle
           views={viewOptions}
           activeView={range}

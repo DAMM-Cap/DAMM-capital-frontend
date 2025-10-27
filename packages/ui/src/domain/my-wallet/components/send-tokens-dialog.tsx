@@ -26,7 +26,7 @@ interface SendTokensDialogProps {
   tokens: Tokens;
 }
 
-export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendTokensDialogProps) {
+export function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendTokensDialogProps) {
   const chainName = getNetworkConfig().chain.name;
   const [amount, setAmount] = useState("");
   const defaultSelection = tokens[Object.keys(tokens)[0] as Address];
@@ -84,6 +84,7 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
   };
 
   useEffect(() => {
+    if (!selectedRow) return;
     const numericAmount = Number(amount);
     if (isNaN(numericAmount)) {
       setInvalidAmount(true);
@@ -97,7 +98,7 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
 
   // Reset to default selection when dialog opens
   useEffect(() => {
-    if (isOpen && defaultSelection) {
+    if (isOpen) {
       setSelectedRow(defaultSelection);
       setAmount("");
       setAddress("");
@@ -105,7 +106,7 @@ export default function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendToke
       setInvalidAmount(false);
       setInvalidAddress(false);
     }
-  }, [isOpen, defaultSelection]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

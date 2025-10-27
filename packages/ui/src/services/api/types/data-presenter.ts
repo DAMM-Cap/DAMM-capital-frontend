@@ -69,6 +69,8 @@ export interface VaultMetricsView {
   netApy: number;
   netApy30d: number;
   sharpe: number;
+  aum: number;
+  nav: number;
 }
 
 export interface DataPresenter {

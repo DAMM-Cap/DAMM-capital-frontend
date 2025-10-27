@@ -13,7 +13,7 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
   const vaultIcon = <DammStableIcon size={48} />;
   const isMobile = useIsMobile();
 
-  const { vault_name, tvl, sharpe, netApy, netApy30d, aum } = useFundData();
+  const { vault_name, nav, sharpe, netApy, netApy30d, aum } = useFundData();
   return (
     <div className="flex-1 flex-col gap-4">
       <Card variant="fund">
@@ -80,7 +80,7 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                   className: "text-left",
                 },
                 {
-                  value: tvl.toString(),
+                  value: nav.toString(),
                   className: "text-left",
                 },
               ],

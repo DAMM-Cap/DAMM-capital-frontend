@@ -1,9 +1,9 @@
 import { useVaults } from "@/context/vault-context";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
-import { useUserPosition } from "@/services/api/use-user-position";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
+import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { formatToMaxDefinition } from "@/shared/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export enum OperationStatus {
   CONFIRMED = "Confirmed",
@@ -16,9 +16,7 @@ export enum OperationStatus {
 export function usePortfolioData(vaultId?: string) {
   const { vaults, isLoading } = useVaults();
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-
-  const { data: userPosition } = useUserPosition();
-
+  const { data: tokensBalance } = useTokensBalance();
   const [vaultsData, setVaultsData] = useState<
     Record<string, Record<"positionValue" | "totalAssets" | "yieldEarned", number>>
   >({});
@@ -41,51 +39,78 @@ export function usePortfolioData(vaultId?: string) {
     }
   }, [vaultId, vaults]);
 
-  const opState = useOperationStateQuery(
-    selectedVault?.staticData.vault_address,
-    selectedVault?.staticData.token_decimals,
-  );
+  const operationStateParams = useMemo(() => {
+    return vaults?.vaultsData.map(vault => ({
+      vaultId: vault.staticData.vault_id,
+      vaultAddress: vault.staticData.vault_address,
+      tokenDecimals: vault.staticData.token_decimals,
+      vaultDecimals: vault.staticData.vault_decimals,
+    })) ?? [];
+  }, [vaults?.vaultsData]);
+
+  const { data: opState } = useOperationStateQuery(operationStateParams);
+  const opStateRef = useRef(opState);
+
+  // Update ref when opState changes
+  useEffect(() => {
+    opStateRef.current = opState;
+  }, [opState]);
 
   useEffect(() => {
+    if (isLoading) return;
+
     let totalPositionValue = 0;
     let totalTotalAssets = 0;
     let totalYieldEarned = 0;
-    userPosition?.forEach((vaultUserPositionData) => {
+    const newVaultsData: Record<string, Record<"positionValue" | "totalAssets" | "yieldEarned", number>> = {};
+    
+    vaults?.vaultsData.forEach((vaultUserPositionData) => {
       const selectedVault = vaults?.vaultsData.find(
-        (v) => v.staticData.vault_id === vaultUserPositionData.vault_id,
+        (v) => v.staticData.vault_id === vaultUserPositionData.staticData.vault_id,
       );
       if (!selectedVault) return;
 
-      const positionValue =
-        (Number(vaultUserPositionData.user_total_shares) *
-          Number(vaultUserPositionData.share_price) *
-          10 ** selectedVault.staticData.token_decimals) /
-        10 ** selectedVault.staticData.vault_decimals;
+      // Position Value retrieves real time converted shares from the blockchain
+      const availableAssets = Number(
+        tokensBalance?.vaultBalances[vaultUserPositionData.staticData.vault_id]?.assets || 0,
+      );
+      const positionValue = availableAssets;
       totalPositionValue += positionValue;
+      // ------------------------------------------------------------
 
+      // Total Assets retrieves the remaining total assets of the user in the vault
+      // This is by tracking the original deposits in the original denomination
+      // Deposit values are fetched from the db by the indexer action, so this is not real time
+      const thisOpState = opStateRef.current?.find((o) => o.vaultId === vaultUserPositionData.staticData.vault_id);
+      const settledDeposits = thisOpState?.claimableDepositRequest || 0;
+      const settledRedeems = thisOpState?.claimableRedeemRequest || 0;
       const totalAssets =
-        Number(vaultUserPositionData.total_assets) / 10 ** selectedVault.staticData.token_decimals;
+        Number(vaultUserPositionData.vaultData.positionRaw) + 
+        Number(settledDeposits) - Number(settledRedeems);
       totalTotalAssets += totalAssets;
+      // ------------------------------------------------------------
 
+      // Absolute yield earned is the difference between the position value and the total assets
       const yieldEarned = positionValue - totalAssets;
       totalYieldEarned += yieldEarned;
+      // ------------------------------------------------------------
 
-      setVaultsData((prevVaultsData) => ({
-        ...prevVaultsData,
-        [vaultUserPositionData.vault_id as string]: {
-          positionValue: formatToMaxDefinition(positionValue),
-          totalAssets: formatToMaxDefinition(totalAssets),
-          yieldEarned: formatToMaxDefinition(yieldEarned),
-        },
-      }));
+      newVaultsData[vaultUserPositionData.staticData.vault_id as string] = {
+        positionValue: formatToMaxDefinition(positionValue),
+        totalAssets: formatToMaxDefinition(totalAssets),
+        yieldEarned: formatToMaxDefinition(yieldEarned),
+      };
     });
+    
+    setVaultsData(newVaultsData);
     setTotalPositionValue(formatToMaxDefinition(totalPositionValue));
     setTotalTotalAssets(formatToMaxDefinition(totalTotalAssets));
     setTotalYieldEarned(formatToMaxDefinition(totalYieldEarned));
-  }, [userPosition, vaults]);
+  }, [vaults, tokensBalance, isLoading]);
 
   function useFundData() {
-    if (!selectedVault) {
+    const thisOpState = opState.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
+    if (!selectedVault || !thisOpState) {
       return {
         vault_name: "",
         apr: "0",
@@ -93,27 +118,29 @@ export function usePortfolioData(vaultId?: string) {
         token_symbol: "",
         positionSize: "0",
         yieldEarned: "0",
+        totalAssets: "0",
         operation: "",
         operationVariant: "outline-secondary",
         operationActive: false,
       };
     }
 
+    
     let operation = OperationStatus.CONFIRMED;
     let operationVariant = "outline-secondary";
-    if (opState.pendingDepositRequest > 0) {
+    if (thisOpState.pendingDepositRequest > 0) {
       operation = OperationStatus.DEPOSIT_PENDING;
       operationVariant = "outline-secondary";
     }
-    if (opState.pendingRedeemRequest > 0) {
+    if (thisOpState.pendingRedeemRequest > 0) {
       operation = OperationStatus.WITHDRAW_PENDING;
       operationVariant = "outline-secondary";
     }
-    if (opState.claimableDepositRequest > 0) {
+    if (thisOpState.claimableDepositRequest > 0) {
       operation = OperationStatus.SHARES_CLAIMABLE;
       operationVariant = "outline";
     }
-    if (opState.claimableRedeemRequest > 0) {
+    if (thisOpState.claimableRedeemRequest > 0) {
       operation = OperationStatus.ASSETS_CLAIMABLE;
       operationVariant = "outline";
     }
@@ -123,6 +150,7 @@ export function usePortfolioData(vaultId?: string) {
       apr: selectedVaultMetrics?.netApy ?? 0,
       positionSize: vaultsData[selectedVault.staticData.vault_id]?.positionValue ?? 0,
       yieldEarned: vaultsData[selectedVault.staticData.vault_id]?.yieldEarned ?? 0,
+      totalAssets: vaultsData[selectedVault.staticData.vault_id]?.totalAssets ?? 0,
       vault_icon: selectedVault.staticData.vault_icon,
       token_symbol: selectedVault.staticData.token_symbol,
       operation: operation,

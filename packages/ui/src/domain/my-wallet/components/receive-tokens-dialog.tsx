@@ -1,5 +1,6 @@
 import { Button, Label, Modal } from "@/components";
-import { getChainLogo, NetworkConfig } from "@/shared/config/network";
+import { useIsMobile } from "@/components/hooks/use-is-mobile";
+import { getChainLogo, getShortAddress, NetworkConfig } from "@/shared/config/network";
 import { CopyIcon } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -18,6 +19,8 @@ export const ReceiveTokensDialog = ({
 }: ReceiveTokensDialogProps) => {
   const chainLogo = getChainLogo(network.chain);
   const chainName = network.chain.name;
+  const isMobile = useIsMobile();
+  const shortAddress = getShortAddress(evmAddress);
 
   return (
     <Modal
@@ -25,7 +28,17 @@ export const ReceiveTokensDialog = ({
       open={isOpen}
       onClose={onClose}
       actions={() => (
-        <>
+        <div className="flex flex-col gap-2 w-full">
+        <Button
+            onClick={() => {
+              navigator.clipboard.writeText(evmAddress!);
+            }}
+            variant="tertiary"
+            className="text-sm w-full"
+            disabled={true}
+          >
+            <span className="text-textLight">{isMobile ? shortAddress : evmAddress}</span>
+          </Button>
           <Button
             onClick={() => {
               navigator.clipboard.writeText(evmAddress);
@@ -37,14 +50,13 @@ export const ReceiveTokensDialog = ({
             <CopyIcon size={16} />
             Copy address
           </Button>
-        </>
+        </div>
       )}
     >
       <div className="flex flex-col w-full items-center gap-12 justify-center pt-16 pb-8">
-        <div className="flex flex-col w-full items-left gap-2 -mt-16">
-          <Label label={`Network: ${chainName}.`} className="!text-normal !text-textLight" />
+        <div className="flex w-full items-left gap-2 -mt-16">
           <Label
-            label={`Important: Only send assets on ${chainName}. Deposits from other networks won't be credited.`}
+            label={`Only send assets on ${chainName}. Deposits from other networks won't be credited.`}
             className="!text-normal !text-textLight"
           />
         </div>
@@ -54,7 +66,6 @@ export const ReceiveTokensDialog = ({
             <img className="w-14 h-14" src={chainLogo} />
           </div>
         </div>
-        <span className="text-center text-lg">{evmAddress}</span>
       </div>
     </Modal>
   );

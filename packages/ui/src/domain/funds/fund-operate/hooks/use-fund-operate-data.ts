@@ -26,20 +26,16 @@ export function useFundOperateData(vaultId: string) {
     }
   }, [vaultId, vaults]);
 
-  const {
-    isWhitelisted: isUserWhitelisted,
-    claimableRedeemRequest,
-    claimableDepositRequest,
-    pendingDepositRequest,
-    pendingRedeemRequest,
-  } = useOperationStateQuery(
-    selectedVault?.staticData.vault_address,
-    selectedVault?.staticData.token_decimals,
-    selectedVault?.staticData.vault_decimals,
+  const { data: opState } = useOperationStateQuery([{
+    vaultId: selectedVault?.staticData.vault_id,
+    vaultAddress: selectedVault?.staticData.vault_address,
+    tokenDecimals: selectedVault?.staticData.token_decimals,
+    vaultDecimals: selectedVault?.staticData.vault_decimals}]
   );
-
+  
   function useDepositData() {
-    if (!selectedVault) {
+    const thisOpState = opState?.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
+    if (!selectedVault || !thisOpState) {
       return {
         position: 0,
         positionUSD: 0,
@@ -58,10 +54,14 @@ export function useFundOperateData(vaultId: string) {
         isClaimableDeposit: false,
         isPendingDepositRequest: false,
         pendingDepositRequest: 0,
-        getConvertedValue: (amount: number) => useConversionValue(amount),
+        convertAssetsAmountToShares,
+        isLoading: true,
       };
     }
 
+    const isUserWhitelisted = thisOpState.isWhitelisted;
+    const claimableDepositRequest = thisOpState.claimableDepositRequest;
+    const pendingDepositRequest = thisOpState.pendingDepositRequest;
     const vaultDecimals = selectedVault.staticData.vault_decimals;
     const tokenDecimals = selectedVault.staticData.token_decimals;
     const sharePrice = selectedVault.vaultData.sharePrice;
@@ -69,10 +69,13 @@ export function useFundOperateData(vaultId: string) {
       1 / ((sharePrice * 10 ** vaultDecimals) / 10 ** tokenDecimals),
     );
 
-    function useConversionValue(amount: number) {
+    function convertAssetsAmountToShares(amount: number) {
       if (!selectedVault) {
         return 0;
       }
+      const vaultDecimals = selectedVault.staticData.vault_decimals;
+      const tokenDecimals = selectedVault.staticData.token_decimals;
+      const sharePrice = selectedVault.vaultData.sharePrice;
       return formatToMaxDefinition(
         (amount * 10 ** tokenDecimals) / sharePrice / 10 ** vaultDecimals,
       );
@@ -96,15 +99,18 @@ export function useFundOperateData(vaultId: string) {
       isClaimableDeposit: claimableDepositRequest > 0,
       pendingDepositRequest,
       isPendingDepositRequest: pendingDepositRequest > 0,
-      getConvertedValue: (amount: number) => useConversionValue(amount),
+      convertAssetsAmountToShares,
+      isLoading: false,
     };
   }
 
   function useWithdrawData() {
-    if (!selectedVault) {
+    const thisOpState = opState?.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
+    if (!selectedVault || !thisOpState) {
       return {
         position: 0,
         positionUSD: 0,
+        positionUSDRaw: 0,
         conversionValue: 0,
         vault_address: "",
         vault_symbol: "",
@@ -120,10 +126,12 @@ export function useFundOperateData(vaultId: string) {
         claimableRedeemRequest: 0,
         isPendingRedeemRequest: false,
         pendingRedeemRequest: 0,
-        getConvertedValue: (amount: number) => useConversionValue(amount),
+        convertSharesAmountToAssets,
+        isLoading: true,
       };
     }
-
+    const claimableRedeemRequest = thisOpState.claimableRedeemRequest;
+    const pendingRedeemRequest = thisOpState.pendingRedeemRequest;
     const vaultDecimals = selectedVault.staticData.vault_decimals;
     const tokenDecimals = selectedVault.staticData.token_decimals;
     const sharePrice = selectedVault.vaultData.sharePrice;
@@ -131,10 +139,13 @@ export function useFundOperateData(vaultId: string) {
       (sharePrice * 10 ** vaultDecimals) / 10 ** tokenDecimals,
     );
 
-    function useConversionValue(amount: number) {
+    function convertSharesAmountToAssets(amount: number) {
       if (!selectedVault) {
         return 0;
       }
+      const vaultDecimals = selectedVault.staticData.vault_decimals;
+      const tokenDecimals = selectedVault.staticData.token_decimals;
+      const sharePrice = selectedVault.vaultData.sharePrice;
       return formatToMaxDefinition(
         (amount * 10 ** vaultDecimals * sharePrice) / 10 ** tokenDecimals,
       );
@@ -143,10 +154,12 @@ export function useFundOperateData(vaultId: string) {
     return {
       position: availableShares,
       positionUSD: `≈ $${availableAssets}`,
+      positionUSDRaw: availableAssets,
       conversionValue,
       vault_address: selectedVault.staticData.vault_address,
       vault_symbol: selectedVault.staticData.vault_symbol,
       token_address: selectedVault.staticData.token_address,
+      token_decimals: tokenDecimals,
       fee_receiver_address: selectedVault.staticData.fee_receiver_address,
       vault_decimals: vaultDecimals,
       exitRate: selectedVault.vaultData.exitRate,
@@ -157,7 +170,8 @@ export function useFundOperateData(vaultId: string) {
       claimableRedeemRequest,
       isPendingRedeemRequest: pendingRedeemRequest > 0,
       pendingRedeemRequest,
-      getConvertedValue: (amount: number) => useConversionValue(amount),
+      convertSharesAmountToAssets,
+      isLoading: false,
     };
   }
 
@@ -189,6 +203,7 @@ export function useFundOperateData(vaultId: string) {
         netApy: 0,
         netApy30d: 0,
         aum: 0,
+        nav: 0,
       };
     }
 
@@ -216,7 +231,9 @@ export function useFundOperateData(vaultId: string) {
       sharpe: selectedVaultMetrics?.sharpe || 0,
       netApy: selectedVaultMetrics?.netApy || 0,
       netApy30d: selectedVaultMetrics?.netApy30d || 0,
-      aum: selectedVault.vaultData.aum,
+      aum: selectedVaultMetrics?.aum || 0,
+      nav: selectedVaultMetrics?.nav || 0,
+      //aum: selectedVault.vaultData.aum,
     };
   }
 

@@ -92,4 +92,6 @@ export interface VaultMetricsResponse {
   netApy: number;
   netApy30d: number;
   sharpe: number;
+  aum: number;
+  nav: number;
 }
