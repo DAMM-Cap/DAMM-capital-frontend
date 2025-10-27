@@ -80,6 +80,7 @@ export interface RowField {
   value: string;
   subtitle?: string;
   className?: string;
+  isLoading?: boolean;
 }
 
 export interface RowProps {
@@ -163,7 +164,7 @@ const Row: React.FC<RowProps> = ({
                     </div>
                     <div className="text-center">
                       <div className={clsx("font-montserrat leading-none", field.className)}>
-                        {field.value}
+                        {field.isLoading ? <LoadingField className="!h-4 !w-8" /> : field.value}
                       </div>
                       {field.subtitle && (
                         <div
@@ -211,7 +212,7 @@ const Row: React.FC<RowProps> = ({
                   )}
                   <div className="flex flex-col">
                     <div className={clsx("font-montserrat leading-none", field.className)}>
-                      {field.value}
+                      {field.isLoading ? <LoadingField className="!h-4 !w-8" /> : field.value}
                     </div>
                     {field.subtitle && (
                       <div className="font-montserrat font-normal text-tiny leading-none text-textLight mt-1">

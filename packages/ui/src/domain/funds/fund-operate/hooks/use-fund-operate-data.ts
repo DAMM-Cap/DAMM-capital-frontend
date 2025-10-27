@@ -1,17 +1,17 @@
 import { useVaults } from "@/context/vault-context";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
-import { useTokensBalance } from "@/services/shared/use-tokens-balance";
+import { useAllVaultsBalance } from "@/services/shared/use-tokens-balance";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useEffect, useState } from "react";
 
 export function useFundOperateData(vaultId: string) {
   const { vaults } = useVaults();
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-  const { data: tokensBalance } = useTokensBalance();
-  const walletBalance = Number(tokensBalance?.vaultBalances[vaultId]?.availableSupply || 0);
-  const availableAssets = Number(tokensBalance?.vaultBalances[vaultId]?.assets || 0);
-  const availableShares = Number(tokensBalance?.vaultBalances[vaultId]?.shares || 0);
+  const { allVaultsBalance } = useAllVaultsBalance();
+  const walletBalance = Number(allVaultsBalance?.[vaultId]?.availableSupply || 0);
+  const availableAssets = Number(allVaultsBalance?.[vaultId]?.assets || 0);
+  const availableShares = Number(allVaultsBalance?.[vaultId]?.shares || 0);
   const [selectedVaultMetrics, setSelectedVaultMetrics] = useState<VaultMetricsView | undefined>(
     undefined,
   );

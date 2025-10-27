@@ -5,39 +5,27 @@ import { useQuery } from "@tanstack/react-query";
 import { isAddress } from "viem";
 import { SinglePositionData, UserPositionData } from "./types/user-position";
 
-export function useUserPosition() {
-  const { API_GATEWAY } = envParsed();
+async function getUserPosition(wallet: string) {
   const network = getNetworkConfig().chain;
+  const { API_GATEWAY } = envParsed();
+  const response = await fetch(
+    `${API_GATEWAY}/lagoon/position/test/${wallet}?offset=0&limit=100&chain_id=${network.id}`,
+  );
+  if (!response.ok) throw new Error("Failed to fetch user position");
+  return response.json();
+}
+
+export function useUserPosition() {
   const { evmAddress } = useSession();
 
-  return useQuery<SinglePositionData[]>({
+  const { data: positions, ...rest } = useQuery<SinglePositionData[]>({
     queryKey: ["positions", evmAddress],
     queryFn: async () => {
-      if (!isAddress(evmAddress)) {
-        console.warn("No wallet address provided");
-        return [];
-      }
-      try {
-        const res = await fetch(
-          `${API_GATEWAY}/lagoon/position/test/${evmAddress}?offset=0&limit=100&chain_id=${network.id}`,
-        );
-        if (!res.ok) throw new Error("Network error");
-
-        const data = (await res.json()) as UserPositionData;
-        return data?.positions ? data.positions : [];
-      } catch (error) {
-        console.warn("Error fetching vault data:", error);
-        console.warn("Retrieving vault data from contract");
-        return [];
-      }
+      const data = (await getUserPosition(evmAddress)) as UserPositionData;
+      return data?.positions ? data.positions : [];
     },
-    enabled:
-      // When wallet is 0x the user is not connected but we still want to get the funds data
-      // When wallet is not 0x the connected wallet is validated before fetching the data
-      isAddress(evmAddress) ||
-      (evmAddress === "0x" && localStorage.getItem("disconnect_requested") !== "true"), // Don't poll if disconnect was requested
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchInterval: 5000, // Poll every 5 seconds
-    refetchIntervalInBackground: true,
+    enabled: isAddress(evmAddress) || evmAddress === "0x",
   });
+
+  return { positions, ...rest };
 }
