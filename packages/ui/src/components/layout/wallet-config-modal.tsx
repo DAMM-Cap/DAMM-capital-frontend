@@ -3,7 +3,9 @@ import ConfigIcon from "@/components/icons/config-icon";
 import { useSession } from "@/context/session-context";
 import { getShortAddress } from "@/shared/config/network";
 import { useNavigate } from "@tanstack/react-router";
-import { CopyIcon, LogOutIcon } from "lucide-react";
+import clsx from "clsx";
+import { CheckIcon, CopyIcon, LogOutIcon } from "lucide-react";
+import { useState } from "react";
 import { useIsMobile } from "../hooks/use-is-mobile";
 
 export default function WalletConfigModal({
@@ -17,6 +19,14 @@ export default function WalletConfigModal({
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const shortAddress = getShortAddress(evmAddress);
+  const [isAddressCopied, setIsAddressCopied] = useState(false);
+
+  const handleAddressCopied = () => {
+    setIsAddressCopied(true);
+    setTimeout(() => {
+      setIsAddressCopied(false);
+    }, 2000);
+  };
 
   return (
     <Modal
@@ -27,25 +37,22 @@ export default function WalletConfigModal({
       title="My Smart Account"
       actions={() => (
         <div className="flex flex-col gap-2 w-full">
-          <Button
-            onClick={() => {
-              navigator.clipboard.writeText(evmAddress!);
-            }}
-            variant="tertiary"
-            className="text-sm w-full"
-            disabled={true}
-          >
+          <Button variant="tertiary" className="text-sm w-full" disabled={true}>
             <span className="text-textLight">{isMobile ? shortAddress : evmAddress}</span>
           </Button>
           <Button
             onClick={() => {
               navigator.clipboard.writeText(evmAddress!);
+              handleAddressCopied();
             }}
-            variant="tertiary"
-            className="text-sm w-full mb-8"
+            variant="secondary"
+            className={clsx(
+              "text-sm w-full mb-8",
+              isAddressCopied && "!text-textSuccess hover:!bg-secondary hover:!border-secondary",
+            )}
           >
-            <CopyIcon size={16} />
-            Copy address
+            {isAddressCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+            {isAddressCopied ? "Address copied to clipboard" : "Copy address"}
           </Button>
           <Button onClick={showMfaModal} variant="primary" className="text-sm w-full">
             <ConfigIcon className="w-4 h-4 text-textLight" />

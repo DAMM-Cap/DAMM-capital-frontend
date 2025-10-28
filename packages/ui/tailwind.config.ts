@@ -33,6 +33,7 @@ export default {
         textDark: "var(--color-text-dark)",
         textLight: "var(--color-text-light)",
         textMuted: "var(--color-text-muted)",
+        textSuccess: "var(--color-success)",
         inputTxtDisabled: "var(--color-input-txt-disabled)",
         invalid: "var(--color-invalid)",
         success: "var(--color-success)",

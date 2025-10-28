@@ -1,8 +1,10 @@
 import { Button, Label, Modal } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { getChainLogo, getShortAddress, NetworkConfig } from "@/shared/config/network";
-import { CopyIcon } from "lucide-react";
+import clsx from "clsx";
+import { CheckIcon, CopyIcon } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { useState } from "react";
 
 interface ReceiveTokensDialogProps {
   isOpen: boolean;
@@ -21,6 +23,14 @@ export const ReceiveTokensDialog = ({
   const chainName = network.chain.name;
   const isMobile = useIsMobile();
   const shortAddress = getShortAddress(evmAddress);
+  const [isAddressCopied, setIsAddressCopied] = useState(false);
+  
+  const handleAddressCopied = () => {
+    setIsAddressCopied(true);
+    setTimeout(() => {
+      setIsAddressCopied(false);
+    }, 2000);
+  };
 
   return (
     <Modal
@@ -30,9 +40,6 @@ export const ReceiveTokensDialog = ({
       actions={() => (
         <div className="flex flex-col gap-2 w-full">
         <Button
-            onClick={() => {
-              navigator.clipboard.writeText(evmAddress!);
-            }}
             variant="tertiary"
             className="text-sm w-full"
             disabled={true}
@@ -42,13 +49,13 @@ export const ReceiveTokensDialog = ({
           <Button
             onClick={() => {
               navigator.clipboard.writeText(evmAddress);
-              onClose();
+              handleAddressCopied();
             }}
             variant="secondary"
-            className="text-sm w-full"
+            className={clsx("text-sm w-full", isAddressCopied && "!text-textSuccess hover:!bg-secondary hover:!border-secondary")}
           >
-            <CopyIcon size={16} />
-            Copy address
+            {isAddressCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+            {isAddressCopied ? "Address copied to clipboard" : "Copy address"}
           </Button>
         </div>
       )}
