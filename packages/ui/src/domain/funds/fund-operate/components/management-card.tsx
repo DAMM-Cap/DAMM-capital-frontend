@@ -1,25 +1,28 @@
 import { Card, DammStableIcon, Label, TitleLabel } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSession } from "@/context/session-context";
-import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
 import SecondaryActionCard from "./secondary-action-card";
 
 import envParsed from "@/envParsed";
 import Deposit from "../deposit";
-import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import Withdraw from "../withdraw";
+import { DepositData, FundData, WithdrawData } from "../hooks/use-fund-operate-data";
 
 export default function ManagementCard({
   className,
   isLoading,
+  fundData,
+  depositData,
+  withdrawData,
 }: {
   className?: string;
   isLoading: boolean;
+  fundData: FundData;
+  depositData: DepositData;
+  withdrawData: WithdrawData;
 }) {
-  const {BLOCK_VAULT} = envParsed();
-  const { vaultId } = useSearch({ from: "/fund-operate/" });
-  const { useFundData, isLoading: isLoadingFundOperateData } = useFundOperateData(vaultId!);
+  const { BLOCK_VAULT } = envParsed();
   const isMobile = useIsMobile();
   const { isSignedIn } = useSession();
 
@@ -31,10 +34,9 @@ export default function ManagementCard({
     totalValueRaw,
     walletBalance,
     totalValueUSD,
-    vault_address
-  } = useFundData();
+    vault_address,
+  } = fundData;
 
-  const isLoadingTitle = isLoading || isLoadingFundOperateData;
   const isBlocked = BLOCK_VAULT === vault_address;
 
   return (
@@ -55,7 +57,7 @@ export default function ManagementCard({
           leftIcon={<DammStableIcon size={20} />}
           secondaryTitle={totalValueUSD?.toString()}
           label="My position"
-          isLoading={isLoadingTitle}
+          isLoading={isLoading}
         />
 
         <TitleLabel
@@ -64,14 +66,23 @@ export default function ManagementCard({
             <img src={vault_icon} alt={vault_name} className="w-5 h-5 object-cover rounded-full" />
           }
           label="My wallet balance"
-          isLoading={isLoadingTitle}
+          isLoading={isLoading}
         />
 
         <div className="flex flex-row gap-4">
-          <Deposit vaultId={vaultId!} className="w-full" disabled={!isSignedIn || isBlocked} />
-          <Withdraw vaultId={vaultId!} className="w-full" disabled={!isSignedIn || isBlocked} />
+          <Deposit
+            depositData={depositData}
+            className="w-full"
+            disabled={!isSignedIn || isBlocked}
+          />
+          <Withdraw
+            withdrawData={withdrawData}
+            depositData={depositData}
+            className="w-full"
+            disabled={!isSignedIn || isBlocked}
+          />
         </div>
-        {isSignedIn && !isBlocked && <SecondaryActionCard vaultId={vaultId!} />}
+        {isSignedIn && !isBlocked && <SecondaryActionCard withdrawData={withdrawData} depositData={depositData} isLoading={isLoading} />}
       </Card>
     </div>
   );

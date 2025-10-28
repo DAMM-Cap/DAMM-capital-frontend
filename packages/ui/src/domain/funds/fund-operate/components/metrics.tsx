@@ -35,6 +35,7 @@ export default function MetricsView({
   });
 
   useEffect(() => {
+    console.log("chartData", chartData);
     if (!isLoadingSnapshots && !isLoading && chartData) {
       const reducedChartData: ChartDataType = chartData.reduce((acc, vaultData) => {
         const date = vaultData.event_timestamp;

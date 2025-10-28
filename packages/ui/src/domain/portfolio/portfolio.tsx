@@ -56,7 +56,7 @@ export default function Portfolio() {
           />
         </div>
 
-        <FundsArea isLoading={isLoadingFund} handleIsLoading={setIsLoadingFund} />
+        <FundsArea isLoading={isLoadingFund} />
       </div>
     </div>
   );

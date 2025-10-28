@@ -1,19 +1,16 @@
 import { Button, Card, DammStableIcon, Skeleton, Table } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
-import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
 import { ExternalLinkIcon } from "lucide-react";
-import { useFundOperateData } from "../hooks/use-fund-operate-data";
 import klerosCurateIcon from "/kleros-curate.svg";
 import octavIcon from "/octav.svg";
+import { FundData } from "../hooks/use-fund-operate-data";
 
-export default function FundCard({ isLoading }: { isLoading: boolean }) {
-  const { vaultId } = useSearch({ from: "/fund-operate/" });
-  const { useFundData } = useFundOperateData(vaultId!);
+export default function FundCard({ isLoading, fundData }: { isLoading: boolean; fundData: FundData }) {
   const vaultIcon = <DammStableIcon size={48} />;
   const isMobile = useIsMobile();
 
-  const { vault_name, nav, sharpe, netApy, netApy30d, aum } = useFundData();
+  const { vault_name, nav, sharpe, netApy, netApy30d, aum } = fundData;
   return (
     <div className="flex-1 flex-col gap-4">
       <Card variant="fund">

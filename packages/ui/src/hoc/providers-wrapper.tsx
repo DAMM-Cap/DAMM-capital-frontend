@@ -1,5 +1,4 @@
 import { SessionProvider } from "@/context/session-context";
-import { VaultProvider } from "@/context/vault-context";
 import envParsed from "@/envParsed";
 import { privyConfig, wagmiConfig } from "@/services/privy/config";
 import { PrivyProvider } from "@privy-io/react-auth";
@@ -22,9 +21,7 @@ export default function ProvidersWrapper({ children }: ProvidersWrapperProps) {
       <SmartWalletsProvider>
         <QueryClientProvider client={queryClient}>
           <PrivyWagmiProvider config={wagmiConfig} reconnectOnMount={false}>
-            <SessionProvider>
-              <VaultProvider>{children}</VaultProvider>
-            </SessionProvider>
+            <SessionProvider>{children}</SessionProvider>
           </PrivyWagmiProvider>
         </QueryClientProvider>
       </SmartWalletsProvider>

@@ -1,5 +1,4 @@
 import { useSession } from "@/context/session-context";
-import { useVaults } from "@/context/vault-context";
 import { publicClient } from "@/services/viem/viem";
 import { getNetworkConfig } from "@/shared/config/network";
 import { formatToMaxDefinition } from "@/shared/utils";
@@ -7,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Abi, Address, formatUnits, isAddress, MulticallParameters } from "viem";
 import IERC20ABI from "../lagoon/abis/IERC20.json";
 import VaultABI from "../lagoon/abis/Vault.json";
+import { useVaults } from "@/hooks/use-vaults";
 
 // Helper functions
 function calculateSharePrice(totalAssets: bigint, totalShares: bigint, decimals: number): bigint {
@@ -178,16 +178,30 @@ export function useAllVaultsBalance() {
     queryFn: async () => {
       if (!evmAddress || !chain.id || !publicClient || !vaults) {
         throw new Error("Missing required data for all vaults balance");
-      } 
+      }
 
-      const allVaultsBalance = await Promise.all(vaults.vaultsData.map((vault) => useVaultBalance(vault.staticData.vault_id, vault.staticData.token_address as Address, vault.staticData.vault_address as Address, vault.staticData.token_decimals as number, vault.staticData.vault_decimals as number))); 
+      const allVaultsBalance = await Promise.all(
+        vaults.vaultsData.map((vault) =>
+          fetchVaultBalance(
+            vault.staticData.token_address as Address,
+            vault.staticData.vault_address as Address,
+            vault.staticData.vault_decimals as number,
+            vault.staticData.token_decimals as number,
+            evmAddress as Address,
+            publicClient,
+          ),
+        ),
+      );
 
-      return allVaultsBalance.reduce((acc, curr) => {
-        if (curr.vaultBalance) {
-          acc[curr.vaultBalance.vaultId] = curr.vaultBalance;
-        }
-        return acc;
-      }, {} as { [vaultId: string]: VaultBalance });
+      return allVaultsBalance.reduce(
+        (acc, curr) => {
+          if (curr) {
+            acc[curr.vaultId] = curr;
+          }
+          return acc;
+        },
+        {} as { [vaultId: string]: VaultBalance },
+      );
     },
     enabled: isAddress(evmAddress) && localStorage.getItem("disconnect_requested") !== "true",
   });

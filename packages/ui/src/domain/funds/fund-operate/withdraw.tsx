@@ -7,22 +7,23 @@ import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { WithdrawInProgressModal, WithdrawModal } from "./components";
-import { useFundOperateData } from "./hooks/use-fund-operate-data";
+import { DepositData, WithdrawData } from "./hooks/use-fund-operate-data";
 
 interface WithdrawProps {
-  vaultId: string;
+  withdrawData: WithdrawData;
+  depositData: DepositData;
   className?: string;
   disabled?: boolean;
   isLoading?: boolean;
 }
 
 export default function Withdraw({
-  vaultId,
+  withdrawData,
+  depositData,
   className,
   disabled,
   isLoading,
 }: WithdrawProps) {
-  const { useWithdrawData, useDepositData, isLoading: vaultLoading } = useFundOperateData(vaultId);
   const [amount, setAmount] = useState("");
   const [txHash, setTxHash] = useState("");
   const [convertedAmount, setConvertedAmount] = useState("");
@@ -41,13 +42,13 @@ export default function Withdraw({
     positionUSD,
     convertSharesAmountToAssets,
     isLoading: isWithdrawDataLoading,
-  } = useWithdrawData();
+  } = withdrawData;
 
   const {
     conversionValue: inversedConversionValue,
     convertAssetsAmountToShares,
     isLoading: isDepositDataLoading,
-  } = useDepositData();
+  } = depositData;
 
   const {
     isOpen: openModalInProgress,
@@ -56,7 +57,7 @@ export default function Withdraw({
   } = useModal(false);
 
   const [tokens, setTokens] = useState<Tokens>({});
-  
+
   useEffect(() => {
     if (!isWithdrawDataLoading && !isDepositDataLoading) {
       const tokens: Tokens = {};
@@ -73,11 +74,13 @@ export default function Withdraw({
         },
       };
       tokens[token_address] = {
-        iconNode: <img
-          src={getTokenLogo(token_symbol)}
-          alt={token_symbol}
-          className="w-5 h-5 object-cover rounded-full"
-        />,
+        iconNode: (
+          <img
+            src={getTokenLogo(token_symbol)}
+            alt={token_symbol}
+            className="w-5 h-5 object-cover rounded-full"
+          />
+        ),
         name: token_symbol,
         symbol: token_symbol,
         balance: positionUSDRaw,
@@ -90,7 +93,20 @@ export default function Withdraw({
       };
       setTokens(tokens);
     }
-  }, [isWithdrawDataLoading, isDepositDataLoading, position, positionUSDRaw, vault_address, vault_symbol, vault_decimals, token_address, token_symbol, token_decimals, conversionValue, inversedConversionValue]);
+  }, [
+    isWithdrawDataLoading,
+    isDepositDataLoading,
+    position,
+    positionUSDRaw,
+    vault_address,
+    vault_symbol,
+    vault_decimals,
+    token_address,
+    token_symbol,
+    token_decimals,
+    conversionValue,
+    inversedConversionValue,
+  ]);
 
   const handleReset = () => {
     setAmount("");
@@ -106,7 +122,7 @@ export default function Withdraw({
     change: changeTokenSelection,
   } = useSelector<TokenType>(tokens, 0, {
     onReset: handleReset,
-    onChange: handleReset
+    onChange: handleReset,
   });
 
   const {
@@ -158,11 +174,6 @@ export default function Withdraw({
     setTxHash(tx.hash ?? "");
     setOpenModalInProgress();
   };
-
-  // Don't render if vault is not found or still loading
-  if (vaultLoading) {
-    return null;
-  }
 
   return (
     <div className={className}>

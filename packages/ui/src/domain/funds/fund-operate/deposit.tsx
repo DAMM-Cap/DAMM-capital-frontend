@@ -6,22 +6,15 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { DepositInProgressModal, DepositModal, WhitelistingModal } from "./components";
 import InsufficientBalanceModal from "./components/insufficient-balance-modal";
-import { useFundOperateData } from "./hooks/use-fund-operate-data";
+import { DepositData } from "./hooks/use-fund-operate-data";
 
 interface DepositProps {
-  vaultId: string;
+  depositData: DepositData;
   className?: string;
   disabled?: boolean;
-  isLoading?: boolean;
 }
 
-export default function Deposit({
-  vaultId,  
-  className,
-  disabled,
-}: DepositProps) {
-  const { useDepositData } = useFundOperateData(vaultId);
-
+  export default function Deposit({ depositData, className, disabled }: DepositProps) {
   const [amount, setAmount] = useState("");
   const [txHash, setTxHash] = useState("");
   const [referral, setReferral] = useState("");
@@ -42,7 +35,7 @@ export default function Deposit({
     walletBalance: max,
     isUserWhitelisted,
     convertAssetsAmountToShares,
-  } = useDepositData();
+  } = depositData;
 
   const {
     isOpen: openModal,

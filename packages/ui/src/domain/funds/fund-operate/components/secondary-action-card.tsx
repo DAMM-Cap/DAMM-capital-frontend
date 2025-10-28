@@ -4,12 +4,8 @@ import envParsed from "@/envParsed";
 import { useDeposit } from "@/services/lagoon/use-deposit";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import { ArrowRightIcon, CircleCheckIcon, ClockIcon } from "lucide-react";
-import { useFundOperateData } from "../hooks/use-fund-operate-data";
-import {
-  IconKind,
-  useSecondaryActionViewModel,
-  VisualKind,
-} from "../hooks/use-secondary-action-view-model";
+import { DepositData, WithdrawData } from "../hooks/use-fund-operate-data";
+import { IconKind, useSecondaryActionViewModel, VisualKind } from "../hooks/use-secondary-action-view-model";
 
 function StatusIcon({ type, size }: { type: IconKind; size: number }) {
   if (type === "check") return <CircleCheckIcon size={size} />;
@@ -30,14 +26,14 @@ function TokenIcon({ type, tokenSymbol }: { type: VisualKind; tokenSymbol: strin
 }
 
 export default function SecondaryActionCard({
-  vaultId,
+  withdrawData,
+  depositData,
   isLoading = false, // TODO: Add loading state
 }: {
-  vaultId: string;
+  withdrawData: WithdrawData;
+  depositData: DepositData;
   isLoading?: boolean;
 }) {
-  const { useWithdrawData, useDepositData } = useFundOperateData(vaultId!);
-
   const {
     isClaimableRedeem,
     claimableRedeemRequest,
@@ -49,7 +45,7 @@ export default function SecondaryActionCard({
     token_address,
     fee_receiver_address,
     exitRate,
-  } = useWithdrawData();
+  } = withdrawData;
 
   const {
     isClaimableDeposit,
@@ -58,7 +54,7 @@ export default function SecondaryActionCard({
     isPendingDepositRequest,
     token_decimals,
     vault_decimals,
-  } = useDepositData();
+  } = depositData;
 
   const { submitRedeem } = useWithdraw();
   const { submitDeposit, cancelDepositRequest } = useDeposit();

@@ -1,18 +1,17 @@
 import { Card, Label, Table } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
-import { useSearch } from "@tanstack/react-router";
-import { useFundOperateData } from "../hooks/use-fund-operate-data";
+import { FundData } from "../hooks/use-fund-operate-data";
 
-export default function FeesCard({ isLoading }: { isLoading: boolean }) {
-  const { vaultId } = useSearch({ from: "/fund-operate/" });
-  const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
-const isMobile = useIsMobile();
+export default function FeesCard({
+  isLoading,
+  fundData,
+}: {
+  isLoading: boolean;
+  fundData: FundData;
+}) {
+  const isMobile = useIsMobile();
 
-  const { token_symbol, managementFee, performanceFee, entranceRate, exitRate } = useFundData();
-
-  if (vaultLoading) {
-    return null;
-  }
+  const { token_symbol, managementFee, performanceFee, entranceRate, exitRate } = fundData;
 
   return (
     <div className="flex-1 flex-col gap-4 max-w-full">
@@ -22,8 +21,8 @@ const isMobile = useIsMobile();
           initialCol2X={false}
           noColor
           tableHeaders={[
-            { label: isMobile ? "Mgmt. Fee": "Management Fee", className: "text-center" },
-            { label: isMobile ? "Perf. Fee": "Performance Fee", className: "text-center" },
+            { label: isMobile ? "Mgmt. Fee" : "Management Fee", className: "text-center" },
+            { label: isMobile ? "Perf. Fee" : "Performance Fee", className: "text-center" },
             { label: "Entry Rate", className: "text-center" },
             { label: "Exit Rate", className: "text-center" },
           ]}
