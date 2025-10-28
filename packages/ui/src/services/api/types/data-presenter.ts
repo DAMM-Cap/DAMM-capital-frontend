@@ -71,6 +71,7 @@ export interface VaultMetricsView {
   sharpe: number;
   aum: number;
   nav: number;
+  lastSnapshotTimestamp: string;
 }
 
 export interface DataPresenter {

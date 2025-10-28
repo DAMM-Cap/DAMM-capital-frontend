@@ -13,7 +13,7 @@ const RowSkeleton: React.FC<{
   return (
     <div
       className={clsx(
-        "w-full border border-disabledDark hover:border-primary bg-disabled rounded-2xl p-3 transition-colors duration-200 cursor-pointer",
+        "w-full border border-disabledDark bg-disabled rounded-2xl p-3 transition-colors duration-200 cursor-pointer",
         className,
       )}
     >

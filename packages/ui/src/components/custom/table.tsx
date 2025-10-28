@@ -6,6 +6,7 @@ import Row, { RowProps } from "./row";
 export interface HeaderData {
   label: string;
   tooltip?: string;
+  tooltipClassName?: string;
   className?: string;
 }
 
@@ -62,7 +63,7 @@ const Table: React.FC<TableProps> = ({
                 )}
               >
                 {item.tooltip && (
-                  <Tooltip content={item.tooltip}>
+                  <Tooltip content={item.tooltip} className={item.tooltipClassName}>
                     {item.label} <CircledExclamationIcon className="ml-2 -mt-0.5" size={16} />
                   </Tooltip>
                 )}

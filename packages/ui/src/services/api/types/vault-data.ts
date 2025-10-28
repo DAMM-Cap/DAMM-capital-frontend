@@ -94,4 +94,5 @@ export interface VaultMetricsResponse {
   sharpe: number;
   aum: number;
   nav: number;
+  lastSnapshotTimestamp: string;
 }

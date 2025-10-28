@@ -34,6 +34,7 @@ export default function FundCard({
       operation,
       operationVariant,
       operationActive,
+      lastUpdate,
     } = useFundData();
 
     return (
@@ -99,7 +100,7 @@ export default function FundCard({
                   tableHeaders={[
                     { label: "Position Size", className: "text-left" },
                     { label: "Yield Earned", className: "text-left" },
-                    { label: "Total Deposited", className: "text-left" },
+                    { label: "Total Deposited", className: "text-left", tooltip: "Last update: " + new Date(lastUpdate??"").toLocaleString(), tooltipClassName: "min-w-[240px]" },
                     { label: "Net APY", className: "text-left" },
                     { label: "Underlying Asset", className: "text-left" },
                   ]}

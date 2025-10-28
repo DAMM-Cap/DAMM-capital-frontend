@@ -116,7 +116,7 @@ function computeVaultMetrics(
   snapshots: VaultMetricsData[]
 ): VaultMetricsResponse {
   if (!snapshots.length)
-    return { vaultId: "", netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, nav: 0 };
+    return { vaultId: "", netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, nav: 0, lastSnapshotTimestamp: "" };
 
   // 1) Sort by timestamp ascending to respect time order
   const data = [...snapshots].sort(
@@ -159,7 +159,7 @@ function computeVaultMetrics(
   }
 
   if (totalHours <= 0) {
-    return { vaultId, netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, nav: 0 };
+    return { vaultId, netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, nav: 0, lastSnapshotTimestamp: "" };
   }
 
   // 3) Annualized implied return from the observed window
@@ -231,12 +231,13 @@ if (
     sharpe: formatToMaxDefinition(sharpe),
     aum: formatToMaxDefinition(aumUSD),
     nav: formatToMaxDefinition(navUSD),
+    lastSnapshotTimestamp: latest.event_timestamp,
   };
 }
 
 export function computeVaultMetricsByVaultId(snapshots: ApiSnapshotsResponse): VaultMetricsResponse[] {
   if (!snapshots || !snapshots.snapshots || !snapshots["snapshots"].length)
-    return [{ vaultId: "", netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, nav: 0 }];
+    return [{ vaultId: "", netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, nav: 0, lastSnapshotTimestamp: "" }];
 
   // Sort once globally by time, then bucket
   const sorted: VaultMetricsData[] = [...snapshots.snapshots].sort(
