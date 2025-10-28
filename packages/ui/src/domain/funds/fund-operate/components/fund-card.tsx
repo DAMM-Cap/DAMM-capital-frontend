@@ -1,5 +1,6 @@
 import { Button, Card, DammStableIcon, Table } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
+import { getVaultLinks } from "@/shared/config/link-utils";
 import { useSearch } from "@tanstack/react-router";
 import clsx from "clsx";
 import { ExternalLinkIcon } from "lucide-react";
@@ -12,9 +13,10 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
   const { useFundData, isLoading: vaultLoading } = useFundOperateData(vaultId!);
   const vaultIcon = <DammStableIcon size={48} />;
   const isMobile = useIsMobile();
-
+  
   try {
-    const { vault_name, sharpe, netApy, netApy30d, aum, nav } = useFundData();
+    const { vault_name, sharpe, netApy, netApy30d, aum, nav, vault_address } = useFundData();
+    const {octavLink, curateLink} = getVaultLinks(vault_address!);
     return (
       !vaultLoading && (
         <div className="flex-1 flex-col gap-4">
@@ -38,7 +40,7 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
                         alt={klerosCurateIcon}
                         className="h-4 w-auto ml-2 mr-2 hover:cursor-pointer"
                         onClick={() => {
-                          window.open("https://curate.kleros.io", "_blank");
+                          window.open(curateLink, "_blank");
                         }}
                       />
                       Verified by Kleros Curate.
@@ -48,7 +50,7 @@ export default function FundCard({ isLoading }: { isLoading: boolean }) {
               </div>
               <Button
                 onClick={() => {
-                  window.open("https://octav.fi", "_blank");
+                  window.open(octavLink, "_blank");
                 }}
                 className="flex-1 !h-10 !min-w-40 !max-w-40  !bg-disabled !border-disabled !text-neutral !text-xs !border !border-neutral"
               >

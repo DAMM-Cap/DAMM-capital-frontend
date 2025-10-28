@@ -14,6 +14,8 @@ const env = {
   BOT_CLAIMS_ON_BEHALF_ACTIVE: import.meta.env.VITE_BOT_CLAIMS_ON_BEHALF_ACTIVE,
   MAX_DEFINITION: parseInt(import.meta.env.VITE_MAX_DEFINITION || "5"),
   BLOCK_VAULT: import.meta.env.VITE_BLOCK_VAULT,
+  OCTAV_GATEWAY: import.meta.env.VITE_OCTAV_GATEWAY,
+  CURATE_GATEWAY: import.meta.env.VITE_CURATE_GATEWAY,
 };
 
 const envSchema = z
@@ -29,6 +31,8 @@ const envSchema = z
     BOT_CLAIMS_ON_BEHALF_ACTIVE: z.string().optional().default(""),
     MAX_DEFINITION: z.number().optional().default(5),
     BLOCK_VAULT: z.string().optional().default(""),
+    OCTAV_GATEWAY: z.string().optional().default(""),
+    CURATE_GATEWAY: z.string().optional().default(""),
   })
   .required();
 
