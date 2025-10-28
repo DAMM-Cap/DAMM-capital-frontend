@@ -5,12 +5,13 @@ import { useVaults } from "@/context/vault-context";
 import { Tokens } from "@/domain/types/token";
 import { useModal } from "@/hooks/use-modal";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
+import { useRescueToken } from "@/services/shared/use-rescue-token";
 import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { getNetworkConfig } from "@/shared/config/network";
 import clsx from "clsx";
-import { LogInIcon, SendIcon } from "lucide-react";
+import { HeartHandshakeIcon, LogInIcon, SendIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ReceiveTokensDialog, SendTokensDialog } from "./components";
+import { ReceiveTokensDialog, RescueTokenDialog, SendTokensDialog } from "./components";
 
 export default function MyWallet() {
   const { evmAddress, isSignedIn, isConnecting, isSmartAccount } = useSession();
@@ -26,6 +27,11 @@ export default function MyWallet() {
     close: closeSendTokens,
     open: openSendTokens,
   } = useModal(false);
+  const {
+    isOpen: isOpenRescueToken,
+    close: closeRescueToken,
+    open: openRescueToken,
+  } = useModal(false);
 
   const [isLoadingFund, setIsLoadingFund] = useState(true);
   const { vaults } = useVaults();
@@ -33,7 +39,10 @@ export default function MyWallet() {
   const { data: tokensBalance } = useTokensBalance();
   const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
   const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;
-
+  const nullAddress = "0x0000000000000000000000000000000000000000";
+  const [erc20Address, setErc20Address] = useState(nullAddress);
+  const { data: rescueToken, error: rescueTokenError } = useRescueToken({ rescueTokenAddress: erc20Address });
+  
   useEffect(() => {
     if (vaultsData) {
       const tokens: Tokens = {};
@@ -62,6 +71,37 @@ export default function MyWallet() {
     }
   }, [vaultsData, tokensBalance]);
 
+  const pushRescueToken = (erc20Address: string) => {
+    setErc20Address(erc20Address);
+  };
+
+  useEffect(() => {
+    if (!rescueToken || !erc20Address || !tokens) return;
+
+    try {
+    const tokensLocal: Tokens = { ...tokens };
+    tokensLocal[erc20Address] = {
+      name: rescueToken.name,
+      symbol: rescueToken.symbol,
+      balance: rescueToken.balance,
+      metadata: {
+        address: erc20Address,
+        decimals: rescueToken.decimals,
+      },
+    }
+    setTokens(tokensLocal);
+  } catch (error) {
+    setErc20Address(nullAddress);
+  }
+  }, [erc20Address, rescueToken]);
+
+  useEffect(() => {
+    if (rescueTokenError && erc20Address !== nullAddress) {
+      setErc20Address(nullAddress);
+    }
+  }, [rescueTokenError]);
+
+
   useEffect(() => {
     setTimeout(() => {
       setIsLoadingFund(false);
@@ -86,6 +126,15 @@ export default function MyWallet() {
             >
               <SendIcon className={clsx(isMobile && "size-4")}/>
               {isMobile? "" : "Send"}
+            </Button>
+            <Button
+              onClick={openRescueToken}
+              disabled={!isSignedIn || isConnecting}
+              variant="secondary"
+              className={clsx(isMobile && "h-8 w-12")}
+            >
+              <HeartHandshakeIcon className={clsx(isMobile && "size-4")}/>
+              {isMobile? "" : "Rescue"}
             </Button>
           </div>
         )}
@@ -129,6 +178,11 @@ export default function MyWallet() {
       {tokens && (
         <SendTokensDialog isOpen={isOpenSendTokens} setIsOpen={closeSendTokens} tokens={tokens} />
       )}
+      <RescueTokenDialog
+        isOpen={isOpenRescueToken}
+        setIsOpen={closeRescueToken}
+        pushRescueToken={pushRescueToken}
+      />
     </div>
   );
 }
