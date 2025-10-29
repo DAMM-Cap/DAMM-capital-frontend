@@ -55,11 +55,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    forceOptimism();
+    switchDefaultChain();
   }, [wallets]);
 
-  async function forceOptimism() {
-    const connected = wallets.find(w => w.walletClientType === 'metamask');
+  async function switchDefaultChain() {
+    const connected = wallets?.[0]
     if (!connected) return;
 
     const chainId = connected.chainId;
