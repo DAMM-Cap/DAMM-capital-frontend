@@ -4,7 +4,7 @@ import { getNetworkConfig } from "@/shared/config/network";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Abi, Address, formatUnits, isAddress, MulticallParameters } from "viem";
-import IERC20ABI from "../lagoon/abis/IERC20-rescue.json";
+import IERC20ABI from "../../../services/lagoon/abis/IERC20-rescue.json";
 
 export interface RescueToken {
   balance: number;

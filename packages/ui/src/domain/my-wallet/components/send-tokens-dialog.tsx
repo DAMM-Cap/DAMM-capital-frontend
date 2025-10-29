@@ -1,7 +1,7 @@
 import { Button, Input, Label, Modal, TokenAmountInput } from "@/components";
+import { useSendTokens } from "@/domain/my-wallet/hooks/use-send-tokens";
 import { TokenType, Tokens } from "@/domain/types/token";
 import { useSelector } from "@/hooks/use-selector";
-import { useSendTokens } from "@/services/shared/use-send-tokens";
 import { getNetworkConfig } from "@/shared/config/network";
 import React, { useEffect, useState } from "react";
 import { isAddress } from "viem";

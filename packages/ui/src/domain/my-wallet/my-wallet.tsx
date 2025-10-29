@@ -2,17 +2,17 @@ import { Button, Card, Label, Table } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
+import { useRescueToken } from "@/domain/my-wallet/hooks/use-rescue-token";
 import { Tokens } from "@/domain/types/token";
 import { useModal } from "@/hooks/use-modal";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
-import { useRescueToken } from "@/services/shared/use-rescue-token";
-import { useTokensBalance } from "@/services/shared/use-tokens-balance";
+import { POLL_BALANCES_MY_WALLET_INTERVAL, POLL_VAULTS_DATA_MY_WALLET_INTERVAL } from "@/shared/config/constants";
 import { getNetworkConfig } from "@/shared/config/network";
 import clsx from "clsx";
 import { HeartHandshakeIcon, LogInIcon, SendIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ReceiveTokensDialog, RescueTokenDialog, SendTokensDialog } from "./components";
-import { POLL_BALANCES_MY_WALLET_INTERVAL, POLL_VAULTS_DATA_MY_WALLET_INTERVAL } from "@/shared/config/constants";
+import { useTokensBalance } from "./hooks/use-tokens-balance";
 
 export default function MyWallet() {
   const { evmAddress, isSignedIn, isConnecting, isSmartAccount } = useSession();
@@ -65,7 +65,7 @@ export default function MyWallet() {
             symbol: fund.staticData.token_symbol,
             balance:
               Number(
-                tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]?.availableSupply,
+                tokensBalance?.[fund.staticData.vault_id]?.availableSupply,
               ) || 0,
             metadata: {
               address: fund.staticData.token_address,

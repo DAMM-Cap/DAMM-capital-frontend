@@ -2,7 +2,7 @@ import { useSession } from "@/context/session-context";
 import { EvmBatchCall, EvmCall, usePrivyTxs } from "@/services/privy/use-privy-txs";
 import { TransactionResponse } from "@ethersproject/providers";
 import { parseUnits } from "ethers/lib/utils";
-import IERC20ABI from "../lagoon/abis/IERC20.json";
+import IERC20ABI from "../../../services/lagoon/abis/IERC20.json";
 
 export function useSendTokens() {
   const { isSignedIn, evmAddress: usersAccount } = useSession();

@@ -1,10 +1,10 @@
 import { useVaults } from "@/context/vault-context";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
-import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { POLL_BALANCES_PORTFOLIO_INTERVAL, POLL_VAULTS_DATA_PORTFOLIO_INTERVAL } from "@/shared/config/constants";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTokensBalance } from "./use-tokens-balance";
 
 export enum OperationStatus {
   CONFIRMED = "Confirmed",
@@ -73,7 +73,7 @@ export function usePortfolioData(vaultId?: string) {
 
       // Position Value retrieves real time converted shares from the blockchain
       const availableAssets = Number(
-        tokensBalance?.vaultBalances[vaultUserPositionData.staticData.vault_id]?.assets || 0,
+        tokensBalance?.[vaultUserPositionData.staticData.vault_id]?.assets || 0,
       );
       const positionValue = availableAssets;
       totalPositionValue += positionValue;

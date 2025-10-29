@@ -1,10 +1,10 @@
 import { useVaults } from "@/context/vault-context";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
-import { useTokensBalance } from "@/services/shared/use-tokens-balance";
 import { POLL_BALANCES_FUND_OPERATE_INTERVAL, POLL_VAULTS_DATA_FUND_OPERATE_INTERVAL } from "@/shared/config/constants";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useEffect, useState } from "react";
+import { useTokensBalance } from "./use-tokens-balance";
 
 export interface DepositData {
   position: number;
@@ -83,9 +83,10 @@ export function useFundOperateData(vaultId: string) {
   const { vaults } = useVaults(POLL_VAULTS_DATA_FUND_OPERATE_INTERVAL);
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
   const { data: tokensBalance } = useTokensBalance(POLL_BALANCES_FUND_OPERATE_INTERVAL);
-  const walletBalance = Number(tokensBalance?.vaultBalances[vaultId]?.availableSupply || 0);
-  const availableAssets = Number(tokensBalance?.vaultBalances[vaultId]?.assets || 0);
-  const availableShares = Number(tokensBalance?.vaultBalances[vaultId]?.shares || 0);
+  const walletBalance = Number(tokensBalance?.[vaultId]?.availableSupply || 0);
+  const availableAssets = Number(tokensBalance?.[vaultId]?.assets || 0);
+  const availableShares = Number(tokensBalance?.[vaultId]?.shares || 0);
+  const sharePrice = Number(tokensBalance?.[vaultId]?.sharePrice || 0);
   const [selectedVaultMetrics, setSelectedVaultMetrics] = useState<VaultMetricsView | undefined>(
     undefined,
   );
@@ -140,7 +141,6 @@ export function useFundOperateData(vaultId: string) {
     const pendingDepositRequest = thisOpState.pendingDepositRequest;
     const vaultDecimals = selectedVault.staticData.vault_decimals;
     const tokenDecimals = selectedVault.staticData.token_decimals;
-    const sharePrice = selectedVault.vaultData.sharePrice;
     const conversionValue = formatToMaxDefinition(
       1 / ((sharePrice * 10 ** vaultDecimals) / 10 ** tokenDecimals),
     );
@@ -151,7 +151,6 @@ export function useFundOperateData(vaultId: string) {
       }
       const vaultDecimals = selectedVault.staticData.vault_decimals;
       const tokenDecimals = selectedVault.staticData.token_decimals;
-      const sharePrice = selectedVault.vaultData.sharePrice;
       return formatToMaxDefinition(
         (amount * 10 ** tokenDecimals) / sharePrice / 10 ** vaultDecimals,
       );
@@ -210,7 +209,6 @@ export function useFundOperateData(vaultId: string) {
     const pendingRedeemRequest = thisOpState.pendingRedeemRequest;
     const vaultDecimals = selectedVault.staticData.vault_decimals;
     const tokenDecimals = selectedVault.staticData.token_decimals;
-    const sharePrice = selectedVault.vaultData.sharePrice;
     const conversionValue = formatToMaxDefinition(
       (sharePrice * 10 ** vaultDecimals) / 10 ** tokenDecimals,
     );
@@ -221,7 +219,6 @@ export function useFundOperateData(vaultId: string) {
       }
       const vaultDecimals = selectedVault.staticData.vault_decimals;
       const tokenDecimals = selectedVault.staticData.token_decimals;
-      const sharePrice = selectedVault.vaultData.sharePrice;
       return formatToMaxDefinition(
         (amount * 10 ** vaultDecimals * sharePrice) / 10 ** tokenDecimals,
       );
