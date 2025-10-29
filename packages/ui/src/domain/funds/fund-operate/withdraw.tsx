@@ -12,6 +12,7 @@ import { DepositData, WithdrawData } from "./hooks/use-fund-operate-data";
 interface WithdrawProps {
   withdrawData: WithdrawData;
   depositData: DepositData;
+  refetchData: () => void;
   handleLoading: (isLoading: boolean) => void;
   className?: string;
   disabled?: boolean;
@@ -21,6 +22,7 @@ interface WithdrawProps {
 export default function Withdraw({
   withdrawData,
   depositData,
+  refetchData,
   handleLoading,
   className,
   disabled,
@@ -116,7 +118,7 @@ export default function Withdraw({
     isOpen: openModalWithdraw,
     open: setOpenModalWithdraw,
     close: setCloseModalWithdraw,
-  } = useModal(false, { onOpen: resetSelector, onClose: () => handleLoading(false) });
+  } = useModal(false, { onOpen: () => {refetchData(); resetSelector();}, onClose: () => handleLoading(false) });
 
   const { submitRequestWithdraw } = useWithdraw();
 

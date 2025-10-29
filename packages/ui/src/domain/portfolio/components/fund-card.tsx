@@ -1,6 +1,7 @@
 import { Button, Card, DammStableIcon, Label, LoadingField, Table } from "@/components";
 import { ButtonVariant } from "@/components/core/button";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
+import { getVaultLinks } from "@/shared/config/link-utils";
 import { useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
 import { usePortfolioData } from "../hooks/use-portfolio-data";
@@ -24,7 +25,10 @@ export default function FundCard({ isLoading, vaultId }: { isLoading: boolean; v
     operationVariant,
     operationActive,
     lastUpdate,
+    vault_address,
   } = getFundData();
+
+  const { curateLink } = getVaultLinks(vault_address!);
 
   return (
     !vaultLoading &&
@@ -53,7 +57,7 @@ export default function FundCard({ isLoading, vaultId }: { isLoading: boolean; v
                       alt={klerosCurateIcon}
                       className="h-4 w-auto ml-2 mr-2 hover:cursor-pointer"
                       onClick={() => {
-                        window.open("https://curate.kleros.io", "_blank");
+                        window.open(curateLink, "_blank");
                       }}
                     />
                     Verified by Kleros Curate.

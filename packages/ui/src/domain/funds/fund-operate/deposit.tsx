@@ -10,6 +10,7 @@ import { DepositData } from "./hooks/use-fund-operate-data";
 
 interface DepositProps {
   depositData: DepositData;
+  refetchData: () => void;
   handleLoading: (isLoading: boolean) => void;
   className?: string;
   disabled?: boolean;
@@ -18,6 +19,7 @@ interface DepositProps {
 
 export default function Deposit({
   depositData,
+  refetchData,
   handleLoading,
   className,
   disabled,
@@ -49,7 +51,7 @@ export default function Deposit({
     isOpen: openModal,
     open: setOpenModal,
     close: setCloseModal,
-  } = useModal(false, { onClose: () => handleLoading(false) });
+  } = useModal(false, { onOpen: () => refetchData(), onClose: () => handleLoading(false) });
   const {
     isOpen: openModalInProgress,
     open: setOpenModalInProgress,

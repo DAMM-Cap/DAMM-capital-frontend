@@ -35,10 +35,10 @@ export default function MyWallet() {
   } = useModal(false);
 
   const [isLoadingFund, setIsLoadingFund] = useState(true);
-  const { vaults } = useVaults(POLL_VAULTS_DATA_MY_WALLET_INTERVAL);
+  const { vaults } = useVaults(POLL_VAULTS_DATA_MY_WALLET_INTERVAL, true);
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
   const { data: tokensBalance, refetch: refetchTokensBalance } = useTokensBalance(
-    POLL_BALANCES_MY_WALLET_INTERVAL,
+    POLL_BALANCES_MY_WALLET_INTERVAL
   );
   const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
   const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;
@@ -47,6 +47,12 @@ export default function MyWallet() {
   const { data: rescueToken, error: rescueTokenError } = useRescueToken({
     rescueTokenAddress: erc20Address,
   });
+
+  useEffect(() => {
+    if (vaults) {
+      refetchTokensBalance();
+    }
+  }, []);
 
   useEffect(() => {
     if (vaultsData) {

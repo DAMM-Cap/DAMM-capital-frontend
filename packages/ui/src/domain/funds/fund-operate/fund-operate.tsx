@@ -19,6 +19,7 @@ export default function FundOperate() {
     getFundData,
     getDepositData,
     getWithdrawData,
+    refetchData,
     isLoading: vaultLoading,
   } = useFundOperateData(vaultId!);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,6 +60,7 @@ export default function FundOperate() {
               fundData={fundData}
               depositData={depositData}
               withdrawData={withdrawData}
+              refetchData={refetchData}
               handleLoading={setIsLoading}
               isLoading={isLoading}
             />
@@ -105,6 +107,7 @@ export default function FundOperate() {
               fundData={fundData}
               depositData={depositData}
               withdrawData={withdrawData}
+              refetchData={refetchData}
               handleLoading={setIsLoading}
               isLoading={isLoading}
               className="fixed z-20 max-h-[calc(100vh-10.5rem)] scrollbar-visible overflow-y-auto overscroll-contain w-[360px]"

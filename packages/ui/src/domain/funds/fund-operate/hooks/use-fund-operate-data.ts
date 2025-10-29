@@ -80,9 +80,9 @@ export interface FundData {
 }
 
 export function useFundOperateData(vaultId: string) {
-  const { vaults } = useVaults(POLL_VAULTS_DATA_FUND_OPERATE_INTERVAL);
+  const { vaults, refetch: refetchVaults } = useVaults(POLL_VAULTS_DATA_FUND_OPERATE_INTERVAL);
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-  const { data: tokensBalance } = useTokensBalance(POLL_BALANCES_FUND_OPERATE_INTERVAL);
+  const { data: tokensBalance, refetch: refetchTokensBalance } = useTokensBalance(POLL_BALANCES_FUND_OPERATE_INTERVAL);
   const walletBalance = Number(tokensBalance?.[vaultId]?.availableSupply || 0);
   const availableAssets = Number(tokensBalance?.[vaultId]?.assets || 0);
   const availableShares = Number(tokensBalance?.[vaultId]?.shares || 0);
@@ -309,10 +309,16 @@ export function useFundOperateData(vaultId: string) {
     } satisfies FundData;
   }
 
+  async function refetchData() {
+    await refetchTokensBalance();
+    await refetchVaults();
+  }
+
   return {
     getDepositData,
     getWithdrawData,
     getFundData,
+    refetchData,
     isLoading: !vaults?.vaultsData || !selectedVault,
   };
 }

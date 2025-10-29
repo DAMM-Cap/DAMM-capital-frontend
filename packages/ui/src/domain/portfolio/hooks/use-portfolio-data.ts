@@ -124,6 +124,7 @@ export function usePortfolioData(vaultId?: string) {
         operationVariant: "outline-secondary",
         operationActive: false,
         lastUpdate: "",
+        vault_address: "",
       };
     }
 
@@ -154,6 +155,7 @@ export function usePortfolioData(vaultId?: string) {
       yieldEarned: vaultsData[selectedVault.staticData.vault_id]?.yieldEarned ?? 0,
       totalAssets: vaultsData[selectedVault.staticData.vault_id]?.totalAssets ?? 0,
       vault_icon: selectedVault.staticData.vault_icon,
+      vault_address: selectedVault.staticData.vault_address,
       token_symbol: selectedVault.staticData.token_symbol,
       lastUpdate: selectedVaultMetrics?.lastSnapshotTimestamp,
       operation: operation,

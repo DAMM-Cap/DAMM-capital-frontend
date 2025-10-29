@@ -13,6 +13,7 @@ export default function ManagementCard({
   fundData,
   depositData,
   withdrawData,
+  refetchData,
   isLoading,
   handleLoading,
   className,
@@ -20,6 +21,7 @@ export default function ManagementCard({
   fundData: FundData;
   depositData: DepositData;
   withdrawData: WithdrawData;
+  refetchData: () => void;
   isLoading: boolean;
   handleLoading: (isLoading: boolean) => void;
   className?: string;
@@ -74,6 +76,7 @@ export default function ManagementCard({
         <div className="flex flex-row gap-4">
           <Deposit
             depositData={depositData}
+            refetchData={refetchData}
             handleLoading={handleLoading}
             className="w-full"
             disabled={!isSignedIn || isBlocked}
@@ -82,6 +85,7 @@ export default function ManagementCard({
           <Withdraw
             withdrawData={withdrawData}
             depositData={depositData}
+            refetchData={refetchData}
             handleLoading={handleLoading}
             className="w-full"
             disabled={!isSignedIn || isBlocked}
