@@ -1,9 +1,11 @@
+import { getNetworkConfig } from "@/shared/config/network";
 import {
   useLogout,
   useMfaEnrollment,
   usePrivy,
+  useWallets,
 } from "@privy-io/react-auth";
-import { createContext, type ReactNode, useContext, useMemo, useState } from "react";
+import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
 
 interface SessionContextType {
   evmAddress: string;
@@ -18,10 +20,13 @@ interface SessionContextType {
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
+  const { chain } = getNetworkConfig();
+
   // States
   const [isConnecting, setIsConnecting] = useState(false);
-
+  
   // Hooks
+  const { wallets } = useWallets();
   const { showMfaEnrollmentModal } = useMfaEnrollment();
   const { logout } = useLogout();
   const { ready, user, login, authenticated } = usePrivy();
@@ -35,19 +40,34 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return user?.wallet?.address ?? "0x";
   }, [user, isSmartAccount]);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     if (!ready || isConnecting) return;
 
     setIsConnecting(true);
 
     try {
-      await login();
+      login();
     } catch (err) {
       console.error("Login process failed:", err);
     } finally {
       setIsConnecting(false);
     }
   };
+
+  useEffect(() => {
+    forceOptimism();
+  }, [wallets]);
+
+  async function forceOptimism() {
+    const connected = wallets.find(w => w.walletClientType === 'metamask');
+    if (!connected) return;
+
+    const chainId = connected.chainId;
+  
+    if (chainId !== chain.id.toString()) {
+      await connected.switchChain(chain.id);
+    }
+  }
 
   return (
     <SessionContext.Provider
