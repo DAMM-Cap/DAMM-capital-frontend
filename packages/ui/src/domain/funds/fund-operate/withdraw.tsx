@@ -7,10 +7,11 @@ import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { WithdrawInProgressModal, WithdrawModal } from "./components";
-import { useFundOperateData } from "./hooks/use-fund-operate-data";
+import { DepositData, WithdrawData } from "./hooks/use-fund-operate-data";
 
 interface WithdrawProps {
-  vaultId: string;
+  withdrawData: WithdrawData;
+  depositData: DepositData;
   handleLoading: (isLoading: boolean) => void;
   className?: string;
   disabled?: boolean;
@@ -18,13 +19,13 @@ interface WithdrawProps {
 }
 
 export default function Withdraw({
-  vaultId,
+  withdrawData,
+  depositData,
   handleLoading,
   className,
   disabled,
   isLoading,
 }: WithdrawProps) {
-  const { useWithdrawData, useDepositData, isLoading: vaultLoading } = useFundOperateData(vaultId);
   const [amount, setAmount] = useState("");
   const [txHash, setTxHash] = useState("");
   const [convertedAmount, setConvertedAmount] = useState("");
@@ -43,13 +44,13 @@ export default function Withdraw({
     positionUSD,
     convertSharesAmountToAssets,
     isLoading: isWithdrawDataLoading,
-  } = useWithdrawData();
+  } = withdrawData;
 
   const {
     conversionValue: inversedConversionValue,
     convertAssetsAmountToShares,
     isLoading: isDepositDataLoading,
-  } = useDepositData();
+  } = depositData;
 
   const {
     isOpen: openModalInProgress,
@@ -161,11 +162,6 @@ export default function Withdraw({
     setTxHash(tx.hash ?? "");
     setOpenModalInProgress();
   };
-
-  // Don't render if vault is not found or still loading
-  if (vaultLoading) {
-    return null;
-  }
 
   return (
     <div className={className}>

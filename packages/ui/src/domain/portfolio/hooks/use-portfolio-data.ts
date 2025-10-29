@@ -2,6 +2,7 @@ import { useVaults } from "@/context/vault-context";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
 import { useTokensBalance } from "@/services/shared/use-tokens-balance";
+import { POLL_BALANCES_PORTFOLIO_INTERVAL, POLL_VAULTS_DATA_PORTFOLIO_INTERVAL } from "@/shared/config/constants";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -14,9 +15,9 @@ export enum OperationStatus {
 }
 
 export function usePortfolioData(vaultId?: string) {
-  const { vaults, isLoading } = useVaults();
+  const { vaults, isLoading } = useVaults(POLL_VAULTS_DATA_PORTFOLIO_INTERVAL);
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-  const { data: tokensBalance } = useTokensBalance();
+  const { data: tokensBalance } = useTokensBalance(POLL_BALANCES_PORTFOLIO_INTERVAL);
   const [vaultsData, setVaultsData] = useState<
     Record<string, Record<"positionValue" | "totalAssets" | "yieldEarned", number>>
   >({});
@@ -108,7 +109,7 @@ export function usePortfolioData(vaultId?: string) {
     setTotalYieldEarned(formatToMaxDefinition(totalYieldEarned));
   }, [vaults, tokensBalance, isLoading]);
 
-  function useFundData() {
+  function getFundData() {
     const thisOpState = opState.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
     if (!selectedVault || !thisOpState) {
       return {
@@ -161,7 +162,7 @@ export function usePortfolioData(vaultId?: string) {
     };
   }
 
-  function usePortfolioSingleValuesData() {
+  function getPortfolioSingleValuesData() {
     return {
       tvl: totalPositionValue,
       yieldEarned: totalYieldEarned,
@@ -170,8 +171,8 @@ export function usePortfolioData(vaultId?: string) {
   }
 
   return {
-    useFundData,
-    usePortfolioSingleValuesData,
+    getFundData,
+    getPortfolioSingleValuesData,
     vaultIds: vaults?.vaultsData?.map((fund) => fund.staticData.vault_id),
     isLoading: isLoading,
   };

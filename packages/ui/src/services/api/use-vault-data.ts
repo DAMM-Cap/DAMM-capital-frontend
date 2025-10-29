@@ -11,7 +11,7 @@ import { isAddress } from "viem";
 import { tokenSymbolsWithSuffix } from "./lib/utils";
 import { computeVaultMetricsByVaultId } from "./lib/vault-metrics";
 
-export function useVaultData(wallet: string) {
+export function useVaultData(wallet: string, pollInterval: number) {
   const network = getNetworkConfig().chain;
   const { API_GATEWAY } = envParsed();
 
@@ -71,7 +71,7 @@ export function useVaultData(wallet: string) {
       (isAddress(wallet) || wallet === "0x") &&
       localStorage.getItem("disconnect_requested") !== "true", // Don't poll if disconnect was requested
     staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchInterval: 5000, // Poll every 5 seconds
-    refetchIntervalInBackground: true,
+    refetchInterval: pollInterval,
+    refetchIntervalInBackground: false,
   });
 }

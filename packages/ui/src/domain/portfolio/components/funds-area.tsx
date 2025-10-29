@@ -2,20 +2,14 @@ import { Card, Label } from "@/components";
 import { usePortfolioData } from "../hooks/use-portfolio-data";
 import FundCard from "./fund-card";
 
-export default function FundsArea({
-  isLoading,
-  handleIsLoading,
-}: {
-  isLoading: boolean;
-  handleIsLoading: (isLoading: boolean) => void;
-}) {
+export default function FundsArea({ isLoading }: { isLoading: boolean }) {
   const { vaultIds } = usePortfolioData();
 
   // Get fund data for all vaults to check positions
   const vaultFundData =
     vaultIds?.map((vaultId) => {
-      const { useFundData } = usePortfolioData(vaultId);
-      return { vaultId, ...useFundData() };
+      const { getFundData } = usePortfolioData(vaultId!);
+      return { vaultId, ...getFundData() };
     }) || [];
 
   const noPosition = vaultFundData.every(({ positionSize, operationActive }) => {
@@ -35,12 +29,7 @@ export default function FundsArea({
   return (
     <div className="justify-between items-center mb-10 gap-4 max-w-full">
       {vaultIds?.map((vaultId) => (
-        <FundCard
-          isLoading={isLoading}
-          handleIsLoading={handleIsLoading}
-          vaultId={vaultId}
-          key={vaultId}
-        />
+        <FundCard key={vaultId} isLoading={isLoading} vaultId={vaultId} />
       ))}
     </div>
   );

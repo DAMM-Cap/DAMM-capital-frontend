@@ -5,8 +5,9 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { useSession } from "./session-context";
 interface VaultContextType {
   vaults: DataPresenter | null;
-  setVaults: (vaults: DataPresenter | null) => void;
   isLoading: boolean;
+  pollInterval: number;
+  setPollInterval: (pollInterval: number) => void;
 }
 
 const VaultContext = createContext<VaultContextType | undefined>(undefined);
@@ -16,10 +17,13 @@ interface VaultProviderProps {
 }
 
 export function VaultProvider({ children }: VaultProviderProps) {
+  const [pollInterval, setPollInterval] = useState(1000 * 60 * 5); 
+  
+  
   const { isSignedIn, evmAddress: usersAccount } = useSession();
   const [vaults, setVaults] = useState<DataPresenter | null>(null);
 
-  const vaultDataQuery = useVaultData(isSignedIn ? usersAccount : "0x");
+  const vaultDataQuery = useVaultData(isSignedIn ? usersAccount : "0x", pollInterval);
   const { data, isLoading } = vaultDataQuery;
 
   useEffect(() => {
@@ -30,12 +34,14 @@ export function VaultProvider({ children }: VaultProviderProps) {
     }
   }, [isLoading, data, isSignedIn]);
 
+
   return (
     <VaultContext.Provider
       value={{
         vaults,
-        setVaults,
-        isLoading: isSignedIn ? isLoading : false,
+        pollInterval,
+        setPollInterval,
+        isLoading,
       }}
     >
       {children}
@@ -43,8 +49,16 @@ export function VaultProvider({ children }: VaultProviderProps) {
   );
 }
 
-export function useVaults() {
+export function useVaults(pollInterval: number) {
   const context = useContext(VaultContext);
+
+  useEffect(() => {
+    if (context) {
+      context.setPollInterval(pollInterval);
+    }
+  }, [pollInterval]);
+
+
   if (context === undefined) {
     throw new Error("useVaults must be used within a VaultProvider");
   }

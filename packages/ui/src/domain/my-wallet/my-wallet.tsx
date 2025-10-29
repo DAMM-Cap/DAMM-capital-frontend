@@ -12,6 +12,7 @@ import clsx from "clsx";
 import { HeartHandshakeIcon, LogInIcon, SendIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ReceiveTokensDialog, RescueTokenDialog, SendTokensDialog } from "./components";
+import { POLL_BALANCES_MY_WALLET_INTERVAL, POLL_VAULTS_DATA_MY_WALLET_INTERVAL } from "@/shared/config/constants";
 
 export default function MyWallet() {
   const { evmAddress, isSignedIn, isConnecting, isSmartAccount } = useSession();
@@ -34,15 +35,19 @@ export default function MyWallet() {
   } = useModal(false);
 
   const [isLoadingFund, setIsLoadingFund] = useState(true);
-  const { vaults } = useVaults();
+  const { vaults } = useVaults(POLL_VAULTS_DATA_MY_WALLET_INTERVAL);
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
-  const { data: tokensBalance } = useTokensBalance();
+  const { data: tokensBalance, refetch: refetchTokensBalance } = useTokensBalance(
+    POLL_BALANCES_MY_WALLET_INTERVAL,
+  );
   const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
   const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;
   const nullAddress = "0x0000000000000000000000000000000000000000";
   const [erc20Address, setErc20Address] = useState(nullAddress);
-  const { data: rescueToken, error: rescueTokenError } = useRescueToken({ rescueTokenAddress: erc20Address });
-  
+  const { data: rescueToken, error: rescueTokenError } = useRescueToken({
+    rescueTokenAddress: erc20Address,
+  });
+
   useEffect(() => {
     if (vaultsData) {
       const tokens: Tokens = {};
@@ -59,8 +64,9 @@ export default function MyWallet() {
             name: fund.staticData.vault_name,
             symbol: fund.staticData.token_symbol,
             balance:
-              Number(tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]?.availableSupply) ||
-              0,
+              Number(
+                tokensBalance?.vaultBalances[fund.staticData.vault_id.toString()]?.availableSupply,
+              ) || 0,
             metadata: {
               address: fund.staticData.token_address,
               decimals: fund.staticData.token_decimals,
@@ -79,20 +85,20 @@ export default function MyWallet() {
     if (!rescueToken || !erc20Address || !tokens) return;
 
     try {
-    const tokensLocal: Tokens = { ...tokens };
-    tokensLocal[erc20Address] = {
-      name: rescueToken.name,
-      symbol: rescueToken.symbol,
-      balance: rescueToken.balance,
-      metadata: {
-        address: erc20Address,
-        decimals: rescueToken.decimals,
-      },
+      const tokensLocal: Tokens = { ...tokens };
+      tokensLocal[erc20Address] = {
+        name: rescueToken.name,
+        symbol: rescueToken.symbol,
+        balance: rescueToken.balance,
+        metadata: {
+          address: erc20Address,
+          decimals: rescueToken.decimals,
+        },
+      };
+      setTokens(tokensLocal);
+    } catch (error) {
+      setErc20Address(nullAddress);
     }
-    setTokens(tokensLocal);
-  } catch (error) {
-    setErc20Address(nullAddress);
-  }
   }, [erc20Address, rescueToken]);
 
   useEffect(() => {
@@ -100,7 +106,6 @@ export default function MyWallet() {
       setErc20Address(nullAddress);
     }
   }, [rescueTokenError]);
-
 
   useEffect(() => {
     setTimeout(() => {
@@ -111,12 +116,16 @@ export default function MyWallet() {
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex flex-row justify-between mb-10">
-        <Label label={clsx(isMobile?"Wallet": "Wallet Overview")} className="domain-title" />
+        <Label label={clsx(isMobile ? "Wallet" : "Wallet Overview")} className="domain-title" />
         {isSmartAccount && !noVaults && (
           <div className="flex flex-row gap-4">
-            <Button onClick={openReceiveTokens} disabled={!isSignedIn || isConnecting} className={clsx(isMobile && "h-8 w-12")}>
+            <Button
+              onClick={openReceiveTokens}
+              disabled={!isSignedIn || isConnecting}
+              className={clsx(isMobile && "h-8 w-12")}
+            >
               <LogInIcon className={clsx("rotate-90", isMobile && "size-4")} />
-              {isMobile? "" : "Receive"}
+              {isMobile ? "" : "Receive"}
             </Button>
             <Button
               onClick={openSendTokens}
@@ -124,8 +133,8 @@ export default function MyWallet() {
               variant="secondary"
               className={clsx(isMobile && "h-8 w-12")}
             >
-              <SendIcon className={clsx(isMobile && "size-4")}/>
-              {isMobile? "" : "Send"}
+              <SendIcon className={clsx(isMobile && "size-4")} />
+              {isMobile ? "" : "Send"}
             </Button>
             <Button
               onClick={openRescueToken}
@@ -133,8 +142,8 @@ export default function MyWallet() {
               variant="secondary"
               className={clsx(isMobile && "h-8 w-12")}
             >
-              <HeartHandshakeIcon className={clsx(isMobile && "size-4")}/>
-              {isMobile? "" : "Rescue"}
+              <HeartHandshakeIcon className={clsx(isMobile && "size-4")} />
+              {isMobile ? "" : "Rescue"}
             </Button>
           </div>
         )}
@@ -176,7 +185,12 @@ export default function MyWallet() {
         network={network}
       />
       {tokens && (
-        <SendTokensDialog isOpen={isOpenSendTokens} setIsOpen={closeSendTokens} tokens={tokens} />
+        <SendTokensDialog
+          isOpen={isOpenSendTokens}
+          setIsOpen={closeSendTokens}
+          tokens={tokens}
+          refetchTokensBalance={refetchTokensBalance}
+        />
       )}
       <RescueTokenDialog
         isOpen={isOpenRescueToken}

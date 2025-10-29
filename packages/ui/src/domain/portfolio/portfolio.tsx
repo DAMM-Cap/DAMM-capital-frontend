@@ -10,9 +10,9 @@ export default function Portfolio() {
   const navigate = useNavigate();
   const { isSignedIn } = useSession();
   const [isLoadingFund, setIsLoadingFund] = useState(true);
-  const { usePortfolioSingleValuesData } = usePortfolioData();
+  const { getPortfolioSingleValuesData } = usePortfolioData();
 
-  const { tvl, yieldEarned, deposited } = usePortfolioSingleValuesData();
+  const { tvl, yieldEarned, deposited } = getPortfolioSingleValuesData();
 
   useEffect(() => {
     setTimeout(() => {
@@ -56,7 +56,7 @@ export default function Portfolio() {
           />
         </div>
 
-        <FundsArea isLoading={isLoadingFund} handleIsLoading={setIsLoadingFund} />
+        <FundsArea isLoading={isLoadingFund} />
       </div>
     </div>
   );

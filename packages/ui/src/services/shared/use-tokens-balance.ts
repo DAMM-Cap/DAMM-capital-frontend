@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Abi, Address, formatUnits, isAddress, MulticallParameters } from "viem";
 import IERC20ABI from "../lagoon/abis/IERC20.json";
 import VaultABI from "../lagoon/abis/Vault.json";
+import { POLL_VAULTS_DATA_BALANCES_INTERVAL } from "@/shared/config/constants";
 
 export interface TokensBalance {
   nativeBalance: string;
@@ -20,8 +21,8 @@ export interface TokensBalance {
   };
 }
 
-export function useTokensBalance() {
-  const { vaults } = useVaults();
+export function useTokensBalance(pollInterval: number) {
+  const { vaults } = useVaults(POLL_VAULTS_DATA_BALANCES_INTERVAL);
   const { evmAddress } = useSession();
   const chain = getNetworkConfig().chain;
 
@@ -138,7 +139,7 @@ export function useTokensBalance() {
     enabled: isAddress(evmAddress) && localStorage.getItem("disconnect_requested") !== "true", // Don't poll if disconnect was requested
     staleTime: 1000 * 30, // 30 seconds
     //refetchInterval: 60 * 1000, // Poll every minute
-    refetchInterval: 5000, // Poll every 5 seconds
+    refetchInterval: pollInterval,
     refetchIntervalInBackground: true,
   });
 }

@@ -10,9 +10,10 @@ interface SendTokensDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   tokens: Tokens;
+  refetchTokensBalance: () => void;
 }
 
-export function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendTokensDialogProps) {
+export function SendTokensDialog({ isOpen, setIsOpen, tokens, refetchTokensBalance }: SendTokensDialogProps) {
   const chainName = getNetworkConfig().chain.name;
 
   const handleReset = () => {
@@ -71,6 +72,7 @@ export function SendTokensDialog({ isOpen, setIsOpen, tokens }: SendTokensDialog
 
     // Wait for confirmation
     await tx.wait();
+    refetchTokensBalance();
 
     setIsLoading(false);
     setIsOpen(false);
