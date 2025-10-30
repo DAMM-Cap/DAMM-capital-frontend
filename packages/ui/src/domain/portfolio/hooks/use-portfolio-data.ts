@@ -69,12 +69,14 @@ export function usePortfolioData() {
       );
       if (!selectedVault) return;
 
+      const priceUSD = tokensBalance?.[vaultUserPositionData.staticData.vault_id]?.priceUSD ?? 0;
+
       // Position Value retrieves real time converted shares from the blockchain
       const availableAssets = Number(
         tokensBalance?.[vaultUserPositionData.staticData.vault_id]?.assets || 0,
       );
       const positionValue = availableAssets;
-      totalPositionValue += positionValue;
+      totalPositionValue += positionValue * priceUSD;
       // ------------------------------------------------------------
 
       // Total Assets retrieves the remaining total assets of the user in the vault
@@ -86,7 +88,7 @@ export function usePortfolioData() {
       const totalAssets =
         Number(vaultUserPositionData.vaultData.positionRaw) + 
         Number(settledDeposits) - Number(settledRedeems);
-      totalTotalAssets += totalAssets;
+      totalTotalAssets += totalAssets * priceUSD;
       // ------------------------------------------------------------
 
       // Absolute yield earned is the difference between the position value and the total assets

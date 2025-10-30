@@ -6,11 +6,13 @@ export default function SingleValueCard({
   value,
   isLoading,
   className,
+  isUSD,
 }: {
   label: string;
   value: string;
   isLoading: boolean;
   className?: string;
+  isUSD?: boolean;
 }) {
   return (
     <Card variant="fund" className="flex-1 max-w-full min-w-[300px] !my-2">
@@ -20,7 +22,10 @@ export default function SingleValueCard({
           <LoadingField className="!h-6 !w-48" />
         </div>
       ) : (
-        <Label label={value} className={clsx("domain-title !justify-center mt-2", className)} />
+        <Label
+          label={isUSD ? `≈ $${value} USD` : value}
+          className={clsx("domain-title !justify-center mt-2", className)}
+        />
       )}
     </Card>
   );

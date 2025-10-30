@@ -42,6 +42,7 @@ export default function Portfolio() {
             label="Total Portfolio Value"
             value={tvl.toString()}
             isLoading={isLoadingFund}
+            isUSD
           />
           <SingleValueCard
             label="Total Yield Earned"
@@ -53,6 +54,7 @@ export default function Portfolio() {
             label="Total Deposited"
             value={deposited.toString()}
             isLoading={isLoadingFund}
+            isUSD
           />
         </div>
 

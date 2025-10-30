@@ -166,7 +166,7 @@ export function useFundOperateData(vaultId: string) {
 
     return {
       position: availableShares,
-      positionUSD: `≈ $${availableAssets}`,
+      positionUSD: `≈ $${availableAssets} ${selectedVault.staticData.token_symbol}`,
       conversionValue,
       vault_address: selectedVault.staticData.vault_address,
       token_address: selectedVault.staticData.token_address,
@@ -233,7 +233,7 @@ export function useFundOperateData(vaultId: string) {
 
     return {
       position: availableShares,
-      positionUSD: `≈ $${availableAssets}`,
+      positionUSD: `≈ $${availableAssets} ${selectedVault.staticData.token_symbol}`,
       positionUSDRaw: availableAssets,
       conversionValue,
       vault_address: selectedVault.staticData.vault_address,
@@ -295,7 +295,7 @@ export function useFundOperateData(vaultId: string) {
       vault_icon: selectedVault.staticData.vault_icon,
       token_symbol: selectedVault.staticData.token_symbol,
       totalValueRaw: availableShares,
-      totalValueUSD: `≈ $${availableAssets}`,
+      totalValueUSD: `≈ $${availableAssets} ${selectedVault.staticData.token_symbol}`,
       vaultShare: selectedVault.positionData.vaultShare,
       claimableShares: selectedVault.positionData.claimableShares,
       vault_address: selectedVault.staticData.vault_address,
