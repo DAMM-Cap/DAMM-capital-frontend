@@ -136,15 +136,6 @@ export default function MyWallet() {
               <SendIcon className={clsx(isMobile && "size-4")} />
               {isMobile ? "" : "Send"}
             </Button>
-            <Button
-              onClick={openRescueToken}
-              disabled={!isSignedIn || isConnecting}
-              variant="secondary"
-              className={clsx(isMobile && "h-8 w-12")}
-            >
-              <HeartHandshakeIcon className={clsx(isMobile && "size-4")} />
-              {isMobile ? "" : "Rescue"}
-            </Button>
           </div>
         )}
       </div>
@@ -170,6 +161,16 @@ export default function MyWallet() {
           }))}
         />
       )}
+      <div className="fixed bottom-16 z-20 flex justify-start">
+        <Button
+          onClick={openRescueToken}
+          disabled={!isSignedIn || isConnecting}
+          variant="outline-secondary"
+        >
+          <HeartHandshakeIcon className={clsx(isMobile && "size-4")} />
+          Rescue Token
+        </Button>
+      </div>
       {noVaults && (
         <Card variant="fund" className="flex flex-col gap-4">
           <Label
