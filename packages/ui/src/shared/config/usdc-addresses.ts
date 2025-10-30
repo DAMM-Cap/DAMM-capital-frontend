@@ -5,7 +5,6 @@ export const USDC_BY_CHAIN: Record<number, `0x${string}`> = {
   [optimism.id]: "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
   [arbitrum.id]: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
   [base.id]: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-  // Polygon note: liquidity often sits on USDC.e (0x2791…); adjust if needed:
   [polygon.id]: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", // USDC.e
 };
 
