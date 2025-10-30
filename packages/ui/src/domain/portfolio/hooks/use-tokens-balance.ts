@@ -1,7 +1,7 @@
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
-import { getUsdPrice } from "@/services/api/lib/vault-metrics/utils";
 import VaultABI from "@/services/lagoon/abis/Vault.json";
+import { getUsdPrice } from "@/services/uniswap/utils";
 import { publicClient } from "@/services/viem/viem";
 import { getNetworkConfig } from "@/shared/config/network";
 import { formatToMaxDefinition } from "@/shared/utils";

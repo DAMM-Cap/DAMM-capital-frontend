@@ -1,6 +1,6 @@
-import UniswapV3FactoryABI from "@/services/api/lib/vault-metrics/abis/uniswap-v3-factory.json";
-import UniswapV3PoolABI from "@/services/api/lib/vault-metrics/abis/uniswap-v3-pool.json";
 import IERC20ABI from "@/services/lagoon/abis/IERC20-rescue.json";
+import UniswapV3FactoryABI from "@/services/uniswap/abis/uniswap-v3-factory.json";
+import UniswapV3PoolABI from "@/services/uniswap/abis/uniswap-v3-pool.json";
 import { publicClient } from "@/services/viem/viem";
 import { UNISWAP_V3_FACTORY, USDC_BY_CHAIN } from "@/shared/config/usdc-addresses";
 import type { Abi, Address, MulticallParameters } from "viem";
