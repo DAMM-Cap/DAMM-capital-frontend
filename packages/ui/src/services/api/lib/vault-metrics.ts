@@ -185,44 +185,43 @@ function computeVaultMetrics(
   }
 
   // 6) NAV / AUM / TVL (USD) from the latest snapshot (fees already accrued in snapshot)
-const latest = data[data.length - 1]!;
-const priceUSD = 1; // USDT ≈ $1; plug an oracle for non-stables
+  const latest = data[data.length - 1]!;
+  const priceUSD = 1; // For non-stable coins, get the correct price from API
+  
+  // AUM = GROSS (no fee deduction): shares * share_price
+  let aumUSD = 0;
+  if (
+    typeof latest.total_shares === "number" &&
+    typeof latest.share_price === "number" &&
+    typeof latest.deposit_token_decimals === "number"
+  ) {
+    aumUSD = computeAumUsdFromShares(
+      {
+        total_shares: latest.total_shares,
+        share_price: latest.share_price,
+        deposit_token_decimals: latest.deposit_token_decimals,
+      },
+      priceUSD
+    );
+  }
 
-// AUM = GROSS (no fee deduction): shares * share_price
-let aumUSD = 0;
-if (
-  typeof latest.total_shares === "number" &&
-  typeof latest.share_price === "number" &&
-  typeof latest.deposit_token_decimals === "number"
-) {
-  aumUSD = computeAumUsdFromShares(
-    {
-      total_shares: latest.total_shares,
-      share_price: latest.share_price,
-      deposit_token_decimals: latest.deposit_token_decimals,
-    },
-    priceUSD
-  );
-}
-
-// NAV = NET (subtract accrued fee amounts already present in the snapshot)
-let navUSD = 0;
-if (
-  typeof latest.total_assets === "number" &&
-  typeof latest.management_fee === "number" &&
-  typeof latest.deposit_token_decimals === "number"
-) {
-  navUSD = computeNavUsdFromSnapshotUsingFees(
-    {
-      total_assets: latest.total_assets,
-      management_fee: latest.management_fee,
-      performance_fee: latest.performance_fee ?? 0,
-      deposit_token_decimals: latest.deposit_token_decimals,
-    },
-    priceUSD
-  );
-}
-
+  // NAV = NET (subtract accrued fee amounts already present in the snapshot)
+  let navUSD = 0;
+  if (
+    typeof latest.total_assets === "number" &&
+    typeof latest.management_fee === "number" &&
+    typeof latest.deposit_token_decimals === "number"
+  ) {
+    navUSD = computeNavUsdFromSnapshotUsingFees(
+      {
+        total_assets: latest.total_assets,
+        management_fee: latest.management_fee,
+        performance_fee: latest.performance_fee ?? 0,
+        deposit_token_decimals: latest.deposit_token_decimals,
+      },
+      priceUSD
+    );
+  }
 
   return {
     vaultId,

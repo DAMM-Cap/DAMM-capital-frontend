@@ -1,5 +1,6 @@
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
+import { getUsdPrice } from "@/services/api/lib/vault-metrics/utils";
 import VaultABI from "@/services/lagoon/abis/Vault.json";
 import { publicClient } from "@/services/viem/viem";
 import { getNetworkConfig } from "@/shared/config/network";
@@ -10,6 +11,7 @@ import { Abi, Address, formatUnits, isAddress, MulticallParameters } from "viem"
 export interface TokensBalance {
   [vaultId: string]: {
     assets: string;
+    priceUSD: number;
   };
 }
 
@@ -76,17 +78,26 @@ export function useTokensBalance(pollInterval: number) {
           allowFailure: false,
         });
 
-        vaults.vaultsData.forEach((v, i) => {
-          const assets =
-            BigInt(resultsAssets[i * conversionArrayLength] as bigint) +
-            BigInt(results[i * queryLength + 1] as bigint) +
-            BigInt(resultsAssets[i * conversionArrayLength + 1] as bigint);
-          result[v.staticData.vault_id] = {
-            assets: formatToMaxDefinition(
-              Number(formatUnits(assets, v.staticData.token_decimals)),
-            ).toString(),
-          };
-        });
+        await Promise.all(
+          vaults.vaultsData.map(async (v, i) => {
+            // Get the USD price of the underlying token using the chainId and the token address
+            const USDPriceResponse = await getUsdPrice({
+              chainId: chain.id,
+              token: v.staticData.token_address as `0x${string}`,
+              //token: "0x68f180fcCe6836688e9084f035309E29Bf0A2095", // WBTC for testing
+            });
+            const assets =
+              BigInt(resultsAssets[i * conversionArrayLength] as bigint) +
+              BigInt(results[i * queryLength + 1] as bigint) +
+              BigInt(resultsAssets[i * conversionArrayLength + 1] as bigint);
+            result[v.staticData.vault_id] = {
+              assets: formatToMaxDefinition(
+                Number(formatUnits(assets, v.staticData.token_decimals)),
+              ).toString(),
+              priceUSD: USDPriceResponse.usd,
+            };
+          }),
+        );
 
         return result;
       } catch (error) {
