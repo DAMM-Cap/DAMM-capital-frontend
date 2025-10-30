@@ -54,17 +54,17 @@ export function VaultProvider({ children }: VaultProviderProps) {
   );
 }
 
-export function useVaults(pollInterval: number, refetch?: boolean) {
+export function useVaults(pollInterval?: number, refetch?: boolean) {
   const context = useContext(VaultContext);
 
   useEffect(() => {
     const asyncRefetch = async () => {
       await context!.refetch();
-      console.log("Refetched vaults");
     };
     
     if (!context) return;
-    context.setPollInterval(pollInterval);
+    
+    if (pollInterval !== undefined) context.setPollInterval(pollInterval);
     if (refetch) asyncRefetch();
   }, [refetch, pollInterval]);
 

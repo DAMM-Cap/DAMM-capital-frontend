@@ -80,7 +80,7 @@ export interface FundData {
 }
 
 export function useFundOperateData(vaultId: string) {
-  const { vaults, refetch: refetchVaults } = useVaults(POLL_VAULTS_DATA_FUND_OPERATE_INTERVAL);
+  const { vaults, refetch: refetchVaults } = useVaults(POLL_VAULTS_DATA_FUND_OPERATE_INTERVAL, true);
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
   const [thisOpState, setThisOpState] = useState<OperationState | undefined>(undefined);
   const { data: tokensBalance, refetch: refetchTokensBalance } = useTokensBalance(POLL_BALANCES_FUND_OPERATE_INTERVAL);

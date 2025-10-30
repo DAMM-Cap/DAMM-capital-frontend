@@ -2,7 +2,6 @@ import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import VaultABI from "@/services/lagoon/abis/Vault.json";
 import { publicClient } from "@/services/viem/viem";
-import { POLL_VAULTS_DATA_BALANCES_INTERVAL } from "@/shared/config/constants";
 import { getNetworkConfig } from "@/shared/config/network";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -15,7 +14,7 @@ export interface TokensBalance {
 }
 
 export function useTokensBalance(pollInterval: number) {
-  const { vaults } = useVaults(POLL_VAULTS_DATA_BALANCES_INTERVAL);
+  const { vaults } = useVaults();
   const { evmAddress } = useSession();
   const chain = getNetworkConfig().chain;
 
