@@ -4,7 +4,8 @@ import envParsed from "@/envParsed";
 import { useDeposit } from "@/services/lagoon/use-deposit";
 import { useWithdraw } from "@/services/lagoon/use-withdraw";
 import { ArrowRightIcon, CircleCheckIcon, ClockIcon } from "lucide-react";
-import { useFundOperateData } from "../hooks/use-fund-operate-data";
+import { useMemo } from "react";
+import { DepositData, WithdrawData } from "../hooks/use-fund-operate-data";
 import {
   IconKind,
   useSecondaryActionViewModel,
@@ -30,16 +31,18 @@ function TokenIcon({ type, tokenSymbol }: { type: VisualKind; tokenSymbol: strin
 }
 
 export default function SecondaryActionCard({
-  vaultId,
+  depositData,
+  withdrawData,
+  refetchData,
   isLoading,
   handleLoading,
 }: {
-  vaultId: string;
+  depositData: DepositData;
+  withdrawData: WithdrawData;
+  refetchData: () => void;
   isLoading: boolean;
   handleLoading: (isLoading: boolean) => void;
 }) {
-  const { useWithdrawData, useDepositData } = useFundOperateData(vaultId!);
-
   const {
     isClaimableRedeem,
     claimableRedeemRequest,
@@ -51,7 +54,7 @@ export default function SecondaryActionCard({
     token_address,
     fee_receiver_address,
     exitRate,
-  } = useWithdrawData();
+  } = withdrawData;
 
   const {
     isClaimableDeposit,
@@ -60,7 +63,7 @@ export default function SecondaryActionCard({
     isPendingDepositRequest,
     token_decimals,
     vault_decimals,
-  } = useDepositData();
+  } = depositData;
 
   const { submitRedeem } = useWithdraw();
   const { submitDeposit, cancelDepositRequest } = useDeposit();
@@ -71,6 +74,7 @@ export default function SecondaryActionCard({
       const amount = String(claimableDepositRequest);
       const tx = await submitDeposit(vault_address, token_decimals, amount);
       await tx.wait();
+      refetchData();
     } finally {
       handleLoading(false);
     }
@@ -89,6 +93,7 @@ export default function SecondaryActionCard({
         amount,
       );
       await tx.wait();
+      refetchData();
     } finally {
       handleLoading(false);
     }
@@ -99,6 +104,7 @@ export default function SecondaryActionCard({
     try {
       const tx = await cancelDepositRequest(vault_address);
       await tx.wait();
+      refetchData();
     } finally {
       handleLoading(false);
     }
@@ -107,7 +113,7 @@ export default function SecondaryActionCard({
   const extraDisableOnClaimableDeposit =
     envParsed().BOT_CLAIMS_ON_BEHALF_ACTIVE !== "false" && envParsed().USE_SEPOLIA === "true";
 
-  const vm = useSecondaryActionViewModel({
+  const vm = useSecondaryActionViewModel(useMemo(() => ({
     // deposit
     isClaimableDeposit,
     isPendingDepositRequest,
@@ -127,7 +133,22 @@ export default function SecondaryActionCard({
     handleCancelDeposit,
     // false to allow claiming shares manually when disabling keeper bot in production
     extraDisableOnClaimableDeposit,
-  });
+  }), [
+    isClaimableDeposit, 
+    isPendingDepositRequest, 
+    claimableDepositRequest, 
+    pendingDepositRequest, 
+    isClaimableRedeem, 
+    isPendingRedeemRequest, 
+    claimableRedeemRequest, 
+    pendingRedeemRequest, 
+    token_symbol, 
+    vault_symbol, 
+    handleClaim, 
+    handleRedeem, 
+    handleCancelDeposit, 
+    extraDisableOnClaimableDeposit
+  ]));
 
   if (!vm.visible) return null;
 

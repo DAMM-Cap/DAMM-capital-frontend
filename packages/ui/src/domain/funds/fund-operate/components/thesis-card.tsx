@@ -11,7 +11,7 @@ export default function ThesisCard({ isLoading }: { isLoading: boolean }) {
             {isLoading ? (
               <Skeleton lines={3} />
             ) : (
-              <ul className="list-disc list-outside pl-6 text-sm text-neutral font-montserrat leading-snug whitespace-normal break-words [overflow-wrap:anywhere] hyphens-auto">
+              <ul className="list-disc list-outside pl-6 text-sm text-neutral font-montserrat leading-snug whitespace-normal [overflow-wrap:anywhere] hyphens-auto">
                 <li>Provide low-risk stable yield on popular USD stablecoins.</li>
                 <li>
                   Assets are invested in short-term unleveraged concentrated liquidity positions.
@@ -27,7 +27,7 @@ export default function ThesisCard({ isLoading }: { isLoading: boolean }) {
             {isLoading ? (
               <Skeleton lines={3} />
             ) : (
-              <ul className="list-disc list-outside pl-6 text-sm text-neutral font-montserrat leading-snug whitespace-normal break-words [overflow-wrap:anywhere] hyphens-auto">
+              <ul className="list-disc list-outside pl-6 text-sm text-neutral font-montserrat leading-snug whitespace-normal [overflow-wrap:anywhere] hyphens-auto">
                 <li>
                   The DAMM USD Stablecoin Money Market Fund seeks to provide stable yield for idle
                   USD stablecoin liquidity.

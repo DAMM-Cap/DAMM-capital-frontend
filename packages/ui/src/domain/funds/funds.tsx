@@ -4,6 +4,7 @@ import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { useModal } from "@/hooks/use-modal";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
+import { POLL_VAULTS_DATA_FUNDS_INTERVAL } from "@/shared/config/constants";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -12,7 +13,7 @@ export default function Funds() {
   const navigate = useNavigate();
   const { isSignedIn, login } = useSession();
   const [isLoadingFund, setIsLoadingFund] = useState(true);
-  const { vaults } = useVaults();
+  const { vaults } = useVaults(POLL_VAULTS_DATA_FUNDS_INTERVAL);
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
   const vaultMetrics: VaultMetricsView[] | undefined = vaults?.vaultMetrics;
   const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;

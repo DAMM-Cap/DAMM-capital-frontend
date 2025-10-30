@@ -1,9 +1,9 @@
 import { useVaults } from "@/context/vault-context";
-import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
-import { useTokensBalance } from "@/services/shared/use-tokens-balance";
+import { POLL_BALANCES_PORTFOLIO_INTERVAL, POLL_VAULTS_DATA_PORTFOLIO_INTERVAL } from "@/shared/config/constants";
 import { formatToMaxDefinition } from "@/shared/utils";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTokensBalance } from "./use-tokens-balance";
 
 export enum OperationStatus {
   CONFIRMED = "Confirmed",
@@ -12,11 +12,30 @@ export enum OperationStatus {
   SHARES_CLAIMABLE = "Shares Claimable",
   ASSETS_CLAIMABLE = "Assets Claimable",
 }
+export interface PortfolioFundData {
+  vault_name: string,
+  apr: number,
+  vault_icon: string,
+  token_symbol: string,
+  positionSize: number,
+  yieldEarned: number,
+  totalAssets: number,
+  operation: string,
+  operationVariant: string,
+  operationActive: boolean,
+  lastUpdate: string | undefined,
+  vault_address: string,
+}
 
-export function usePortfolioData(vaultId?: string) {
-  const { vaults, isLoading } = useVaults();
-  const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
-  const { data: tokensBalance } = useTokensBalance();
+export interface PortfolioSingleValuesData {
+  tvl: string,
+  yieldEarned: string,
+  deposited: string,
+}
+
+export function usePortfolioData() {
+  const { vaults, isLoading } = useVaults(POLL_VAULTS_DATA_PORTFOLIO_INTERVAL, true);
+  const { data: tokensBalance } = useTokensBalance(POLL_BALANCES_PORTFOLIO_INTERVAL);
   const [vaultsData, setVaultsData] = useState<
     Record<string, Record<"positionValue" | "totalAssets" | "yieldEarned", number>>
   >({});
@@ -24,20 +43,6 @@ export function usePortfolioData(vaultId?: string) {
   const [totalPositionValue, setTotalPositionValue] = useState<number>(0);
   const [totalTotalAssets, setTotalTotalAssets] = useState<number>(0);
   const [totalYieldEarned, setTotalYieldEarned] = useState<number>(0);
-
-  const [selectedVaultMetrics, setSelectedVaultMetrics] = useState<VaultMetricsView | undefined>(
-    undefined,
-  );
-
-  useEffect(() => {
-    if (vaultId && vaults?.vaultsData && vaults?.vaultMetrics) {
-      const foundVault = vaults.vaultsData.find((v) => v.staticData.vault_id === vaultId);
-      setSelectedVault(foundVault);
-
-      const foundVaultMetrics = vaults.vaultMetrics.find((v) => v.vaultId === vaultId);
-      setSelectedVaultMetrics(foundVaultMetrics);
-    }
-  }, [vaultId, vaults]);
 
   const operationStateParams = useMemo(() => {
     return vaults?.vaultsData.map(vault => ({
@@ -49,15 +54,9 @@ export function usePortfolioData(vaultId?: string) {
   }, [vaults?.vaultsData]);
 
   const { data: opState } = useOperationStateQuery(operationStateParams);
-  const opStateRef = useRef(opState);
-
-  // Update ref when opState changes
+  
   useEffect(() => {
-    opStateRef.current = opState;
-  }, [opState]);
-
-  useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || opState?.length === 0) return;
 
     let totalPositionValue = 0;
     let totalTotalAssets = 0;
@@ -72,7 +71,7 @@ export function usePortfolioData(vaultId?: string) {
 
       // Position Value retrieves real time converted shares from the blockchain
       const availableAssets = Number(
-        tokensBalance?.vaultBalances[vaultUserPositionData.staticData.vault_id]?.assets || 0,
+        tokensBalance?.[vaultUserPositionData.staticData.vault_id]?.assets || 0,
       );
       const positionValue = availableAssets;
       totalPositionValue += positionValue;
@@ -81,7 +80,7 @@ export function usePortfolioData(vaultId?: string) {
       // Total Assets retrieves the remaining total assets of the user in the vault
       // This is by tracking the original deposits in the original denomination
       // Deposit values are fetched from the db by the indexer action, so this is not real time
-      const thisOpState = opStateRef.current?.find((o) => o.vaultId === vaultUserPositionData.staticData.vault_id);
+      const thisOpState = opState?.find((o) => o.vaultId === vaultUserPositionData.staticData.vault_id);
       const settledDeposits = thisOpState?.claimableDepositRequest || 0;
       const settledRedeems = thisOpState?.claimableRedeemRequest || 0;
       const totalAssets =
@@ -106,24 +105,28 @@ export function usePortfolioData(vaultId?: string) {
     setTotalPositionValue(formatToMaxDefinition(totalPositionValue));
     setTotalTotalAssets(formatToMaxDefinition(totalTotalAssets));
     setTotalYieldEarned(formatToMaxDefinition(totalYieldEarned));
-  }, [vaults, tokensBalance, isLoading]);
+  }, [vaults, tokensBalance, isLoading, opState]);
 
-  function useFundData() {
+  function getFundData(vaultId: string) {
+    const selectedVault = vaults!.vaultsData.find((v) => v.staticData.vault_id === vaultId);
+    const selectedVaultMetrics = vaults!.vaultMetrics.find((v) => v.vaultId === vaultId);
+    
     const thisOpState = opState.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
     if (!selectedVault || !thisOpState) {
       return {
         vault_name: "",
-        apr: "0",
+        apr: 0,
         vault_icon: "",
         token_symbol: "",
-        positionSize: "0",
-        yieldEarned: "0",
-        totalAssets: "0",
+        positionSize: 0,
+        yieldEarned: 0,
+        totalAssets: 0,
         operation: "",
         operationVariant: "outline-secondary",
         operationActive: false,
         lastUpdate: "",
-      };
+        vault_address: "",
+      } satisfies PortfolioFundData;
     }
 
     
@@ -153,15 +156,16 @@ export function usePortfolioData(vaultId?: string) {
       yieldEarned: vaultsData[selectedVault.staticData.vault_id]?.yieldEarned ?? 0,
       totalAssets: vaultsData[selectedVault.staticData.vault_id]?.totalAssets ?? 0,
       vault_icon: selectedVault.staticData.vault_icon,
+      vault_address: selectedVault.staticData.vault_address,
       token_symbol: selectedVault.staticData.token_symbol,
       lastUpdate: selectedVaultMetrics?.lastSnapshotTimestamp,
       operation: operation,
       operationVariant: operationVariant,
       operationActive: operation !== OperationStatus.CONFIRMED,
-    };
+    } satisfies PortfolioFundData;
   }
 
-  function usePortfolioSingleValuesData() {
+  function getPortfolioSingleValuesData() {
     return {
       tvl: totalPositionValue,
       yieldEarned: totalYieldEarned,
@@ -170,8 +174,8 @@ export function usePortfolioData(vaultId?: string) {
   }
 
   return {
-    useFundData,
-    usePortfolioSingleValuesData,
+    getFundData,
+    getPortfolioSingleValuesData,
     vaultIds: vaults?.vaultsData?.map((fund) => fund.staticData.vault_id),
     isLoading: isLoading,
   };
