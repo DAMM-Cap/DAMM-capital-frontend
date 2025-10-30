@@ -4,11 +4,16 @@ import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { getVaultLinks } from "@/shared/config/link-utils";
 import { useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
-import { usePortfolioData } from "../hooks/use-portfolio-data";
+import { PortfolioFundData } from "../hooks/use-portfolio-data";
 import klerosCurateIcon from "/kleros-curate.svg";
 
-export default function FundCard({ isLoading, vaultId }: { isLoading: boolean; vaultId: string }) {
-  const { getFundData, isLoading: vaultLoading } = usePortfolioData(vaultId!);
+interface FundCardProps {
+  isLoading: boolean;
+  vaultId: string;
+  fundData: PortfolioFundData;
+}
+
+export default function FundCard({ isLoading, vaultId, fundData }: FundCardProps) {
   const vaultIcon = <DammStableIcon size={48} />;
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -26,12 +31,11 @@ export default function FundCard({ isLoading, vaultId }: { isLoading: boolean; v
     operationActive,
     lastUpdate,
     vault_address,
-  } = getFundData();
+  } = fundData;
 
   const { curateLink } = getVaultLinks(vault_address!);
 
   return (
-    !vaultLoading &&
     (Number(positionSize) > 0 || operationActive) && (
       <div
         className="flex-1 flex-col gap-4 hover:cursor-pointer"

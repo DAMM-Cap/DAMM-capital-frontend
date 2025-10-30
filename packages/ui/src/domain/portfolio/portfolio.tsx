@@ -10,15 +10,15 @@ export default function Portfolio() {
   const navigate = useNavigate();
   const { isSignedIn } = useSession();
   const [isLoadingFund, setIsLoadingFund] = useState(true);
-  const { getPortfolioSingleValuesData } = usePortfolioData();
+  const { getPortfolioSingleValuesData, getFundData, vaultIds, isLoading: isLoadingPortfolio } = usePortfolioData();
 
   const { tvl, yieldEarned, deposited } = getPortfolioSingleValuesData();
 
   useEffect(() => {
     setTimeout(() => {
-      setIsLoadingFund(false);
+      setIsLoadingFund(isLoadingPortfolio);
     }, 1000);
-  }, []);
+  }, [isLoadingPortfolio]);
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -56,7 +56,7 @@ export default function Portfolio() {
           />
         </div>
 
-        <FundsArea isLoading={isLoadingFund} />
+        <FundsArea isLoading={isLoadingFund} vaultIds={vaultIds ?? []} getFundData={getFundData} />
       </div>
     </div>
   );

@@ -3,8 +3,8 @@ export const POLL_BALANCES_MY_WALLET_INTERVAL = 0;
 export const POLL_VAULTS_DATA_MY_WALLET_INTERVAL = 0; //1000 * 60 * 5;
 
 // Portfolio Poll Intervals
-export const POLL_BALANCES_PORTFOLIO_INTERVAL = 0; //1000 * 30;
-export const POLL_VAULTS_DATA_PORTFOLIO_INTERVAL = 0; //1000 * 60 * 5;
+export const POLL_BALANCES_PORTFOLIO_INTERVAL = 1000 * 30;
+export const POLL_VAULTS_DATA_PORTFOLIO_INTERVAL = 1000 * 30;
 
 // Funds Poll Intervals
 export const POLL_VAULTS_DATA_FUNDS_INTERVAL = 0; //1000 * 60 * 5;

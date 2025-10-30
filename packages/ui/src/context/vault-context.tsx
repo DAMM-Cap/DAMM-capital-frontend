@@ -11,7 +11,6 @@ interface VaultContextType {
   pollInterval: number;
   setPollInterval: (pollInterval: number) => void;
   refetch: () => Promise<QueryObserverResult<VaultDataResponse, Error>>;
-  //refetch: () => void;
 }
 
 const VaultContext = createContext<VaultContextType | undefined>(undefined);
@@ -24,16 +23,18 @@ export function VaultProvider({ children }: VaultProviderProps) {
   const [pollInterval, setPollInterval] = useState(0); 
   
   const { isSignedIn, evmAddress: usersAccount } = useSession();
+  const { data, isLoading, refetch } = useVaultData(isSignedIn ? usersAccount : "0x", pollInterval);
+  
   const [vaults, setVaults] = useState<DataPresenter | null>(null);
-
-  const vaultDataQuery = useVaultData(isSignedIn ? usersAccount : "0x", pollInterval);
-  const { data, isLoading, refetch } = vaultDataQuery;
+  const [isHookLoading, setIsHookLoading] = useState(isLoading); 
 
   useEffect(() => {
     if (isLoading) {
       setVaults(null);
+      setIsHookLoading(true);
     } else if (data) {
       setVaults(DataWrangler({ data }));
+      setIsHookLoading(false);
     }
   }, [isLoading, data, isSignedIn]);
 
@@ -45,8 +46,7 @@ export function VaultProvider({ children }: VaultProviderProps) {
         pollInterval,
         setPollInterval,
         refetch: async () => await refetch(),
-        //refetch,
-        isLoading,
+        isLoading: isHookLoading,
       }}
     >
       {children}
@@ -58,9 +58,14 @@ export function useVaults(pollInterval: number, refetch?: boolean) {
   const context = useContext(VaultContext);
 
   useEffect(() => {
+    const asyncRefetch = async () => {
+      await context!.refetch();
+      console.log("Refetched vaults");
+    };
+    
     if (!context) return;
     context.setPollInterval(pollInterval);
-    if (refetch) context.refetch();
+    if (refetch) asyncRefetch();
   }, [refetch, pollInterval]);
 
   if (context === undefined) {

@@ -65,5 +65,6 @@ export function useTokensBalance(pollInterval: number) {
     //refetchInterval: 60 * 1000, // Poll every minute
     refetchInterval: pollInterval,
     refetchIntervalInBackground: true,
+    refetchOnMount: "always",
   });
 }

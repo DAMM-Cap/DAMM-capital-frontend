@@ -4,6 +4,16 @@ import { Abi, formatUnits, MulticallParameters } from "viem";
 import { publicClient } from "../viem/viem";
 import VaultABI from "./abis/Vault.json";
 
+export interface OperationState {
+  pendingDepositRequest: number;
+  pendingRedeemRequest: number;
+  claimableDepositRequest: number;
+  claimableRedeemRequest: number;
+  isWhitelisted: boolean;
+  vaultId: string;
+  vaultAddress: string;
+}
+
 interface OperationStateParams {
   vaultId?: string;
   vaultAddress?: string;
@@ -73,6 +83,7 @@ export function useOperationStateQuery(params: OperationStateParams[]) {
 
   const {
     data: opStates = [],
+    refetch,
   } = useQuery({
     queryKey: ["operationStates", params, isSignedIn],
     queryFn: async () => {
@@ -82,14 +93,14 @@ export function useOperationStateQuery(params: OperationStateParams[]) {
         params.map(async ({ vaultId, vaultAddress, tokenDecimals, vaultDecimals }) => {
           if (!vaultAddress) {
             return {
-              vaultId: vaultId,
-              vaultAddress,
+              vaultId: vaultId ?? "",
+              vaultAddress: vaultAddress ?? "",
               pendingDepositRequest: 0,
               pendingRedeemRequest: 0,
               claimableDepositRequest: 0,
               claimableRedeemRequest: 0,
               isWhitelisted: false,
-            };
+            } satisfies OperationState;
           }
 
           const {
@@ -101,14 +112,14 @@ export function useOperationStateQuery(params: OperationStateParams[]) {
           } = await getOperationStateData(vaultAddress, tokenDecimals!, vaultDecimals!);
           
           return {
-            vaultId: vaultId,
+            vaultId: vaultId!,
             vaultAddress,
             pendingDepositRequest: Number(pendingDepositRequest),
             pendingRedeemRequest: Number(pendingRedeemRequest),
             claimableDepositRequest: Number(claimableDepositRequest),
             claimableRedeemRequest: Number(claimableRedeemRequest),
             isWhitelisted,
-          }
+          } satisfies OperationState;
         })
       );
 
@@ -116,7 +127,8 @@ export function useOperationStateQuery(params: OperationStateParams[]) {
     },
     enabled: Boolean(params.length && isSignedIn),
     refetchInterval: 0, //5000,
+    refetchOnMount: "always",
   });
 
-  return { data: opStates };
+  return { data: opStates satisfies OperationState[], refetch };
 }

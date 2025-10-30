@@ -84,5 +84,6 @@ export function useRescueToken({ rescueTokenAddress }: { rescueTokenAddress: str
       isAddress(rescueTokenAddress), // Don't poll if disconnect was requested or invalid address
     staleTime: 1000 * 30, // 30 seconds
     retry: false, // Don't retry failed queries
+    refetchOnMount: "always",
   });
 }

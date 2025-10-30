@@ -162,6 +162,7 @@ export default function Withdraw({
 
     setCloseModalWithdraw();
     setTxHash(tx.hash ?? "");
+    refetchData();
     setOpenModalInProgress();
   };
 

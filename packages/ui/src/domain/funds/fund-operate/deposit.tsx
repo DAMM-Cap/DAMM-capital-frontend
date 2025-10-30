@@ -113,6 +113,7 @@ export default function Deposit({
 
     setCloseModal();
     setTxHash(tx.hash ?? "");
+    refetchData();
     setOpenModalInProgress();
   };
 

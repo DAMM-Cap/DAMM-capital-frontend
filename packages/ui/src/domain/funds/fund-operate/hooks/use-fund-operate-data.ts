@@ -1,6 +1,6 @@
 import { useVaults } from "@/context/vault-context";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
-import { useOperationStateQuery } from "@/services/lagoon/use-operation-state";
+import { OperationState, useOperationStateQuery } from "@/services/lagoon/use-operation-state";
 import { POLL_BALANCES_FUND_OPERATE_INTERVAL, POLL_VAULTS_DATA_FUND_OPERATE_INTERVAL } from "@/shared/config/constants";
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useEffect, useState } from "react";
@@ -82,6 +82,7 @@ export interface FundData {
 export function useFundOperateData(vaultId: string) {
   const { vaults, refetch: refetchVaults } = useVaults(POLL_VAULTS_DATA_FUND_OPERATE_INTERVAL);
   const [selectedVault, setSelectedVault] = useState<VaultsDataView | undefined>(undefined);
+  const [thisOpState, setThisOpState] = useState<OperationState | undefined>(undefined);
   const { data: tokensBalance, refetch: refetchTokensBalance } = useTokensBalance(POLL_BALANCES_FUND_OPERATE_INTERVAL);
   const walletBalance = Number(tokensBalance?.[vaultId]?.availableSupply || 0);
   const availableAssets = Number(tokensBalance?.[vaultId]?.assets || 0);
@@ -101,7 +102,7 @@ export function useFundOperateData(vaultId: string) {
     }
   }, [vaultId, vaults]);
 
-  const { data: opState } = useOperationStateQuery([
+  const { data: opState, refetch: refetchOpState } = useOperationStateQuery([
     {
       vaultId: selectedVault?.staticData.vault_id,
       vaultAddress: selectedVault?.staticData.vault_address,
@@ -110,8 +111,15 @@ export function useFundOperateData(vaultId: string) {
     },
   ]);
 
+  useEffect(() => {
+    if (opState && opState.length > 0) {
+      setThisOpState(opState[0]);
+      return;
+    }
+    setThisOpState(undefined);
+  }, [opState]);
+
   function getDepositData() {
-    const thisOpState = opState?.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
     if (!selectedVault || !thisOpState) {
       return {
         position: 0,
@@ -180,7 +188,6 @@ export function useFundOperateData(vaultId: string) {
   }
 
   function getWithdrawData() {
-    const thisOpState = opState?.find((o) => o.vaultId === selectedVault?.staticData.vault_id);
     if (!selectedVault || !thisOpState) {
       return {
         position: 0,
@@ -312,6 +319,7 @@ export function useFundOperateData(vaultId: string) {
   async function refetchData() {
     await refetchTokensBalance();
     await refetchVaults();
+    await refetchOpState();
   }
 
   return {

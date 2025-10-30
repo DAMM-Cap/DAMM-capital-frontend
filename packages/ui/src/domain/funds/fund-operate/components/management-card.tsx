@@ -96,6 +96,7 @@ export default function ManagementCard({
           <SecondaryActionCard
             depositData={depositData}
             withdrawData={withdrawData}
+            refetchData={refetchData}
             handleLoading={handleLoading}
             isLoading={isLoading}
           />
