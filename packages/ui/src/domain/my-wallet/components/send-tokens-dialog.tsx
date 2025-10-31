@@ -142,15 +142,17 @@ export function SendTokensDialog({ isOpen, setIsOpen, tokens, refetchTokensBalan
               max={selectedRow.balance}
               validation={invalidAmount ? "invalid" : undefined}
               validationMessage="Invalid amount"
-              selector={{
-                onOptionSelected: (e) => {
-                  changeTokenSelection(e.target.value);
-                },
-                options: Object.keys(tokens).map((token) => ({
-                  label: tokens[token].symbol,
-                  value: token,
-                })),
-              }}
+              selector={
+                Object.keys(tokens).length > 1? {
+                  onOptionSelected: (e) => {
+                    changeTokenSelection(e.target.value);
+                  },
+                  options: Object.keys(tokens).map((token) => ({
+                    label: tokens[token].symbol,
+                    value: token,
+                  })),
+                } : undefined
+              }
             />
             <Input
               label="Address"

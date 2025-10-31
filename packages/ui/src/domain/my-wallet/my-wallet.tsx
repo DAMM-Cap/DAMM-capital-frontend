@@ -3,7 +3,7 @@ import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { useSession } from "@/context/session-context";
 import { useVaults } from "@/context/vault-context";
 import { useRescueToken } from "@/domain/my-wallet/hooks/use-rescue-token";
-import { Tokens } from "@/domain/types/token";
+import { Tokens, TokenType } from "@/domain/types/token";
 import { useModal } from "@/hooks/use-modal";
 import { VaultsDataView } from "@/services/api/types/data-presenter";
 import { POLL_BALANCES_MY_WALLET_INTERVAL, POLL_VAULTS_DATA_MY_WALLET_INTERVAL } from "@/shared/config/constants";
@@ -28,25 +28,39 @@ export default function MyWallet() {
     close: closeSendTokens,
     open: openSendTokens,
   } = useModal(false);
-  const {
-    isOpen: isOpenRescueToken,
-    close: closeRescueToken,
-    open: openRescueToken,
-  } = useModal(false);
 
   const [isLoadingFund, setIsLoadingFund] = useState(true);
+  const [isValidERC20Address, setIsValidERC20Address] = useState(true);
   const { vaults } = useVaults(POLL_VAULTS_DATA_MY_WALLET_INTERVAL);
   const vaultsData: VaultsDataView[] | undefined = vaults?.vaultsData;
   const { data: tokensBalance, refetch: refetchTokensBalance } = useTokensBalance(
     POLL_BALANCES_MY_WALLET_INTERVAL
   );
   const [tokens, setTokens] = useState<Tokens | undefined>(undefined);
+  const [tokenToRescue, setTokenToRescue] = useState<TokenType | undefined>(undefined);
   const noVaults = !vaultsData || vaultsData.length === 0 || !vaultsData?.[0]?.staticData.vault_id;
   const nullAddress = "0x0000000000000000000000000000000000000000";
   const [erc20Address, setErc20Address] = useState(nullAddress);
   const { data: rescueToken, error: rescueTokenError } = useRescueToken({
     rescueTokenAddress: erc20Address,
   });
+
+  const resetTokenToRescue = () => {
+    setErc20Address(nullAddress);
+    setTokenToRescue(undefined);
+  };
+
+  const {
+    isOpen: isOpenRescueToken,
+    close: closeRescueToken,
+    open: openRescueToken,
+  } = useModal(false, {onOpen: resetTokenToRescue});
+
+  const {
+    isOpen: isOpenSendRescueToken,
+    close: closeSendRescueToken,
+    open: openSendRescueToken,
+  } = useModal(false, {onOpen: closeRescueToken});
 
   useEffect(() => {
     if (vaultsData) {
@@ -78,15 +92,15 @@ export default function MyWallet() {
   }, [vaultsData, tokensBalance]);
 
   const pushRescueToken = (erc20Address: string) => {
+    setIsLoadingFund(true);
     setErc20Address(erc20Address);
   };
 
   useEffect(() => {
-    if (!rescueToken || !erc20Address || !tokens) return;
+    if (!rescueToken || !erc20Address) return;
 
     try {
-      const tokensLocal: Tokens = { ...tokens };
-      tokensLocal[erc20Address] = {
+      const tokenToRescue: TokenType = { 
         name: rescueToken.name,
         symbol: rescueToken.symbol,
         balance: rescueToken.balance,
@@ -95,15 +109,24 @@ export default function MyWallet() {
           decimals: rescueToken.decimals,
         },
       };
-      setTokens(tokensLocal);
+      setTokenToRescue(tokenToRescue);
+      openSendRescueToken();
     } catch (error) {
-      setErc20Address(nullAddress);
+      resetTokenToRescue()
+    } finally {
+      setIsLoadingFund(false);
     }
   }, [erc20Address, rescueToken]);
 
   useEffect(() => {
     if (rescueTokenError && erc20Address !== nullAddress) {
-      setErc20Address(nullAddress);
+      setIsValidERC20Address(false);
+      setTimeout(() => {
+        resetTokenToRescue();
+        setIsLoadingFund(false);
+        closeRescueToken();
+        setIsValidERC20Address(true);
+      }, 3000);
     }
   }, [rescueTokenError]);
 
@@ -197,7 +220,16 @@ export default function MyWallet() {
         isOpen={isOpenRescueToken}
         setIsOpen={closeRescueToken}
         pushRescueToken={pushRescueToken}
+        isValidERC20Address={isValidERC20Address}
       />
+      {tokenToRescue && (
+        <SendTokensDialog
+          isOpen={isOpenSendRescueToken}
+          setIsOpen={closeSendRescueToken}
+          tokens={{[tokenToRescue.metadata.address]: tokenToRescue}}
+          refetchTokensBalance={refetchTokensBalance}
+        />
+      )}
     </div>
   );
 }

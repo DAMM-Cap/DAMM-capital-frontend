@@ -21,7 +21,7 @@ interface TokenAmountInputProps {
       label: string;
       value: string;
     }[];
-  };
+  } | undefined;
 }
 
 const TokenAmountInput: React.FC<TokenAmountInputProps> = ({

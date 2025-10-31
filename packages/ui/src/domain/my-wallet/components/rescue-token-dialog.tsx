@@ -1,5 +1,6 @@
 import { Button, Input, Label, Modal } from "@/components";
 import { getNetworkConfig } from "@/shared/config/network";
+import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { isAddress } from "viem";
 
@@ -7,9 +8,15 @@ interface RescueTokenDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   pushRescueToken: (erc20Address: string) => void;
+  isValidERC20Address: boolean;
 }
 
-export function RescueTokenDialog({ isOpen, setIsOpen, pushRescueToken }: RescueTokenDialogProps) {
+export function RescueTokenDialog({
+  isOpen,
+  setIsOpen,
+  pushRescueToken,
+  isValidERC20Address,
+}: RescueTokenDialogProps) {
   const chainName = getNetworkConfig().chain.name;
 
   const [erc20Address, setErc20Address] = useState("");
@@ -35,7 +42,7 @@ export function RescueTokenDialog({ isOpen, setIsOpen, pushRescueToken }: Rescue
     pushRescueToken(erc20Address);
     handleReset();
     setIsLoading(false);
-    setIsOpen(false);
+    // Closes in parent as it chains with the openSendRescueToken modal
   };
 
   const handleReset = () => {
@@ -59,13 +66,16 @@ export function RescueTokenDialog({ isOpen, setIsOpen, pushRescueToken }: Rescue
       blockClose={isLoading}
       actions={() => (
         <Button
-          className="w-full"
+          className={clsx(
+            "w-full",
+            !isValidERC20Address && "!text-textError hover:!bg-secondary hover:!border-secondary",
+          )}
           onClick={handleRescueToken}
-          variant="primary"
+          variant={isValidERC20Address ? "primary" : "secondary"}
           isLoading={isLoading}
           disabled={invalidErc20Address}
         >
-          Rescue Token
+          {isValidERC20Address ? "Rescue Token" : "Invalid ERC-20 contract address"}
         </Button>
       )}
     >
