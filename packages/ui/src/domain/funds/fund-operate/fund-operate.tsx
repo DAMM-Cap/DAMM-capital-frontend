@@ -43,7 +43,7 @@ export default function FundOperate() {
     <div className="min-h-screen">
       <Breadcrumb
         vaultName={fundData.vault_name}
-        className="fixed z-30 bg-textDark -mt-12 w-full"
+        className="fixed z-30 bg-textDark -mt-16 w-full"
       />
       <div
         className={clsx("grid max-w-full", {

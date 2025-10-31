@@ -17,7 +17,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     >
       {/* Sticky Header */}
       <div
-        className={clsx("fixed top-2 z-[1000]", {
+        className={clsx("fixed top-0 z-[1000]", {
           "left-20 right-20": !isMobile,
           "left-5 right-5": isMobile,
         })}
