@@ -1,84 +1,209 @@
-Privy Integration Setup (UI)
+# Privy Integration Setup
 
-Follow these steps to configure Privy in this project.
+This guide walks you through configuring Privy authentication and wallet integration for the UI package.
 
-1. Create a Privy app
+---
 
-- Sign up at `https://dashboard.privy.io`
-- Create an application and enable:
-  - Embedded Wallets (Smart Wallets)
-  - Any desired login methods (email, Google, etc.)
+## Quick Start
 
-2. Configure environment variables
+1. [Create a Privy app](#1-create-a-privy-app)
+2. [Configure environment variables](#2-configure-environment-variables)
+3. [Verify providers](#3-verify-privy-providers-are-wired)
+4. [Use session hooks](#4-session-usage)
+5. [Run locally](#7-run-locally)
 
-- Copy `.env.example` to `.env.local` (or `.env` for local only)
-- Set the following (from Privy dashboard):
-  - `VITE_PRIVY_APP_ID`
-  - `VITE_PRIVY_CLIENT_ID`
+---
 
-3. Verify Privy providers are wired
+## Step-by-Step Setup
 
-- The app is wrapped in `ProvidersWrapper` which includes:
-  - `PrivyProvider` and `SmartWalletsProvider`
-  - Wagmi (via `PrivyWagmiProvider`)
-  - React Query and app contexts
+### 1. Create a Privy app
 
-You should not need to change this unless rotating configs.
+1. Sign up at [Privy Dashboard](https://dashboard.privy.io)
+2. Create a new application
+3. Enable the following features:
+   - **Embedded Wallets** (Smart Wallets)
+   - **Login methods**: Email, Google, and any other desired authentication providers
 
-4. Session usage
+---
 
-- Use `useSession()` from `src/context/session-context.tsx` for:
-  - `isSignedIn, isConnecting, evmAddress, isSmartAccount`
-  - `login()` and `logout()`
-- Call `login()` to trigger Privy login; `logout()` to sign out.
+### 2. Configure environment variables
 
-5. Optional chain enforcement
+1. Copy the example environment file:
 
-- The session context attempts to keep the connected wallet on the configured chain (see `getNetworkConfig`).
-- Adjust logic in `session-context.tsx` if you need different chain behavior.
+   ```bash
+   cp .env.example .env.local
+   ```
 
-6. Smart wallet transactions
+2. Set the following variables (values from your Privy dashboard):
+   ```env
+   VITE_PRIVY_APP_ID=your_app_id_here
+   VITE_PRIVY_CLIENT_ID=your_client_id_here
+   ```
 
-- Use hooks under `src/services/privy` (e.g., `use-privy-txs`) to execute transactions via Privy smart wallets.
-- Ensure your contracts and chain IDs match your environment config.
+> **Note**: Use `.env.local` for local development or `.env` if preferred.
 
-7. Run locally
+---
 
-- Install: `pnpm install` (or `npm install`/`yarn`)
-- Start: `pnpm dev` (or `npm run dev`/`yarn dev`)
+### 3. Verify Privy providers are wired
 
-Troubleshooting
+The application is automatically wrapped in `ProvidersWrapper` located at:
 
-- Missing or incorrect `VITE_PRIVY_APP_ID`/`VITE_PRIVY_CLIENT_ID` → login won’t render/start
-- Browser blocked third-party/cookies → ensure popups/cookies allowed
-- Wrong chain → verify `getNetworkConfig()` and wallet network
+```
+src/hoc/providers-wrapper.tsx
+```
 
-Privy dashboard configuration details
+This includes:
 
-0. Configuration
+- ✅ `PrivyProvider` and `SmartWalletsProvider`
+- ✅ Wagmi integration via `PrivyWagmiProvider`
+- ✅ React Query setup
+- ✅ Application contexts (Session, Vault, etc.)
 
-- App settings / Domains
-  - Add allowed origins from which the app will log in via the Privy SDK (e.g., local dev URL and production domains)
-- App settings / Advanced
-  - Add allowed OAuth redirect URLs
+> **Note**: You typically won't need to modify this unless rotating configurations or adding new providers.
 
-1. Wallet infrastructure
+---
 
-- Smart wallets
-  - Enable Smart Wallets for your app
-  - Select Coinbase Smart Wallet, version 1.1
-  - Configure chains: add Optimism
-- Gas sponsorship
-  - Add payment methods and complete sponsorship setup as needed
+### 4. Session usage
 
-2. User management
+Import and use the `useSession()` hook from the session context:
 
-- Authentication / Basics
-  - Enable Emails
-  - Enable Ethereum External Wallets
-  - Enable Passkeys
-  - Enable “Automatically create embedded wallets on login” for EVM wallets
-- Authentication / Socials
-  - Enable Google (and any other desired providers)
-- Authentication / MFA
-  - Enable MFA for transactions: Authenticator App and Passkey
+```typescript
+import { useSession } from "@/context/session-context";
+
+function MyComponent() {
+  const { isSignedIn, isConnecting, evmAddress, isSmartAccount, login, logout } = useSession();
+
+  // Use session state and methods
+}
+```
+
+**Available properties:**
+
+- `isSignedIn`: Boolean indicating authentication status
+- `isConnecting`: Boolean for connection in-progress state
+- `evmAddress`: User's Ethereum address
+- `isSmartAccount`: Boolean indicating if using smart wallet
+- `login()`: Function to trigger Privy login flow
+- `logout()`: Function to sign out user
+
+---
+
+### 5. Optional: Chain enforcement
+
+The session context automatically attempts to keep the connected wallet on the configured chain (see `getNetworkConfig()`).
+
+To customize chain behavior, modify the logic in:
+
+```
+src/context/session-context.tsx
+```
+
+---
+
+### 6. Smart wallet transactions
+
+Use hooks under `src/services/privy/` to execute transactions:
+
+```typescript
+import { usePrivyTxs } from "@/services/privy/use-privy-txs";
+
+// Example: Execute transactions via Privy smart wallets
+const { executePrivyTransactions } = usePrivyTxs();
+```
+
+> **Important**: Ensure your contract addresses and chain IDs match your environment configuration.
+
+---
+
+### 7. Run locally
+
+1. **Install dependencies:**
+
+   ```bash
+   pnpm install
+   # or
+   npm install
+   # or
+   yarn install
+   ```
+
+2. **Start development server:**
+   ```bash
+   pnpm dev
+   # or
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+---
+
+## Privy Dashboard Configuration
+
+### 0. Configuration
+
+#### App Settings → Domains
+
+- Add **allowed origins** from which the app will authenticate via the Privy SDK
+  - Include your local development URL (e.g., `http://localhost:5173`)
+  - Include your production domains
+
+#### App Settings → Advanced
+
+- Add **allowed OAuth redirect URLs**
+  - Configure callback URLs for OAuth providers
+
+---
+
+### 1. Wallet Infrastructure
+
+#### Smart Wallets
+
+- ✅ Enable **Smart Wallets** for your app
+- Select **Coinbase Smart Wallet**, version **1.1**
+- **Configure chains**: Add **Optimism** to supported networks
+
+#### Gas Sponsorship
+
+- Add payment methods
+- Complete gas sponsorship setup as needed for your use case
+
+---
+
+### 2. User Management
+
+#### Authentication → Basics
+
+- ✅ Enable **Emails**
+- ✅ Enable **Ethereum External Wallets**
+- ✅ Enable **Passkeys**
+- ✅ Enable **"Automatically create embedded wallets on login"** for EVM wallets
+
+#### Authentication → Socials
+
+- ✅ Enable **Google** (and any other desired social providers)
+
+#### Authentication → MFA
+
+- ✅ Enable **MFA for transactions**
+  - Authenticator App
+  - Passkey
+
+---
+
+## Troubleshooting
+
+| Issue                           | Solution                                                                                              |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Login won't render or start     | Check that `VITE_PRIVY_APP_ID` and `VITE_PRIVY_CLIENT_ID` are set correctly in your `.env.local` file |
+| Browser blocking authentication | Ensure popups and third-party cookies are allowed in your browser settings                            |
+| Wrong network/chain             | Verify `getNetworkConfig()` returns the expected chain and check wallet network settings              |
+| Transactions failing            | Confirm contract addresses and chain IDs match your environment configuration                         |
+
+---
+
+## Additional Resources
+
+- [Privy Documentation](https://docs.privy.io/)
+- [Privy Dashboard](https://dashboard.privy.io)
+- [Wagmi Documentation](https://wagmi.sh/)
