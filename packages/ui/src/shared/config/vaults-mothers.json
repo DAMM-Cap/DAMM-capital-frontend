@@ -1,0 +1,18 @@
+{
+    "vaults": [
+        {
+            "vault": "0xbd97665f7bE07bbBaef75b480d242deda582a463",
+            "mother": "0x452B39524838273AAf035c72dBBa320ce198a0fc",
+            "children": [
+                "0x7bCf227e5161650492d3d42858E47e48b88dC8f4",
+                "0x32C87C2A536Df9999043e4bDC07F44cF7dC897DB",
+                "0xFeEF9B05F94376089a4b806F47A8b90A94949FBE"
+            ]
+        },
+        {
+            "vault": "0xd93a8dfe6514179D23314B91aFbaa7a7443372bC",
+            "mother": "0x5620F99A6c766b37Fbd98B002D07B53a2417a966",
+            "children": []
+        }
+    ]
+}

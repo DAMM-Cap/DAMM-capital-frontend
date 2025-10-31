@@ -13,7 +13,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  define: {
+    "process.env": JSON.stringify(process.env),
+  },
   server: {
     port: 3000,
+    proxy: {
+      "/api": {
+        target: "http://localhost:2222",
+        changeOrigin: true,
+      },
+    },
   },
 });

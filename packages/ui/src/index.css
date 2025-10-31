@@ -1,72 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Montserrat', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: dark;
+  color: #F7FEE7;
+  background-color: #09090B;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Color system */
+  --color-primary: #A3E635;
+  --color-secondary: #505050;
+  --color-accent: #F7FEE7;
+  --color-neutral: #BDBDBD;
+  --color-disabled: rgba(24,24,27,0.8);
+  --color-disabled-dark: #18181B;
+  --color-text-dark: #09090B;
+  --color-text-light: #F7FEE7;
+  --color-text-muted: #505050;
+  --color-input-txt-disabled: #303030;
+  --color-invalid: #EF4444;
+  --color-success: #14B8A6;
+  --color-link-hover: #84CC16;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #09090B;
+  color: #F7FEE7;
+  --privy-color-background: #09090B;
+  --privy-color-background-2: #18181B;
+  --privy-color-background-3: #18181BCC;
+  --privy-color-foreground: #F7FEE7; /* primary text */
+  --privy-color-foreground-2: #BDBDBD;
+  --privy-color-foreground-3: #BDBDBD;
+  --privy-color-foreground-4: #BDBDBD;
+  --privy-color-foreground-accent: #09090B; /* accent text */
+  --privy-color-accent: #A3E635; /* brand green */
+  --privy-color-accent-light: #84CC16;
+  --privy-color-accent-lightest: #84CC16;
+  --privy-color-accent-dark: #A3E635;
+  --privy-color-accent-darkest: #A3E635;
+  --privy-color-success: #14B8A6;
+  --privy-color-error: #EF4444;
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #A3E635;
+  transition: color 0.2s ease;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #84CC16;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  color: #F7FEE7;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Base Input Styles */
+input {
+  @apply w-full h-10 sm:h-12 rounded-lg font-montserrat font-medium text-sm sm:text-base leading-none transition-all duration-200 px-3 sm:px-4 border bg-disabled border-secondary text-neutral;
+}
+input:hover {
+  @apply bg-secondary border-secondary text-neutral;
+}
+input:focus {
+  @apply bg-disabled border-primary text-neutral outline-none ring-0;
+}
+input:disabled {
+  @apply bg-textDark border-disabled text-inputTxtDisabled;
 }
 
+/* Base Select Styles */
+select {
+  @apply w-full h-10 sm:h-12 rounded-lg font-montserrat font-medium text-sm sm:text-base leading-none transition-all duration-200 px-3 sm:px-4 border bg-disabled border-secondary text-neutral;
+}
+
+select:hover {
+  @apply bg-secondary border-secondary text-neutral;
+}
+
+select:focus {
+  @apply bg-disabled border-primary text-neutral outline-none ring-0;
+}
+
+select:disabled {
+  @apply bg-textDark border-disabled text-inputTxtDisabled;
+}
+
+/* Base Button Styles */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+  @apply px-3 sm:px-4 py-2 rounded-3xl border-2 transition-all duration-200 flex items-center justify-center gap-2 sm:gap-3 font-montserrat font-medium text-sm sm:text-base leading-none text-center;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+button:focus {
+  @apply outline-none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Base Card Styles */
+.card {
+  @apply border border-disabled rounded-2xl p-4 my-4;
+}
+
+/* Title Styles */
+.text-main-title { /* text-[30px] */
+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+}
+
+.text-sub-title { /* text-[20px] */
+  @apply text-sm sm:text-base md:text-lg lg:text-xl;
+}
+
+.text-body { /* text-[17px] */
+  @apply text-xs sm:text-sm md:text-[1.0625rem] lg:text-lg;
+}
+
+.text-small { /* text-[12px] */
+  @apply text-[0.625rem] sm:text-xs md:text-sm lg:text-base;
+}
+
+.text-tiny { /* text-[10px] */
+  @apply text-[0.5rem] sm:text-[0.625rem] md:text-xs lg:text-sm;
+}
+
+.text-mini {
+  /* text-[6px] */
+  @apply text-[0.25rem] sm:text-[0.375rem] md:text-[0.625rem] lg:text-xs;
+}
+
+.domain-title {
+  @apply text-[1.800rem] font-black font-[650] text-textLight;
+}
+
+.domain-subtitle {
+  @apply text-[0.950rem] font-black font-[350] text-textLight;
+}
+
+.domain-secondary-title {
+  @apply text-[1.250rem] font-black font-[650] text-textLight;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #18181B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #A3E635;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #84CC16;
 }

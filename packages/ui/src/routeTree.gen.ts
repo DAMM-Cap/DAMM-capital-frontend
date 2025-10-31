@@ -8,27 +8,82 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as PortfolioIndexRouteImport } from './routes/portfolio/index'
+import { Route as MyWalletIndexRouteImport } from './routes/my-wallet/index'
+import { Route as FundsIndexRouteImport } from './routes/funds/index'
+import { Route as FundOperateIndexRouteImport } from './routes/fund-operate/index'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
-import { Route as AboutIndexImport } from './routes/about/index'
-
-// Create/Update Routes
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
+  id: '/portfolio/',
+  path: '/portfolio/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyWalletIndexRoute = MyWalletIndexRouteImport.update({
+  id: '/my-wallet/',
+  path: '/my-wallet/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FundsIndexRoute = FundsIndexRouteImport.update({
+  id: '/funds/',
+  path: '/funds/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FundOperateIndexRoute = FundOperateIndexRouteImport.update({
+  id: '/fund-operate/',
+  path: '/fund-operate/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
-const AboutIndexRoute = AboutIndexImport.update({
-  id: '/about/',
-  path: '/about/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/fund-operate': typeof FundOperateIndexRoute
+  '/funds': typeof FundsIndexRoute
+  '/my-wallet': typeof MyWalletIndexRoute
+  '/portfolio': typeof PortfolioIndexRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/fund-operate': typeof FundOperateIndexRoute
+  '/funds': typeof FundsIndexRoute
+  '/my-wallet': typeof MyWalletIndexRoute
+  '/portfolio': typeof PortfolioIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/fund-operate/': typeof FundOperateIndexRoute
+  '/funds/': typeof FundsIndexRoute
+  '/my-wallet/': typeof MyWalletIndexRoute
+  '/portfolio/': typeof PortfolioIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/fund-operate' | '/funds' | '/my-wallet' | '/portfolio'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/fund-operate' | '/funds' | '/my-wallet' | '/portfolio'
+  id:
+    | '__root__'
+    | '/'
+    | '/fund-operate/'
+    | '/funds/'
+    | '/my-wallet/'
+    | '/portfolio/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  FundOperateIndexRoute: typeof FundOperateIndexRoute
+  FundsIndexRoute: typeof FundsIndexRoute
+  MyWalletIndexRoute: typeof MyWalletIndexRoute
+  PortfolioIndexRoute: typeof PortfolioIndexRoute
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
@@ -36,76 +91,47 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/about/': {
-      id: '/about/'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutIndexImport
-      parentRoute: typeof rootRoute
+    '/portfolio/': {
+      id: '/portfolio/'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-wallet/': {
+      id: '/my-wallet/'
+      path: '/my-wallet'
+      fullPath: '/my-wallet'
+      preLoaderRoute: typeof MyWalletIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/funds/': {
+      id: '/funds/'
+      path: '/funds'
+      fullPath: '/funds'
+      preLoaderRoute: typeof FundsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fund-operate/': {
+      id: '/fund-operate/'
+      path: '/fund-operate'
+      fullPath: '/fund-operate'
+      preLoaderRoute: typeof FundOperateIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
-}
-
-// Create and export the route tree
-
-export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
-}
-
-export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/about/': typeof AboutIndexRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about/'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AboutIndexRoute: typeof AboutIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutIndexRoute: AboutIndexRoute,
+  FundOperateIndexRoute: FundOperateIndexRoute,
+  FundsIndexRoute: FundsIndexRoute,
+  MyWalletIndexRoute: MyWalletIndexRoute,
+  PortfolioIndexRoute: PortfolioIndexRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/about/"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/about/": {
-      "filePath": "about/index.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
