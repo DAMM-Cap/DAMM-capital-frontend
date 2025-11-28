@@ -1,6 +1,6 @@
 [build]
   base = "packages/ui"
-  command = "npm install --legacy-peer-deps --include=optional && npm run build"
+  command = "rm -f package-lock.json && npm install --legacy-peer-deps --include=optional && npm run build"
   publish = "dist"
 
 [[redirects]]
