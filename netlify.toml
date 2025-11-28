@@ -1,6 +1,6 @@
 [build]
   base = "packages/ui"
-  command = "npm install --legacy-peer-deps --include=optional && npm rebuild @swc/core || true && npm run build"
+  command = "npm install --legacy-peer-deps --include=optional && npm run build"
   publish = "dist"
 
 [[redirects]]
