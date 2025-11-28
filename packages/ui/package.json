@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm install && npx tsc && vite build",
+    "build": "npx tsc && vite build",
     "preview": "vite preview",
-    "routes": "@tanstack/router-vite-plugin generate"
+    "routes": "@tanstack/router-vite-plugin generate",
+    "postinstall": "npm rebuild @swc/core --update-binary || true"
   },
   "dependencies": {
     "@privy-io/react-auth": "^3.0.1",
@@ -45,5 +46,8 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.35.0"
+  },
+  "overrides": {
+    "vite": "6.2.1"
   }
 }
