@@ -6,7 +6,8 @@ export function getVaultLinks(vaultAddress: string): { octavLink: string; curate
   const chainId = getNetworkConfig().chain.id;
   const { OCTAV_GATEWAY, CURATE_GATEWAY } = envParsed();
   const vaults = vaultsMother.vaults;
-  const vault = vaults.find((v) => v.vault === vaultAddress);
+  // Make comparison case-insensitive
+  const vault = vaults.find((v) => v.vault.toLowerCase() === vaultAddress.toLowerCase());
   if (!vault) {
     return {
       octavLink: OCTAV_GATEWAY,
