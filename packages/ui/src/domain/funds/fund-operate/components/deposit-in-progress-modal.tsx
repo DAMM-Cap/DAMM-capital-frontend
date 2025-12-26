@@ -48,7 +48,7 @@ export default function DepositInProgressModal({
       Your deposit has been successfully submitted and is now awaiting confirmation. Processing may
       take up to 48 hours. To check the status of your deposit, you can track the transaction on{" "}
       <a className="underline" href={`${explorerUrl}/tx/${txHash}`}>
-        Etherscan
+        block explorer
       </a>{" "}
       using your wallet address.
     </InfoModal>
