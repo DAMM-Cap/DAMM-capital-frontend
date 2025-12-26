@@ -16,6 +16,10 @@ export interface VaultMetadata {
   goals: string[];
   overview: string;
   riskDisclosure: RiskDisclosure;
+  structure: {
+    mother: string; // Mother vault address (always present)
+    children: string[]; // Always an array (empty if no children)
+  };
 }
 
 export interface VaultMetadataResponse {
