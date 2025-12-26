@@ -12,6 +12,7 @@ import {
   VaultData,
   VaultDataResponse,
 } from "@/services/api/types/vault-data";
+import { getTokenLogo } from "@/components/token-icons";
 
 export function DataWrangler({ data }: { data: VaultDataResponse }): DataPresenter {
   return {
@@ -30,6 +31,7 @@ export function DataWrangler({ data }: { data: VaultDataResponse }): DataPresent
 }
 
 export function transformStaticData(staticData: StaticData): StaticDataView {
+  const tokenSymbolBase = staticData.token_symbol.split("(")[0].trim();
   return {
     vault_id: staticData.vault_id,
     vault_name: staticData.vault_name,
@@ -41,7 +43,7 @@ export function transformStaticData(staticData: StaticData): StaticDataView {
     token_address: staticData.token_address,
     token_decimals: staticData.token_decimals,
     fee_receiver_address: staticData.fee_receiver_address,
-    vault_icon: "/" + staticData.token_symbol.split("(")[0].toLowerCase() + ".png",
+    vault_icon: getTokenLogo(tokenSymbolBase),
   };
 }
 
