@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
       <div className="w-full px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center text-xs text-textLight">
-            <div>© 2025 DAMM Labs. All rights reserved.</div>
+            <div>© 2026 DAMM Labs. All rights reserved.</div>
             <div
               className={clsx("flex items-center text-xs text-textLight", isMobile && "flex-col")}
             >
