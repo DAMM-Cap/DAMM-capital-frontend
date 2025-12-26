@@ -11,7 +11,7 @@ export default function FeesCard({
   isLoading: boolean;
 }) {
   const isMobile = useIsMobile();
-  const { managementFee, performanceFee, entranceRate, exitRate } = fundData;
+  const { managementRate, performanceRate, entranceRate, exitRate } = fundData;
 
   return (
     <div className="flex-1 flex-col gap-4 max-w-full">
@@ -31,11 +31,11 @@ export default function FeesCard({
             {
               rowFields: [
                 {
-                  value: managementFee.toString() + "%",
+                  value: managementRate.toString() + "%",
                   className: "text-center font-bold text-lg",
                 },
                 {
-                  value: performanceFee.toString() + "%",
+                  value: performanceRate.toString() + "%",
                   className: "text-center font-bold text-lg",
                 },
                 {

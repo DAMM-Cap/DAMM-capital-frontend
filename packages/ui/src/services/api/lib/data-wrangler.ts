@@ -61,8 +61,8 @@ export function transformVaultData(vaultData: VaultData, tokenSymbol: string): V
     positionUSD: `≈ $${vaultData.positionUSD}`,
     entranceRate: vaultData.entranceRate,
     exitRate: vaultData.exitRate,
-    performanceFee: vaultData.performanceFee,
-    managementFee: vaultData.managementFee,
+    performanceRate: vaultData.performanceRate,
+    managementRate: vaultData.managementRate,
     sharePrice: vaultData.sharePrice,
     aum: vaultData.aum,
   };

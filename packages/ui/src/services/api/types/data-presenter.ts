@@ -24,8 +24,8 @@ export interface VaultDataView {
   positionUSD: string;
   entranceRate: number;
   exitRate: number;
-  performanceFee: number;
-  managementFee: number;
+  performanceRate: number;
+  managementRate: number;
   sharePrice: number;
   aum: number;
 }

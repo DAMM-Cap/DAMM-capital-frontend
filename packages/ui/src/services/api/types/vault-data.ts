@@ -43,8 +43,8 @@ export interface VaultData {
   positionUSD: number;
   entranceRate: number;
   exitRate: number;
-  performanceFee: number;
-  managementFee: number;
+  performanceRate: number;
+  managementRate: number;
   sharePrice: number;
   aum: number;
 }
