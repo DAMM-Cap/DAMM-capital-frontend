@@ -72,9 +72,9 @@ const DepositModal: React.FC<DepositModalProps> = ({
       <TokenAmountInput
         tokenLabel={tokenSymbol}
         tokenIcon={TokenIcon}
-        tokenSecondaryLabel={`$${convertedAmount} ${vaultSymbol}`}
+        tokenSecondaryLabel={`${convertedAmount} $${vaultSymbol}`}
         conversionLeftText={`1 ${tokenSymbol}`}
-        conversionRightText={`${conversionValue} ${vaultSymbol}`}
+        conversionRightText={`${conversionValue} $${vaultSymbol}`}
         amount={amount}
         onAmountChange={onAmountChange}
         onMaxClick={onMaxClick}
