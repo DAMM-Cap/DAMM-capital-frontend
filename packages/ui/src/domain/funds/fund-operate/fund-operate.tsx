@@ -66,9 +66,9 @@ export default function FundOperate() {
             />
           )}
 
-          <ThesisCard isLoading={isLoading} />
+          <ThesisCard fundData={fundData} isLoading={isLoading} />
 
-          <OverviewCard isLoading={isLoading} />
+          <OverviewCard fundData={fundData} isLoading={isLoading} />
 
           <MetricsView
             vaultId={vaultId!}
@@ -99,7 +99,7 @@ export default function FundOperate() {
 
           <FeesCard fundData={fundData} isLoading={isLoading} />
 
-          <RiskDisclosureCard isLoading={isLoading} />
+          <RiskDisclosureCard fundData={fundData} isLoading={isLoading} />
         </div>
         {!isMobile && (
           <div className="flex justify-end col-span-1 max-w-full max-h-full">

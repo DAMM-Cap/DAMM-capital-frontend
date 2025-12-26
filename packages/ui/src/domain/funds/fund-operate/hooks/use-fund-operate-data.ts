@@ -5,6 +5,7 @@ import { POLL_BALANCES_FUND_OPERATE_INTERVAL, POLL_VAULTS_DATA_FUND_OPERATE_INTE
 import { formatToMaxDefinition } from "@/shared/utils";
 import { useEffect, useState } from "react";
 import { useTokensBalance } from "./use-tokens-balance";
+import { useVaultMetadata } from "@/services/api/use-vault-metadata";
 
 export interface DepositData {
   position: number;
@@ -77,6 +78,18 @@ export interface FundData {
   exitRate: number;
   aum: number;
   nav: number;
+  metadata?: {
+    thesis: string[];
+    goals: string[];
+    overview: string;
+    riskDisclosure: {
+      intro: string;
+      items: Array<{
+        title: string;
+        description: string;
+      }>;
+    };
+  };
 }
 
 export function useFundOperateData(vaultId: string) {
@@ -91,6 +104,7 @@ export function useFundOperateData(vaultId: string) {
   const [selectedVaultMetrics, setSelectedVaultMetrics] = useState<VaultMetricsView | undefined>(
     undefined,
   );
+  const { data: vaultMetadata } = useVaultMetadata(vaultId);
 
   useEffect(() => {
     if (vaultId && vaults?.vaultsData && vaults?.vaultMetrics) {
@@ -312,6 +326,7 @@ export function useFundOperateData(vaultId: string) {
       netApy30d: selectedVaultMetrics?.netApy30d || 0,
       aum: selectedVaultMetrics?.aum || 0,
       nav: selectedVaultMetrics?.nav || 0,
+      metadata: vaultMetadata?.metadata || undefined,
       //aum: selectedVault.vaultData.aum,
     } satisfies FundData;
   }

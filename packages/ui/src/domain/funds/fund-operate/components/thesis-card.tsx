@@ -1,6 +1,17 @@
 import { Card, Label, Skeleton } from "@/components";
+import { FundData } from "../hooks/use-fund-operate-data";
 
-export default function ThesisCard({ isLoading }: { isLoading: boolean }) {
+export default function ThesisCard({
+  fundData,
+  isLoading,
+}: {
+  fundData: FundData;
+  isLoading: boolean;
+}) {
+  const thesisItems = fundData.metadata?.thesis || [];
+  const goalItems = fundData.metadata?.goals || [];
+  const hasMetadata = fundData.metadata && (thesisItems.length > 0 || goalItems.length > 0);
+
   return (
     <div className="flex-1 flex-col gap-4">
       <Card className="!max-w-full w-full min-w-0 !h-auto overflow-hidden" variant="fund">
@@ -10,14 +21,14 @@ export default function ThesisCard({ isLoading }: { isLoading: boolean }) {
             <Label label="Thesis" className="domain-title mb-2" />
             {isLoading ? (
               <Skeleton lines={3} />
-            ) : (
+            ) : hasMetadata && thesisItems.length > 0 ? (
               <ul className="list-disc list-outside pl-6 text-sm text-neutral font-montserrat leading-snug whitespace-normal [overflow-wrap:anywhere] hyphens-auto">
-                <li>Provide low-risk stable yield on popular USD stablecoins.</li>
-                <li>
-                  Assets are invested in short-term unleveraged concentrated liquidity positions.
-                </li>
-                <li>All underlying positions are always immediately liquidateable (t0).</li>
+                {thesisItems.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
               </ul>
+            ) : (
+              <p className="text-sm text-neutral font-montserrat">No information available.</p>
             )}
           </div>
 
@@ -26,17 +37,14 @@ export default function ThesisCard({ isLoading }: { isLoading: boolean }) {
             <Label label="Goal" className="domain-title mb-2" />
             {isLoading ? (
               <Skeleton lines={3} />
-            ) : (
+            ) : hasMetadata && goalItems.length > 0 ? (
               <ul className="list-disc list-outside pl-6 text-sm text-neutral font-montserrat leading-snug whitespace-normal [overflow-wrap:anywhere] hyphens-auto">
-                <li>
-                  The DAMM USD Stablecoin Money Market Fund seeks to provide stable yield for idle
-                  USD stablecoin liquidity.
-                </li>
-                <li>
-                  Get the best risk adjusted yield on USDC denominated strategies across a
-                  diversified set of DeFi protocols.
-                </li>
+                {goalItems.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
               </ul>
+            ) : (
+              <p className="text-sm text-neutral font-montserrat">No information available.</p>
             )}
           </div>
         </div>
