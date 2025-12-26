@@ -29,6 +29,8 @@ export type IntegratedPosition = {
   completed_redeems: number;
   entrance_rate: number;
   exit_rate: number;
+  performance_rate: number;
+  management_rate: number;
   performance_fee: number;
   management_fee: number;
   shares_balance: number;
@@ -65,6 +67,8 @@ export function getNullMockedIntegratedPosition(): {
         completed_redeems: 0,
         entrance_rate: 0,
         exit_rate: 0,
+        performance_rate: 0,
+        management_rate: 0,
         performance_fee: 0,
         management_fee: 0,
         shares_balance: 0,
@@ -162,10 +166,10 @@ export function convertIntegratedPosition(
         valueGainedUSD: formatToMaxDefinition(valueGainedUSD),
         position: formatToMaxDefinition(formattedPositionValue),
         positionUSD: formatToMaxDefinition(formattedPositionValue * wldUsdPrice),
-        entranceRate: formatToMaxDefinition(p.entrance_rate),
-        exitRate: formatToMaxDefinition(p.exit_rate),
-        performanceFee: formatToMaxDefinition(p.performance_fee),
-        managementFee: formatToMaxDefinition(p.management_fee),
+        entranceRate: formatToMaxDefinition(p.entrance_rate / 100), // Convert basis points to percentage
+        exitRate: formatToMaxDefinition(p.exit_rate / 100), // Convert basis points to percentage
+        performanceRate: formatToMaxDefinition(p.performance_rate / 100), // Convert basis points to percentage
+        managementRate: formatToMaxDefinition(p.management_rate / 100), // Convert basis points to percentage
         sharePrice: Number(p.share_price),
         aum: formatToMaxDefinition((p.latest_tvl / 10 ** p.token_decimals) * p.share_price),
       },
