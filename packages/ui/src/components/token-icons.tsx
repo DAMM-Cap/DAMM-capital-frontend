@@ -5,12 +5,15 @@ export const usdcTokenLogo = "/usdc.png";
 export const usdtTokenLogo = "/usdt.png";
 export const daiTokenLogo = "/dai.png";
 export const worldcoinTokenLogo = "/worldcoin.jpeg";
+export const opTokenLogo = "/optimism-chain-logo.svg"; 
 
 export const getTokenLogo = (token: string) => {
-  if (token.toLowerCase().startsWith("weth")) return wethTokenLogo;
-  if (token.toLowerCase().startsWith("usdc")) return usdcTokenLogo;
-  if (token.toLowerCase().startsWith("usdt")) return usdtTokenLogo;
-  if (token.toLowerCase().startsWith("dai")) return daiTokenLogo;
-  if (token.toLowerCase().startsWith("worldcoin")) return worldcoinTokenLogo;
+  const tokenLower = token.toLowerCase();
+  if (tokenLower.startsWith("weth")) return wethTokenLogo;
+  if (tokenLower.startsWith("usdc")) return usdcTokenLogo;
+  if (tokenLower.startsWith("usdt")) return usdtTokenLogo;
+  if (tokenLower.startsWith("dai")) return daiTokenLogo;
+  if (tokenLower.startsWith("worldcoin")) return worldcoinTokenLogo;
+  if (tokenLower.startsWith("op")) return opTokenLogo;
   return ethereumChainLogo;
 };
