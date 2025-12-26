@@ -1,11 +1,13 @@
 import { Button, Card, DammStableIcon, Table } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
-import { getVaultLinks } from "@/shared/config/link-utils";
+import { getOctavLinkFromMetadata, getCurateLinkFromMetadata } from "@/shared/config/link-utils";
+import { useVaultMetadata } from "@/services/api/use-vault-metadata";
 import clsx from "clsx";
 import { ExternalLinkIcon } from "lucide-react";
 import { FundData } from "../hooks/use-fund-operate-data";
 import klerosCurateIcon from "/kleros-curate.svg";
 import octavIcon from "/octav.svg";
+import { useSearch } from "@tanstack/react-router";
 
 export default function FundCard({
   fundData,
@@ -16,9 +18,12 @@ export default function FundCard({
 }) {
   const vaultIcon = <DammStableIcon size={48} />;
   const isMobile = useIsMobile();
+  const { vaultId } = useSearch({ from: "/fund-operate/" });
+  const { data: vaultMetadata } = useVaultMetadata(vaultId!);
 
   const { vault_name, sharpe, netApy, netApy30d, aum, nav, vault_address } = fundData;
-  const { octavLink, curateLink } = getVaultLinks(vault_address!);
+  const octavLink = getOctavLinkFromMetadata(vaultMetadata);
+  const curateLink = getCurateLinkFromMetadata(vaultMetadata, vault_address!);
 
   return (
     <div className="flex-1 flex-col gap-4">

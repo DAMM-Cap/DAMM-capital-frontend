@@ -1,7 +1,8 @@
 import { Button, Card, DammStableIcon, Label, LoadingField, Table } from "@/components";
 import { ButtonVariant } from "@/components/core/button";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
-import { getVaultLinks } from "@/shared/config/link-utils";
+import { getCurateLinkFromMetadata } from "@/shared/config/link-utils";
+import { useVaultMetadata } from "@/services/api/use-vault-metadata";
 import { useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
 import { PortfolioFundData } from "../hooks/use-portfolio-data";
@@ -17,6 +18,7 @@ export default function FundCard({ isLoading, vaultId, fundData }: FundCardProps
   const vaultIcon = <DammStableIcon size={48} />;
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const { data: vaultMetadata } = useVaultMetadata(vaultId);
 
   const {
     vault_name,
@@ -33,7 +35,7 @@ export default function FundCard({ isLoading, vaultId, fundData }: FundCardProps
     vault_address,
   } = fundData;
 
-  const { curateLink } = getVaultLinks(vault_address!);
+  const curateLink = getCurateLinkFromMetadata(vaultMetadata, vault_address!);
 
   return (
     (Number(positionSize) > 0 || operationActive) && (

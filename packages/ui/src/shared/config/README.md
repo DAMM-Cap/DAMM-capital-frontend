@@ -45,27 +45,23 @@ const { data } = useTokensBalance(POLL_BALANCES_PORTFOLIO_INTERVAL);
 
 ## 🔗 `link-utils.ts`
 
-**Purpose**: Generates external links for vault verification and analytics.
+**Purpose**: Generates external links for vault verification and analytics using vault metadata.
 
 **Exports**:
 
-- `getVaultLinks(vaultAddress: string)` - Returns Octav and Kleros Curate links for a vault
-
-**Returns**:
-
-```typescript
-{
-  octavLink: string; // Octav analytics URL with vault addresses
-  curateLink: string; // Kleros Curate verification URL
-}
-```
+- `getOctavLinkFromMetadata(vaultMetadata)` - Returns Octav link with mother and children addresses
+- `getCurateLinkFromMetadata(vaultMetadata, vaultAddress)` - Returns Kleros Curate link
+- `getVaultLinksFromMetadata(vaultMetadata, vaultAddress)` - Returns both links (deprecated)
 
 **Usage**:
 
 ```typescript
-import { getVaultLinks } from "@/shared/config/link-utils";
+import { getOctavLinkFromMetadata, getCurateLinkFromMetadata } from "@/shared/config/link-utils";
+import { useVaultMetadata } from "@/services/api/use-vault-metadata";
 
-const { octavLink, curateLink } = getVaultLinks(vaultAddress);
+const { data: vaultMetadata } = useVaultMetadata(vaultId);
+const octavLink = getOctavLinkFromMetadata(vaultMetadata);
+const curateLink = getCurateLinkFromMetadata(vaultMetadata, vaultAddress);
 
 // Use in UI components
 <Button onClick={() => window.open(octavLink, "_blank")}>
@@ -75,9 +71,9 @@ const { octavLink, curateLink } = getVaultLinks(vaultAddress);
 
 **How it works**:
 
-1. Looks up vault in `vaults-mothers.json`
-2. If found: includes mother vault + children in Octav link
-3. If not found: uses fallback links with just the vault address
+1. Extracts mother and children addresses from `metadata.structure`
+2. If `structure.mother` exists: builds Octav link with mother + children addresses
+3. If not found: returns base Octav URL
 4. Always generates Curate link with chain ID and vault address
 
 ---
