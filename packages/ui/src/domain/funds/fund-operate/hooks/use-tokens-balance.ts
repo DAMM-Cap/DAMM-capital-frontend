@@ -103,7 +103,7 @@ export function useTokensBalance(pollInterval: number) {
             BigInt(results[i * queryLength + 2] as bigint) +
             BigInt(resultsAssets[i * conversionArrayLength + 2] as bigint);
           const sharePrice =
-            shares > 0n ? (assets * BigInt(10 ** v.staticData.vault_decimals)) / shares : 0n;
+            shares > 0n ? (assets * BigInt(10 ** v.staticData.vault_decimals)) / shares : 1n * BigInt(10 ** v.staticData.vault_decimals);
 
           result[v.staticData.vault_id] = {
             availableSupply: formatToMaxDefinition(
