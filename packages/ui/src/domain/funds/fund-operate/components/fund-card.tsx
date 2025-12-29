@@ -2,6 +2,7 @@ import { Button, Card, DammStableIcon, Table } from "@/components";
 import { useIsMobile } from "@/components/hooks/use-is-mobile";
 import { getOctavLinkFromMetadata, getCurateLinkFromMetadata } from "@/shared/config/link-utils";
 import { useVaultMetadata } from "@/services/api/use-vault-metadata";
+import { formatMetricValue } from "@/shared/utils";
 import clsx from "clsx";
 import { ExternalLinkIcon } from "lucide-react";
 import { FundData } from "../hooks/use-fund-operate-data";
@@ -78,11 +79,11 @@ export default function FundCard({
             {
               rowFields: [
                 {
-                  value: netApy.toString(),
+                  value: formatMetricValue(netApy),
                   className: "text-left text-primary",
                 },
                 {
-                  value: netApy30d.toString(),
+                  value: formatMetricValue(netApy30d),
                   className: "text-left",
                 },
                 {
@@ -112,7 +113,7 @@ export default function FundCard({
             {
               rowFields: [
                 {
-                  value: sharpe.toString(),
+                  value: formatMetricValue(sharpe, ""),
                   className: "text-left",
                 },
                 {

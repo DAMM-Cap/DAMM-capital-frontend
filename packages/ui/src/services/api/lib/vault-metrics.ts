@@ -124,7 +124,46 @@ function computeVaultMetrics(
       new Date(a.event_timestamp).getTime() - new Date(b.event_timestamp).getTime()
   );
 
-  // 2) Accumulate interval log-growth and total hours
+  // 2) Calculate AUM / NAV from the latest snapshot FIRST
+  // These metrics should always be available regardless of APY data
+  const latest = data[data.length - 1]!;
+  const priceUSD = 1; // For non-stable coins, get the correct price from API
+  
+  // AUM = GROSS (no fee deduction): shares * share_price
+  let aumUSD = 0;
+  if (
+    typeof latest.total_shares === "number" &&
+    typeof latest.share_price === "number" &&
+    typeof latest.deposit_token_decimals === "number"
+  ) {
+    aumUSD = computeAumUsdFromShares(
+      {
+        total_shares: latest.total_shares,
+        share_price: latest.share_price,
+        deposit_token_decimals: latest.deposit_token_decimals,
+      },
+      priceUSD
+    );
+  }
+
+  // NAV = NET (subtract accrued fee amounts already present in the snapshot)
+  let navUSD = 0;
+  if (
+    typeof latest.total_assets === "number" &&
+    typeof latest.deposit_token_decimals === "number"
+  ) {
+    navUSD = computeNavUsdFromSnapshotUsingFees(
+      {
+        total_assets: latest.total_assets,
+        management_fee: latest.management_fee,
+        performance_fee: latest.performance_fee ?? 0,
+        deposit_token_decimals: latest.deposit_token_decimals,
+      },
+      priceUSD
+    );
+  }
+
+  // 3) Accumulate interval log-growth and total hours for APY/Sharpe calculation
   // interval_factor_i = (1 + apy_i)^(delta_t_i/8760)
   // product_factor    = product of interval_factor_i = exp( sum (delta_t_i/8760) * ln(1+apy_i) )
   let sumLog = 0;           // sum (delta_t/8760) * ln(1 + apy)
@@ -158,22 +197,31 @@ function computeVaultMetrics(
     }
   }
 
+  // If no valid APY intervals, return with AUM/NAV but zero APY/Sharpe
   if (totalHours <= 0) {
-    return { vaultId, netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, nav: 0, lastSnapshotTimestamp: "" };
+    return { 
+      vaultId, 
+      netApy: 0, 
+      netApy30d: 0, 
+      sharpe: 0, 
+      aum: formatToMaxDefinition(aumUSD), 
+      nav: formatToMaxDefinition(navUSD), 
+      lastSnapshotTimestamp: latest.event_timestamp 
+    };
   }
 
-  // 3) Annualized implied return from the observed window
+  // 4) Annualized implied return from the observed window
   // product_factor = exp(sumLog)
   const productFactor = Math.exp(sumLog);
   // Annualize from totalHours -> hours/year = 8760
   const netApy = Math.pow(productFactor, 8760 / totalHours) - 1;
 
-  // 4) Normalize realized growth to 30d:
+  // 5) Normalize realized growth to 30d:
   // annualized_factor = productFactor^(8760/totalHours)
   // 30d factor        = productFactor^(720/totalHours)
   const netApy30d = Math.pow(productFactor, 720 / totalHours) - 1;
 
-  // 5) Sharpe using dailyized interval returns, risk-free ~ 0
+  // 6) Sharpe using dailyized interval returns, risk-free ~ 0
   // Sharpe_ann = (mean_daily / std_daily) * sqrt(365)
   let sharpe = 0;
   if (dailyizedReturns.length >= 2) {
@@ -182,45 +230,6 @@ function computeVaultMetrics(
     if (sd > 0) {
       sharpe = (mean / sd) * Math.sqrt(365);
     }
-  }
-
-  // 6) NAV / AUM / TVL (USD) from the latest snapshot (fees already accrued in snapshot)
-  const latest = data[data.length - 1]!;
-  const priceUSD = 1; // For non-stable coins, get the correct price from API
-  
-  // AUM = GROSS (no fee deduction): shares * share_price
-  let aumUSD = 0;
-  if (
-    typeof latest.total_shares === "number" &&
-    typeof latest.share_price === "number" &&
-    typeof latest.deposit_token_decimals === "number"
-  ) {
-    aumUSD = computeAumUsdFromShares(
-      {
-        total_shares: latest.total_shares,
-        share_price: latest.share_price,
-        deposit_token_decimals: latest.deposit_token_decimals,
-      },
-      priceUSD
-    );
-  }
-
-  // NAV = NET (subtract accrued fee amounts already present in the snapshot)
-  let navUSD = 0;
-  if (
-    typeof latest.total_assets === "number" &&
-    typeof latest.management_fee === "number" &&
-    typeof latest.deposit_token_decimals === "number"
-  ) {
-    navUSD = computeNavUsdFromSnapshotUsingFees(
-      {
-        total_assets: latest.total_assets,
-        management_fee: latest.management_fee,
-        performance_fee: latest.performance_fee ?? 0,
-        deposit_token_decimals: latest.deposit_token_decimals,
-      },
-      priceUSD
-    );
   }
 
   return {

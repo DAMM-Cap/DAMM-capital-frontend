@@ -17,3 +17,13 @@ export const formatToMaxDefinition = (value: number | undefined | null): number 
   }
   return truncateToDecimals(value, maxDefinition);
 };
+
+export const formatMetricValue = (
+  value: number | undefined | null,
+  suffix: string = "%"
+): string => {
+  if (value === undefined || value === null || value === 0) {
+    return "—"; // em dash for not available
+  }
+  return `${value}${suffix}`;
+};
