@@ -5,6 +5,7 @@ import { useVaults } from "@/context/vault-context";
 import { useModal } from "@/hooks/use-modal";
 import { VaultMetricsView, VaultsDataView } from "@/services/api/types/data-presenter";
 import { POLL_VAULTS_DATA_FUNDS_INTERVAL } from "@/shared/config/constants";
+import { formatMetricValue } from "@/shared/utils";
 import { useNavigate } from "@tanstack/react-router";
 import { LogInIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -64,11 +65,11 @@ export default function Funds() {
                   className: "text-left font-bold text-lg",
                 },
                 {
-                  value: metrics?.netApy.toString() || "0",
+                  value: formatMetricValue(metrics?.netApy),
                   className: "text-left text-primary",
                 },
                 {
-                  value: metrics?.netApy30d.toString() || "0",
+                  value: formatMetricValue(metrics?.netApy30d),
                   className: "text-left",
                 },
                 {
