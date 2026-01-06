@@ -16,6 +16,7 @@ export interface VaultMetadata {
   goals: string[];
   overview: string;
   riskDisclosure: RiskDisclosure;
+  settlementFrequency?: string; // Optional field for settlement frequency
   structure: {
     mother: string; // Mother vault address (always present)
     children: string[]; // Always an array (empty if no children)

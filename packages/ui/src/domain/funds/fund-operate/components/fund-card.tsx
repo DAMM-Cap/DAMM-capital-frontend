@@ -116,7 +116,7 @@ export default function FundCard({
                   className: "text-left",
                 },
                 {
-                  value: "Average: 48 hours",
+                  value: vaultMetadata?.metadata?.settlementFrequency || "Not Defined",
                   className: "text-left",
                 },
                 {
