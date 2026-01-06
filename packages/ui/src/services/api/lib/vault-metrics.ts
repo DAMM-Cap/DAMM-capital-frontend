@@ -77,23 +77,12 @@ function normalizeApy(apy: number): number {
  * - total_assets, management_fee, performance_fee are in smallest units (e.g., USDT * 10^6)
  * - share_price * total_shares also yields smallest units
  * - priceUSD defaults to 1 for stables; swap with an oracle if needed
+ * 
+ * Note: NAV and AUM are equal because share_price already reflects the net value per share.
+ * Fees are implicit in share_price calculation (share_price = total_assets / total_shares).
  */
 
-/** NAV (USD, net of fees): (total_assets − management_fee − performance_fee) */
-function computeNavUsdFromSnapshotUsingFees(
-  s: Pick<FetchedSnapshotData,
-    "total_assets" | "management_fee" | "performance_fee" | "deposit_token_decimals"
-  >,
-  priceUSD: number = 1
-): number {
-  const mgmt = Number.isFinite(s.management_fee ?? 0) ? (s.management_fee as number) : 0;
-  const perf = Number.isFinite(s.performance_fee ?? 0) ? (s.performance_fee as number) : 0;
-  const netSmallest = Math.max(s.total_assets - mgmt - perf, 0);
-  const netTokens = netSmallest / 10 ** s.deposit_token_decimals;
-  return netTokens * priceUSD;
-}
-
-/** AUM (USD, gross): total_shares × share_price (no fee deduction) */
+/** AUM (USD): total_shares × share_price */
 function computeAumUsdFromShares(
   s: Pick<FetchedSnapshotData, "total_shares" | "share_price" | "deposit_token_decimals">,
   priceUSD: number = 1
@@ -146,17 +135,18 @@ function computeVaultMetrics(
     );
   }
 
-  // NAV = NET (subtract accrued fee amounts already present in the snapshot)
+  // NAV should equal AUM: total_shares × share_price
+  // The share_price already reflects the net value per share (fees are implicit in share_price)
   let navUSD = 0;
   if (
-    typeof latest.total_assets === "number" &&
+    typeof latest.total_shares === "number" &&
+    typeof latest.share_price === "number" &&
     typeof latest.deposit_token_decimals === "number"
   ) {
-    navUSD = computeNavUsdFromSnapshotUsingFees(
+    navUSD = computeAumUsdFromShares(
       {
-        total_assets: latest.total_assets,
-        management_fee: latest.management_fee,
-        performance_fee: latest.performance_fee ?? 0,
+        total_shares: latest.total_shares,
+        share_price: latest.share_price,
         deposit_token_decimals: latest.deposit_token_decimals,
       },
       priceUSD
