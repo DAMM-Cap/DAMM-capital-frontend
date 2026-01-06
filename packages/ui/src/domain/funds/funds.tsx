@@ -65,11 +65,11 @@ export default function Funds() {
                   className: "text-left font-bold text-lg",
                 },
                 {
-                  value: formatMetricValue(metrics?.netApy),
+                  value: formatMetricValue((metrics?.netApy ?? 0) * 100), // Convert fraction to percentage
                   className: "text-left text-primary",
                 },
                 {
-                  value: formatMetricValue(metrics?.netApy30d),
+                  value: formatMetricValue((metrics?.netApy30d ?? 0) * 100), // Convert fraction to percentage
                   className: "text-left",
                 },
                 {

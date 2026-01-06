@@ -79,11 +79,11 @@ export default function FundCard({
             {
               rowFields: [
                 {
-                  value: formatMetricValue(netApy),
+                  value: formatMetricValue(netApy * 100), // Convert fraction to percentage
                   className: "text-left text-primary",
                 },
                 {
-                  value: formatMetricValue(netApy30d),
+                  value: formatMetricValue(netApy30d * 100), // Convert fraction to percentage
                   className: "text-left",
                 },
                 {
