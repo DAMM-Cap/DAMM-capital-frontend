@@ -63,12 +63,12 @@ function stddev(xs: number[]): number {
 }
 
 /** 
- * Accept APY either as FRACTION (-0.12) or PERCENT (-12). Normalize to fraction. 
- * This is to allow APY to be provided either as a fraction or a percentage.
+ * Normalize APY from percentage to fraction.
+ * Backend always returns APY as a percentage (e.g., 2.77 means 2.77%), so we always divide by 100.
  * */
 function normalizeApy(apy: number): number {
   if (!Number.isFinite(apy)) return 0;
-  return Math.abs(apy) >= 1 ? apy / 100 : apy;
+  return apy / 100;
 }
 
 
