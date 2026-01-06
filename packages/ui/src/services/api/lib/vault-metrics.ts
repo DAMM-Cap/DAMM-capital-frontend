@@ -216,10 +216,34 @@ function computeVaultMetrics(
   // Annualize from totalHours -> hours/year = 8760
   const netApy = Math.pow(productFactor, 8760 / totalHours) - 1;
 
-  // 5) Normalize realized growth to 30d:
-  // annualized_factor = productFactor^(8760/totalHours)
-  // 30d factor        = productFactor^(720/totalHours)
-  const netApy30d = Math.pow(productFactor, 720 / totalHours) - 1;
+  // 5) Calculate 30-day APY from snapshots in the last 30 days only
+  const thirtyDaysAgo = new Date(latest.event_timestamp);
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  
+  let sumLog30d = 0;
+  let totalHours30d = 0;
+  
+  for (const s of data) {
+    const snapshotDate = new Date(s.event_timestamp);
+    if (snapshotDate < thirtyDaysAgo) continue; // Skip snapshots older than 30 days
+    
+    const dt = Math.max(0, s.delta_hours ?? 0);
+    if (dt <= 0 || s.apy == null) continue;
+    
+    const apyNorm = normalizeApy(s.apy);
+    if (!Number.isFinite(apyNorm)) continue;
+    const a = Math.min(Math.max(apyNorm, -0.999999999), 10);
+    
+    sumLog30d += (dt / 8760) * safeLog1p(a);
+    totalHours30d += dt;
+  }
+  
+  let netApy30d = 0;
+  if (totalHours30d > 0) {
+    const productFactor30d = Math.exp(sumLog30d);
+    // Annualize from totalHours30d -> hours/year = 8760
+    netApy30d = Math.pow(productFactor30d, 8760 / totalHours30d) - 1;
+  }
 
   // 6) Sharpe using dailyized interval returns, risk-free ~ 0
   // Sharpe_ann = (mean_daily / std_daily) * sqrt(365)
