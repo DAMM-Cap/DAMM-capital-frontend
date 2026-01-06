@@ -93,6 +93,5 @@ export interface VaultMetricsResponse {
   netApy30d: number;
   sharpe: number;
   aum: number;
-  nav: number;
   lastSnapshotTimestamp: string;
 }

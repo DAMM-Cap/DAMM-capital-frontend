@@ -33,7 +33,7 @@ interface ApiSnapshotsResponse {
 }
 
 /**
- * Minimal per-interval fields needed for APY math, AUM and NAV calculation.
+ * Minimal per-interval fields needed for APY math and AUM calculation.
  */
 type VaultMetricsData =
   Pick<FetchedSnapshotData,
@@ -72,14 +72,11 @@ function normalizeApy(apy: number): number {
 }
 
 
-/** ───────────────────── NAV / AUM helpers ─────────────────────
+/** ───────────────────── AUM helpers ─────────────────────
  * Units:
  * - total_assets, management_fee, performance_fee are in smallest units (e.g., USDT * 10^6)
  * - share_price * total_shares also yields smallest units
  * - priceUSD defaults to 1 for stables; swap with an oracle if needed
- * 
- * Note: NAV and AUM are equal because share_price already reflects the net value per share.
- * Fees are implicit in share_price calculation (share_price = total_assets / total_shares).
  */
 
 /** AUM (USD): total_shares × share_price */
@@ -105,7 +102,7 @@ function computeVaultMetrics(
   snapshots: VaultMetricsData[]
 ): VaultMetricsResponse {
   if (!snapshots.length)
-    return { vaultId: "", netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, nav: 0, lastSnapshotTimestamp: "" };
+    return { vaultId: "", netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, lastSnapshotTimestamp: "" };
 
   // 1) Sort by timestamp ascending to respect time order
   const data = [...snapshots].sort(
@@ -113,7 +110,7 @@ function computeVaultMetrics(
       new Date(a.event_timestamp).getTime() - new Date(b.event_timestamp).getTime()
   );
 
-  // 2) Calculate AUM / NAV from the latest snapshot FIRST
+  // 2) Calculate AUM from the latest snapshot FIRST
   // These metrics should always be available regardless of APY data
   const latest = data[data.length - 1]!;
   const priceUSD = 1; // For non-stable coins, get the correct price from API
@@ -126,24 +123,6 @@ function computeVaultMetrics(
     typeof latest.deposit_token_decimals === "number"
   ) {
     aumUSD = computeAumUsdFromShares(
-      {
-        total_shares: latest.total_shares,
-        share_price: latest.share_price,
-        deposit_token_decimals: latest.deposit_token_decimals,
-      },
-      priceUSD
-    );
-  }
-
-  // NAV should equal AUM: total_shares × share_price
-  // The share_price already reflects the net value per share (fees are implicit in share_price)
-  let navUSD = 0;
-  if (
-    typeof latest.total_shares === "number" &&
-    typeof latest.share_price === "number" &&
-    typeof latest.deposit_token_decimals === "number"
-  ) {
-    navUSD = computeAumUsdFromShares(
       {
         total_shares: latest.total_shares,
         share_price: latest.share_price,
@@ -187,7 +166,7 @@ function computeVaultMetrics(
     }
   }
 
-  // If no valid APY intervals, return with AUM/NAV but zero APY/Sharpe
+  // If no valid APY intervals, return with AUM but zero APY/Sharpe
   if (totalHours <= 0) {
     return { 
       vaultId, 
@@ -195,7 +174,6 @@ function computeVaultMetrics(
       netApy30d: 0, 
       sharpe: 0, 
       aum: formatToMaxDefinition(aumUSD), 
-      nav: formatToMaxDefinition(navUSD), 
       lastSnapshotTimestamp: latest.event_timestamp 
     };
   }
@@ -252,14 +230,13 @@ function computeVaultMetrics(
     netApy30d: formatToMaxDefinition(netApy30d),
     sharpe: formatToMaxDefinition(sharpe),
     aum: formatToMaxDefinition(aumUSD),
-    nav: formatToMaxDefinition(navUSD),
     lastSnapshotTimestamp: latest.event_timestamp,
   };
 }
 
 export function computeVaultMetricsByVaultId(snapshots: ApiSnapshotsResponse): VaultMetricsResponse[] {
   if (!snapshots || !snapshots.snapshots || !snapshots["snapshots"].length)
-    return [{ vaultId: "", netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, nav: 0, lastSnapshotTimestamp: "" }];
+    return [{ vaultId: "", netApy: 0, netApy30d: 0, sharpe: 0, aum: 0, lastSnapshotTimestamp: "" }];
 
   // Sort once globally by time, then bucket
   const sorted: VaultMetricsData[] = [...snapshots.snapshots].sort(

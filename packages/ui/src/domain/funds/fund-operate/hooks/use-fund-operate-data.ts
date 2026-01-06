@@ -77,7 +77,6 @@ export interface FundData {
   netApy30d: number;
   exitRate: number;
   aum: number;
-  nav: number;
   metadata?: {
     thesis: string[];
     goals: string[];
@@ -296,7 +295,6 @@ export function useFundOperateData(vaultId: string) {
         netApy: 0,
         netApy30d: 0,
         aum: 0,
-        nav: 0,
       } satisfies FundData;
     }
 
@@ -325,7 +323,6 @@ export function useFundOperateData(vaultId: string) {
       netApy: selectedVaultMetrics?.netApy || 0,
       netApy30d: selectedVaultMetrics?.netApy30d || 0,
       aum: selectedVaultMetrics?.aum || 0,
-      nav: selectedVaultMetrics?.nav || 0,
       metadata: vaultMetadata?.metadata || undefined,
       //aum: selectedVault.vaultData.aum,
     } satisfies FundData;

@@ -22,7 +22,7 @@ export default function FundCard({
   const { vaultId } = useSearch({ from: "/fund-operate/" });
   const { data: vaultMetadata } = useVaultMetadata(vaultId!);
 
-  const { vault_name, sharpe, netApy, netApy30d, aum, nav, vault_address } = fundData;
+  const { vault_name, sharpe, netApy, netApy30d, aum, vault_address } = fundData;
   const octavLink = getOctavLinkFromMetadata(vaultMetadata);
   const curateLink = getCurateLinkFromMetadata(vaultMetadata, vault_address!);
 
@@ -72,7 +72,6 @@ export default function FundCard({
             { label: "Net APY", tooltip: "Since inception", className: "text-left" },
             { label: "30 days Net APY", className: "text-left" },
             { label: "AUM", className: "text-left" },
-            { label: "NAV", className: "text-left" },
           ]}
           isLoading={isLoading}
           rows={[
@@ -88,10 +87,6 @@ export default function FundCard({
                 },
                 {
                   value: aum.toString(),
-                  className: "text-left",
-                },
-                {
-                  value: nav.toString(),
                   className: "text-left",
                 },
               ],
